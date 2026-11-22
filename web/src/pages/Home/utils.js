@@ -3,7 +3,7 @@ import { faMugHot } from '@fortawesome/free-solid-svg-icons/faMugHot';
 import { faWind } from '@fortawesome/free-solid-svg-icons/faWind';
 import { faDroplet } from '@fortawesome/free-solid-svg-icons/faDroplet';
 import { faMortarPestle } from '@fortawesome/free-solid-svg-icons/faMortarPestle';
-import { faPause } from '@fortawesome/free-solid-svg-icons/faPause';
+import { faStop } from '@fortawesome/free-solid-svg-icons/faStop';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { faPlay } from '@fortawesome/free-solid-svg-icons/faPlay';
 import { msg, t } from '@lingui/core/macro';
@@ -46,13 +46,13 @@ export const getPhaseLabel = (p, grind) => {
 };
 
 export const getPrimaryIcon = (active, finished) => {
-  if (active) return faPause;
+  if (active) return faStop;
   if (finished) return faCheck;
   return faPlay;
 };
 
 export const getPrimaryLabel = (active, finished) => {
-  if (active) return t({ message: 'Pause', context: 'process action' });
+  if (active) return t({ message: 'Stop', context: 'process action' });
   if (finished) return t({ message: 'Finish', context: 'process action' });
   return t({ message: 'Start', context: 'process action' });
 };

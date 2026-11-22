@@ -39,7 +39,7 @@ export function Home() {
             </div>
             <Card
               lg={2}
-              className='landscape:max-lg:col-span-5 landscape:max-lg:min-h-0'
+              className='gm-trace landscape:max-lg:col-span-5 landscape:max-lg:min-h-0'
               fullHeight={true}
             >
               <OverviewChart />
@@ -49,7 +49,7 @@ export function Home() {
           <>
             <Card
               lg={2}
-              className='landscape:max-lg:col-span-5 landscape:max-lg:min-h-0'
+              className='gm-trace landscape:max-lg:col-span-5 landscape:max-lg:min-h-0'
               fullHeight={true}
             >
               <OverviewChart />

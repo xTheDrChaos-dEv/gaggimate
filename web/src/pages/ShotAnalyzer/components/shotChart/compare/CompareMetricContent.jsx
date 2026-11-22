@@ -398,16 +398,6 @@ function getStatisticsMetricDefinitions(metricLabel = null) {
         getValue: total => total?.weight,
       },
     ],
-    'Weight Flow': [
-      {
-        key: 'weightFlow',
-        label: t`Avg. Weight Flow`,
-        unit: 'g/s',
-        color: 'var(--analyzer-weightflow-text)',
-        icon: getShotChartLabelIcon('Weight Flow'),
-        getValue: total => total?.wf?.avg,
-      },
-    ],
     Temp: [
       {
         key: 'temperature',
@@ -588,14 +578,6 @@ function getCompareMobileDetailMetricDefinitions(labelKey, pageKey = null) {
       color: 'var(--analyzer-weight-text)',
       icon: getShotChartLabelIcon('Weight'),
       getValue: nextTotal => nextTotal?.weight,
-    },
-    'Weight Flow': {
-      key: 'weightFlow',
-      label: t`Avg. Weight Flow`,
-      unit: 'g/s',
-      color: 'var(--analyzer-weightflow-text)',
-      icon: getShotChartLabelIcon('Weight Flow'),
-      getValue: nextTotal => nextTotal?.wf?.avg,
     },
     Temp: {
       key: 'temperature',

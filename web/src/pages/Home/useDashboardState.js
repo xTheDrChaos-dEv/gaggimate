@@ -138,6 +138,7 @@ export function useDashboardState() {
     hasSteamLevel: !!s.hasSteamLevel,
     steamBoilerLow: s.steamBoilerLow ?? null,
     mode,
+    connected: connected.value,
     systemReady,
     systemMessage,
     currentTemperature: s.currentTemperature,

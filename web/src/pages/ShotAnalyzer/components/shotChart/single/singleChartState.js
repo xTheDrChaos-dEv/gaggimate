@@ -100,15 +100,10 @@ function sampleHasWeightData(sample) {
   return Number.isFinite(numericWeight) && numericWeight > 0;
 }
 
-function sampleHasWeightFlowData(sample) {
-  const value = Number(sample?.vf ?? sample?.weight_flow);
-  return Number.isFinite(value) && value > 0;
-}
-
 export function getShotSampleCapabilities(shotSamples) {
   return {
     hasWeightData: shotSamples.some(sampleHasWeightData),
-    hasWeightFlowData: shotSamples.some(sampleHasWeightFlowData),
+    hasWeightFlowData: false,
   };
 }
 

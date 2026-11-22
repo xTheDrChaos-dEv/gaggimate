@@ -289,8 +289,38 @@ static void suppressMeterTicks(lv_obj_t *obj) {
     }
 }
 
+// Presentation the EEZ project cannot express: a ring that marks the primary control of a shot (start, stop,
+// acknowledge) as a touch target. Start is ringed in the theme accent, stop and acknowledge in the icon colour, so
+// the brew action reads differently from the profile and settings buttons beside it. Reapplied on every screen
+// load because EEZ recreates the widgets and so the rings follow the active theme.
+// (The brew readout face and the ready/result lines are set in DefaultUI.cpp.)
+static void ringControl(lv_obj_t *button, lv_color_t color) {
+    if (button == nullptr) {
+        return;
+    }
+    lv_obj_set_style_radius(button, LV_RADIUS_CIRCLE, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_width(button, 3, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_pad(button, 14, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_opa(button, LV_OPA_70, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_outline_color(button, color, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_ext_click_area(button, 24); // 88 px touch target around the 40 px icon
+}
+
+static void styleShotControls() {
+    const lv_color_t accent = lv_color_hex(theme_colors[eez_flow_get_selected_theme_index()][2]);
+    ringControl(objects.start_button, accent);
+    ringControl(objects.water_start_button, accent);
+    ringControl(objects.grind_start_button, accent);
+    for (lv_obj_t *button : {objects.pause_button, objects.check_button}) {
+        if (button != nullptr) {
+            ringControl(button, lv_obj_get_style_img_recolor(button, LV_PART_MAIN));
+        }
+    }
+}
+
 void action_on_screen_load(lv_event_t *e) {
     suppressMeterTicks(lv_event_get_target(e));
+    styleShotControls();
     applyClickArea(objects.select_profile_1, 30);
     applyClickArea(objects.previous_profile_1, 30);
     applyClickArea(objects.next_profile_1, 30);
@@ -310,9 +340,6 @@ void action_on_screen_load(lv_event_t *e) {
     applyClickArea(objects.water_dials__menu_icon, 20);
     applyClickArea(objects.grind_dials__menu_icon, 20);
     applyClickArea(objects.info_menu_icon, 20);
-    applyClickArea(objects.start_button, 25);
-    applyClickArea(objects.water_start_button, 25);
-    applyClickArea(objects.grind_start_button, 25);
     applyClickArea(objects.profile_select_button, 25);
     applyClickArea(objects.settings_button, 25);
     applyClickArea(objects.up_duration_button, 15);

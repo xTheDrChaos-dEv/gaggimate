@@ -27,7 +27,6 @@ function getChartData(shot) {
   const pf = [];
   const tf = [];
   const v = [];
-  const vf = [];
 
   // Process all samples to build data arrays
   for (let i = 0; i < data.length; i++) {
@@ -42,7 +41,6 @@ function getChartData(shot) {
     pf.push({ x, y: s.pf });
     tf.push({ x, y: s.tf });
     v.push({ x, y: s.v });
-    vf.push({ x, y: s.vf });
   }
 
   // For v5+ files, use phase transitions from header
@@ -66,9 +64,30 @@ function getChartData(shot) {
   const maxX = Math.max(...timeValues);
   const padding = maxTemp - minTemp > 10 ? 2 : 5;
 
+  // Series colours follow the dashboard's live chart (temperature red, pressure teal, pump flow sage, weight
+  // gold). The history card sits on the page background, so dark themes get the light tones and light themes
+  // the deep ones.
+  const darkPage = ['dark', 'coffee'].includes(document.documentElement.dataset.theme);
+  const series = darkPage
+    ? {
+        temp: '#FF6B5C',
+        tempTarget: '#FFB3A8',
+        pressure: '#70D6C2',
+        flow: '#B3D5A5',
+        puck: '#7FB069',
+        weight: '#F4BD64',
+      }
+    : {
+        temp: '#C2331F',
+        tempTarget: '#8F2A2A',
+        pressure: '#0B6B5D',
+        flow: '#527341',
+        puck: '#2F4A22',
+        weight: '#925408',
+      };
+
   // Check if weight data has any non-zero values
   const hasWeight = v.some(point => point.y > 0);
-  const hasWeightFlow = vf.some(point => point.y > 0);
 
   // Create phase annotations
   const phaseAnnotations = {};
@@ -140,21 +159,21 @@ function getChartData(shot) {
       datasets: [
         {
           label: t`Current Temperature`,
-          borderColor: '#F0561D',
+          borderColor: series.temp,
           pointStyle: false,
           data: ct,
         },
         {
           label: t`Target Temperature`,
           fill: true,
-          borderColor: '#731F00',
+          borderColor: series.tempTarget,
           borderDash: [6, 6],
           pointStyle: false,
           data: tt,
         },
         {
           label: t`Current Pressure`,
-          borderColor: '#0066CC',
+          borderColor: series.pressure,
           pointStyle: false,
           yAxisID: 'y1',
           data: cp,
@@ -162,7 +181,7 @@ function getChartData(shot) {
         {
           label: t`Target Pressure`,
           fill: true,
-          borderColor: '#0066CC',
+          borderColor: series.pressure,
           borderDash: [6, 6],
           pointStyle: false,
           yAxisID: 'y1',
@@ -170,21 +189,21 @@ function getChartData(shot) {
         },
         {
           label: t`Current Pump Flow`,
-          borderColor: '#63993D',
+          borderColor: series.flow,
           pointStyle: false,
           yAxisID: 'y1',
           data: fl,
         },
         {
           label: t`Current Puck Flow`,
-          borderColor: '#204D00',
+          borderColor: series.puck,
           pointStyle: false,
           yAxisID: 'y1',
           data: pf,
         },
         {
           label: t`Target Pump Flow`,
-          borderColor: '#63993D',
+          borderColor: series.flow,
           borderDash: [6, 6],
           pointStyle: false,
           yAxisID: 'y1',
@@ -195,21 +214,10 @@ function getChartData(shot) {
           ? [
               {
                 label: t`Weight`,
-                borderColor: '#8B5CF6',
+                borderColor: series.weight,
                 pointStyle: false,
                 yAxisID: 'y2',
                 data: v,
-              },
-            ]
-          : []),
-        ...(hasWeightFlow
-          ? [
-              {
-                label: t`Weight Flow`,
-                borderColor: '#4b2e8dff',
-                pointStyle: false,
-                yAxisID: 'y1',
-                data: vf,
               },
             ]
           : []),
@@ -281,7 +289,7 @@ function getChartData(shot) {
           max: 16,
           position: 'right',
           ticks: {
-            callback: value => `${value.toFixed()} bar / g/s`,
+            callback: value => `${value.toFixed()} bar / ml/s`,
             font: {
               size: window.innerWidth < 640 ? 10 : 12,
             },

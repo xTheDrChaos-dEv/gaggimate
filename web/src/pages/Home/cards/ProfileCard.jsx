@@ -68,8 +68,8 @@ function FinishedProcessCard({ processInfo, isBrewing, selectedProfile, stats, w
   const flowLabel = isBrewing && stats?.avgFlow != null ? `${stats.avgFlow.toFixed(2)} ml/s` : null;
   const items = [
     weightLabel && { key: 'weight', label: t`Weight`, value: weightLabel },
-    pressureLabel && { key: 'pressure', label: t`Pressure`, value: pressureLabel },
-    flowLabel && { key: 'flow', label: t`Flow`, value: flowLabel },
+    pressureLabel && { key: 'pressure', label: t`Peak Pressure`, value: pressureLabel },
+    flowLabel && { key: 'flow', label: t`Avg. Pump Flow`, value: flowLabel },
   ].filter(Boolean);
 
   return (

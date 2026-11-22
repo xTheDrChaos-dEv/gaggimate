@@ -26,6 +26,7 @@ extern const lv_img_dsc_t img_logo;
 extern const lv_img_dsc_t img_minus_small_40x40;
 extern const lv_img_dsc_t img_mug_hot_alt_80x80;
 extern const lv_img_dsc_t img_pause_40x40;
+extern const lv_img_dsc_t img_stop_40x40;
 extern const lv_img_dsc_t img_play_40x40;
 extern const lv_img_dsc_t img_plus_small_40x40;
 extern const lv_img_dsc_t img_power_40x40;
@@ -62,7 +63,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[46];
+extern const ext_img_desc_t images[47];
 
 #ifdef __cplusplus
 }

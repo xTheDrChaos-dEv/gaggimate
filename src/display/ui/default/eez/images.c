@@ -1,6 +1,6 @@
 #include "images.h"
 
-const ext_img_desc_t images[46] = {
+const ext_img_desc_t images[47] = {
     {"angle-down-40x40", &img_angle_down_40x40},
     {"angle-left-40x40", &img_angle_left_40x40},
     {"angle-right-40x40", &img_angle_right_40x40},
@@ -20,6 +20,7 @@ const ext_img_desc_t images[46] = {
     {"minus-small-40x40", &img_minus_small_40x40},
     {"mug-hot-alt-80x80", &img_mug_hot_alt_80x80},
     {"pause-40x40", &img_pause_40x40},
+    {"stop-40x40", &img_stop_40x40},
     {"play-40x40", &img_play_40x40},
     {"plus-small-40x40", &img_plus_small_40x40},
     {"power-40x40", &img_power_40x40},

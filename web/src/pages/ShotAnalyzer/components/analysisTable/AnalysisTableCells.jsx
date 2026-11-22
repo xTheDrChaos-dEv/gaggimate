@@ -93,7 +93,6 @@ const CELL_METRIC_UNITS = {
   t: '°C',
   tt: '°C',
   w: 'g',
-  wf: 'g/s',
 };
 
 const CELL_METRIC_PARTS = {

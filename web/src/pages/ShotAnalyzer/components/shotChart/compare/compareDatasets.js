@@ -249,7 +249,6 @@ function buildMainWeightDatasetSpecs({
   shotStyle,
   compareDatasetMeta,
   showWeightInMainChart,
-  showWeightFlowInMainChart,
 }) {
   return [
     showWeightInMainChart && visibility.weight && model.series.weight.length > 0
@@ -262,22 +261,6 @@ function buildMainWeightDatasetSpecs({
           backgroundColor: applyColorAlpha(colors.weight, shotStyle.opacity),
           yAxisID: 'yWeight',
           borderWidth: shotStyle.lineWidth,
-          borderDash: shotStyle.dash,
-          tension: 0.2,
-          ...getComparePointStyle(false),
-          ...compareDatasetMeta,
-        }
-      : null,
-    showWeightFlowInMainChart && visibility.weightFlow && model.series.weightFlow.length > 0
-      ? {
-          label: `${entry.label} Weight Flow`,
-          compareTooltipBaseLabel: 'Weight Flow',
-          data: model.series.weightFlow,
-          axisScaleMode: 'weightFlow',
-          borderColor: applyColorAlpha(colors.weightFlow, shotStyle.opacity),
-          backgroundColor: applyColorAlpha(colors.weightFlow, shotStyle.opacity),
-          yAxisID: 'yMain',
-          borderWidth: Math.max(1.2, shotStyle.lineWidth - 0.8),
           borderDash: shotStyle.dash,
           tension: 0.2,
           ...getComparePointStyle(false),
@@ -338,7 +321,6 @@ function buildMainChartDatasetSpecs({
   showTargets,
   compareDatasetMeta,
   showWeightInMainChart,
-  showWeightFlowInMainChart,
 }) {
   return [
     ...buildMainPressureDatasetSpecs({
@@ -375,8 +357,7 @@ function buildMainChartDatasetSpecs({
       shotStyle,
       compareDatasetMeta,
       showWeightInMainChart,
-      showWeightFlowInMainChart,
-    }),
+        }),
   ].filter(Boolean);
 }
 
@@ -433,7 +414,6 @@ export function buildMainChartDatasets({
   shotStylePreset,
   compareStyle,
   showWeightInMainChart = true,
-  showWeightFlowInMainChart = true,
 }) {
   return compareModels.flatMap(({ entry, model }, index) => {
     const shotStyle = getShotStyle(index, shotStylePreset, compareStyle);
@@ -455,8 +435,7 @@ export function buildMainChartDatasets({
       showTargets,
       compareDatasetMeta,
       showWeightInMainChart,
-      showWeightFlowInMainChart,
-    });
+        });
   });
 }
 

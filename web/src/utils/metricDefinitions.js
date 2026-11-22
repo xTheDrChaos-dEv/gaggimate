@@ -27,8 +27,11 @@ export const METRIC_DEFINITIONS = [
     labelMsg: msg`Pressure`,
     required: false,
     available: () => true,
-    getValue: ds => (ds.currentPressure ?? 0).toFixed(1),
-    getTarget: ds => (ds.targetPressure ?? 0).toFixed(1),
+    getValue: ds =>
+      ds.targetPressure > 0
+        ? (ds.currentPressure ?? 0).toFixed(1)
+        : `${(ds.currentPressure ?? 0).toFixed(1)} bar`,
+    getTarget: ds => (ds.targetPressure > 0 ? ds.targetPressure.toFixed(1) : null),
     unit: ' bar',
     adjustable: () => false,
   },

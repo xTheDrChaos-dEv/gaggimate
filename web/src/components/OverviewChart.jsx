@@ -1,4 +1,5 @@
 import { machine } from '../services/ApiService.js';
+import { MODES, fmtElapsed } from '../pages/Home/utils.js';
 import { Chart } from 'chart.js';
 import { ChartComponent } from './Chart.jsx';
 import { t } from '@lingui/core/macro';
@@ -209,37 +210,37 @@ function getChartData(data) {
   const datasets = [
     {
       label: t`Current Temperature`,
-      borderColor: '#F0561D',
+      borderColor: '#FF6B5C',
       pointStyle: false,
       data: data.map(i => ({ x: i.timestamp.toISOString(), y: i.currentTemperature })),
     },
     {
       label: t`Target Temperature`,
-      fill: true,
-      borderColor: '#731F00',
+      fill: false,
+      borderColor: '#FFB3A8',
       borderDash: [6, 6],
       pointStyle: false,
       data: data.map(i => ({ x: i.timestamp.toISOString(), y: i.targetTemperature })),
     },
     {
-      label: t`Current Pressure`,
-      borderColor: '#0066CC',
+      label: `${t`Current Pressure`} (bar)`,
+      borderColor: '#70D6C2',
       pointStyle: false,
       yAxisID: 'y1',
       data: data.map(i => ({ x: i.timestamp.toISOString(), y: i.currentPressure })),
     },
     {
-      label: t`Target Pressure`,
-      fill: true,
-      borderColor: '#003366',
+      label: `${t`Target Pressure`} (bar)`,
+      fill: false,
+      borderColor: '#B0E8DF',
       borderDash: [6, 6],
       pointStyle: false,
       yAxisID: 'y1',
       data: data.map(i => ({ x: i.timestamp.toISOString(), y: i.targetPressure })),
     },
     {
-      label: t`Current Flow`,
-      borderColor: '#63993D',
+      label: `${t`Pump Flow`} (ml/s)`,
+      borderColor: '#B3D5A5',
       pointStyle: false,
       yAxisID: 'y1',
       data: data.map(i => ({ x: i.timestamp.toISOString(), y: i.currentFlow })),
@@ -248,15 +249,15 @@ function getChartData(data) {
   if (showWeights) {
     datasets.push({
       label: t`Current Weight`,
-      borderColor: '#8B5CF6',
+      borderColor: '#F4BD64',
       pointStyle: false,
       yAxisID: 'y2',
       data: data.map(i => ({ x: i.timestamp.toISOString(), y: i.currentWeight || 0 })),
     });
     datasets.push({
       label: t`Target Weight`,
-      fill: true,
-      borderColor: '#4C1D95',
+      fill: false,
+      borderColor: '#F9DCA4',
       borderDash: [6, 6],
       pointStyle: false,
       yAxisID: 'y2',
@@ -277,6 +278,7 @@ function getChartData(data) {
           position: 'top',
           display: true,
           labels: {
+            color: '#ead7d2',
             usePointStyle: true,
             pointStyle: 'line',
             pointStyleWidth: 20,
@@ -301,12 +303,12 @@ function getChartData(data) {
           },
         },
         title: {
-          display: true,
+          display: false,
           text: isBrewActive
-            ? t`Brew Progress - ${windowSeconds}s View`
+            ? t`Brew progress · elapsed time`
             : phaseTransitions.length > 0
-              ? t`Metrics - Recent Brew`
-              : t`Live Metrics`,
+              ? t`Recent brew · last ${windowSeconds} s`
+              : t`Live metrics · last ${windowSeconds} s`,
           font: {
             size: window.innerWidth < 640 ? 14 : 16,
           },
@@ -342,7 +344,7 @@ function getChartData(data) {
               size: window.innerWidth < 640 ? 10 : 12,
             },
             callback: value => {
-              return `${Math.round(value * 10) / 10} bar / g/s`; // Round to 1 decimal place
+              return Math.round(value * 10) / 10; // Round to 1 decimal place
             },
           },
         },
@@ -381,21 +383,21 @@ function getChartData(data) {
             autoSkip: true,
             autoSkipPadding: 0,
             callback: value => {
+              const chartEnd = end.getTime();
               if (isBrewActive) {
-                // For brewing: show relative time from chart end in a clean format
-                const chartEnd = end.getTime();
-                const diffSeconds = Math.ceil((chartEnd - value) / 1000);
-                if (diffSeconds < 60) {
-                  return `${diffSeconds}s`;
-                }
-                const minutes = Math.floor(diffSeconds / 60);
-                const seconds = diffSeconds % 60;
+                // During a shot: elapsed shot time at this tick, matching the m:ss timer.
+                // Ticks from before the shot started stay blank.
+                const elapsedSeconds = Math.round(
+                  ((currentProcess.e || 0) - (chartEnd - value)) / 1000,
+                );
+                if (elapsedSeconds < 0) return '';
+                const minutes = Math.floor(elapsedSeconds / 60);
+                const seconds = elapsedSeconds % 60;
                 return `${minutes}:${seconds.toString().padStart(2, '0')}`;
               }
-              // For normal view: show time ago from chart end
-              const chartEnd = end.getTime();
+              // Otherwise: seconds before now.
               const diff = Math.ceil((chartEnd - value) / 1000);
-              return `-${diff}s`;
+              return diff <= 0 ? t`now` : `-${diff}s`;
             },
             font: {
               size: window.innerWidth < 640 ? 10 : 12,
@@ -409,13 +411,43 @@ function getChartData(data) {
 }
 
 export function OverviewChart() {
-  const chartData = getChartData(machine.value.history);
-
+  const { history, status, capabilities, connected } = machine.value;
+  const chartData = getChartData(history);
+  for (const scale of Object.values(chartData.options.scales)) {
+    scale.ticks.color = '#d2b3ad';
+    scale.grid = { color: '#55282c', ...scale.grid };
+  }
+  const live = connected && history.length > 0 && status.controllerLink !== 'none';
+  const process = status.process;
+  const heading = live
+    ? (status.mode === 1 && status.selectedProfile) ||
+      MODES.find(mode => mode.id === status.mode)?.label
+    : t`Connecting to the machine...`;
+  const measurements = [[t`Temperature`, status.currentTemperature, '°C', '#ff6b5c']];
+  if (capabilities.pressure) {
+    measurements.push([t`Pressure`, status.currentPressure, 'bar', '#70d6c2']);
+    measurements.push([t`Pump Flow`, status.currentFlow, 'ml/s', '#b3d5a5']);
+  }
   return (
-    <ChartComponent
-      className='h-full min-h-[200px] w-full flex-1 lg:min-h-[350px] landscape:max-lg:min-h-0'
-      chartClassName='h-full w-full'
-      data={chartData}
-    />
+    <>
+      <header className='gm-trace-heading'>
+        <div>
+          <p>{chartData.options.plugins.title.text}</p>
+          <h2>{heading}</h2>
+        </div>
+        {live && !!process?.a && <strong>{fmtElapsed(process.e)}</strong>}
+      </header>
+      <dl className='gm-readings'>
+        {measurements.map(([name, value, unit, color]) => (
+          <div key={unit} style={{ '--metric': color }}>
+            <dt>{name}</dt>
+            <dd>
+              {live && Number.isFinite(value) ? value.toFixed(1) : '—'} <small>{unit}</small>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <ChartComponent className='gm-plot' chartClassName='h-full w-full' data={chartData} />
+    </>
   );
 }

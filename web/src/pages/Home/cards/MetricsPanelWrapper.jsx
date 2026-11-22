@@ -11,6 +11,9 @@ export function MetricsPanelWrapper({ ds, inCard = false, compact = false }) {
     ...METRIC_DEFINITIONS.filter(m => m.required && !metricOrder.includes(m.id)).map(m => m.id),
   ];
 
+  // Without a connection the last values are stale: show a dash instead of presenting them as live readings.
+  const offline = ds.connected === false;
+
   const visibleMetrics = orderedIds
     .map(id => METRIC_DEFINITIONS.find(m => m.id === id))
     .filter(Boolean)
@@ -18,16 +21,16 @@ export function MetricsPanelWrapper({ ds, inCard = false, compact = false }) {
     .map(m => ({
       id: m.id,
       label: m.label,
-      current: m.getValue(ds),
-      target: m.getTarget ? m.getTarget(ds) : null,
+      current: offline ? '—' : m.getValue(ds),
+      target: offline || !m.getTarget ? null : m.getTarget(ds),
       unit: m.unit,
-      adjustable: m.adjustable(ds),
+      adjustable: !offline && m.adjustable(ds),
       disabled: m.disabled ? m.disabled(ds) : false,
       onDecrease: m.onDecrease ? m.onDecrease(ds) : undefined,
       onIncrease: m.onIncrease ? m.onIncrease(ds) : undefined,
       onClick: m.onClick ? m.onClick(ds) : undefined,
       active: m.active ? m.active(ds) : false,
-      hint: m.hint ? m.hint(ds) : null,
+      hint: !offline && m.hint ? m.hint(ds) : null,
       ariaLabel: m.ariaLabel ? m.ariaLabel(ds) : undefined,
     }));
 
