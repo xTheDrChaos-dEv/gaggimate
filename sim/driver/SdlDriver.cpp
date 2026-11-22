@@ -2,7 +2,9 @@
 
 #include <SDL.h>
 #include <SD_MMC.h>
+#include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <display/main.h>
 #include <lvgl.h>
 #include <vector>
@@ -45,7 +47,71 @@ static void mouse_read(lv_indev_drv_t *drv, lv_indev_data_t *data) {
     data->state = s_mousePressed ? LV_INDEV_STATE_PR : LV_INDEV_STATE_REL;
 }
 
+// ---- Scripted control (automation) ------------------------------------------
+// With GAGGIMATE_SIM_CONTROL=<dir> set, the simulator polls <dir>/cmd once per frame, runs every line in
+// it and then deletes the file (write cmd.tmp, then rename it to cmd, so a half-written file is never read).
+// This drives the real UI deterministically for scripted walkthroughs and screenshots, on any host OS:
+//   tap <x> <y> [holdMs]    touch the panel at (x, y), default 150 ms
+//   button <0|1> <holdMs>   hold the controller's brew (0) or steam (1) input
+//   scale <grams|off|tare>  simulated Bluetooth scale: weight on the scale, disconnect, or tare
+//   shot <path.bmp>         save the current frame (same output as --screenshot)
+static const char *s_controlDir = nullptr;
+static bool s_tapActive = false;
+static Uint32 s_tapReleaseAt = 0;
+static int s_buttonHeld[2] = {0, 0};
+static Uint32 s_buttonReleaseAt[2] = {0, 0};
+
+static void sim_control_poll(SdlDriver *driver) {
+    if (s_controlDir == nullptr)
+        return;
+    const Uint32 now = SDL_GetTicks();
+    if (s_tapActive && SDL_TICKS_PASSED(now, s_tapReleaseAt)) {
+        s_tapActive = false;
+        s_mousePressed = false;
+    }
+    for (int i = 0; i < 2; i++) {
+        if (s_buttonHeld[i] && SDL_TICKS_PASSED(now, s_buttonReleaseAt[i])) {
+            s_buttonHeld[i] = 0;
+            controller.getClientController()->simulateButton((uint8_t)i, false);
+        }
+    }
+    char path[512];
+    snprintf(path, sizeof(path), "%s/cmd", s_controlDir);
+    FILE *f = fopen(path, "r");
+    if (f == nullptr)
+        return;
+    char line[512];
+    while (fgets(line, sizeof(line), f) != nullptr) {
+        int a = 0, b = 0, c = 150;
+        float grams = 0.0f;
+        char arg[400];
+        if (sscanf(line, "tap %d %d %d", &a, &b, &c) >= 2) {
+            s_mouseX = a;
+            s_mouseY = b;
+            s_mousePressed = true;
+            s_tapActive = true;
+            s_tapReleaseAt = now + (Uint32)c;
+        } else if (sscanf(line, "button %d %d", &a, &b) == 2 && (a == 0 || a == 1)) {
+            s_buttonHeld[a] = 1;
+            s_buttonReleaseAt[a] = now + (Uint32)b;
+            controller.getClientController()->simulateButton((uint8_t)a, true);
+        } else if (sscanf(line, "scale %f", &grams) == 1) {
+            g_simScaleTarget = grams;
+        } else if (strncmp(line, "scale off", 9) == 0) {
+            g_simScaleTarget = -1.0f;
+            g_simScaleOffset = 0.0f;
+        } else if (strncmp(line, "scale tare", 10) == 0) {
+            g_simScaleOffset = g_simScaleTarget > 0.0f ? g_simScaleTarget : 0.0f;
+        } else if (sscanf(line, "shot %399[^\r\n]", arg) == 1) {
+            driver->screenshot(arg);
+        }
+    }
+    fclose(f);
+    remove(path);
+}
+
 void SdlDriver::init() {
+    s_controlDir = getenv("GAGGIMATE_SIM_CONTROL");
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
         exit(1);
@@ -100,6 +166,8 @@ void SdlDriver::pumpAndRender() {
             s_quit = true;
             break;
         case SDL_MOUSEMOTION:
+            if (s_tapActive) // a scripted tap owns the touch point until it releases
+                break;
             s_mouseX = e.motion.x;
             s_mouseY = e.motion.y;
             break;
@@ -148,6 +216,7 @@ void SdlDriver::pumpAndRender() {
             break;
         }
     }
+    sim_control_poll(this);
     SDL_SetRenderDrawColor(s_renderer, BEZEL_R, BEZEL_G, BEZEL_B, 0xFF);
     SDL_RenderClear(s_renderer);
     SDL_RenderCopy(s_renderer, s_texture, nullptr, nullptr);
