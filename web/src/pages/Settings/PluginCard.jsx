@@ -221,6 +221,72 @@ export function PluginCard({
 
       <div className='bg-base-200 rounded-lg p-4'>
         <div className='flex items-center justify-between'>
+          <span className='text-xl font-medium'>
+            <Trans>Send shots to TOM</Trans>
+          </span>
+          <input
+            id='tomUploadActive'
+            name='tomUploadActive'
+            value='tomUploadActive'
+            type='checkbox'
+            className='toggle toggle-primary'
+            checked={!!formData.tomUploadActive}
+            onChange={onChange('tomUploadActive')}
+            aria-label={t`Enable sending shots to TOM`}
+          />
+        </div>
+        {formData.tomUploadActive && (
+          <div className='border-base-300 mt-4 space-y-4 border-t pt-4'>
+            <p className='text-sm opacity-70'>
+              <Trans>
+                Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes,
+                cleaning profiles and shots under 5 s are not sent. Needs internet on this
+                machine&apos;s Wi-Fi. Turning this on takes effect after a restart.
+              </Trans>
+            </p>
+            <div className='form-control'>
+              <label htmlFor='tomHousehold' className='mb-2 block text-sm font-medium'>
+                <Trans>TOM household link</Trans>
+              </label>
+              <div className='flex gap-2'>
+                <input
+                  id='tomHousehold'
+                  name='tomHousehold'
+                  type='password'
+                  autoComplete='off'
+                  className='input input-bordered w-full'
+                  placeholder={
+                    formData.tomHousehold === '---unchanged---'
+                      ? t`Saved. Paste a new link to change it`
+                      : t`Paste the TOM link or code`
+                  }
+                  value={
+                    formData.tomHousehold === '---unchanged---' ? '' : formData.tomHousehold || ''
+                  }
+                  onChange={onChange('tomHousehold')}
+                />
+                {formData.tomHousehold === '---unchanged---' && (
+                  <button
+                    type='button'
+                    className='btn btn-outline'
+                    onClick={() => onChange('tomHousehold')({ currentTarget: { value: '' } })}
+                  >
+                    <Trans>Forget</Trans>
+                  </button>
+                )}
+              </div>
+            </div>
+            {formData.tomStatus && (
+              <p className='text-sm' aria-live='polite'>
+                <Trans>Status:</Trans> {formData.tomStatus}
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className='bg-base-200 rounded-lg p-4'>
+        <div className='flex items-center justify-between'>
           <span className='text-xl font-medium'>HomeKit</span>
           <input
             id='homekit'

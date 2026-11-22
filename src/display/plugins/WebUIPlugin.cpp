@@ -11,6 +11,8 @@
 #include <display/models/profile.h>
 #include <display/plugins/BLEScalePlugin.h>
 #include <display/plugins/ShotHistoryPlugin.h>
+#include <display/plugins/TomUploadPlugin.h>
+#include <display/plugins/tom/TomInbox.h>
 #include <display/webassets/web_ui_manifest.h>
 #include <esp32-hal-psram.h>
 #include <esp_core_dump.h>
@@ -574,6 +576,20 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
                 settings->setSmartGrindActive(parseBoolArg(request->arg("smartGrindActive")));
             if (request->hasArg("smartGrindIp"))
                 settings->setSmartGrindIp(request->arg("smartGrindIp"));
+            if (request->hasArg("tomUploadActive"))
+                settings->setTomUploadActive(parseBoolArg(request->arg("tomUploadActive")));
+            // The TOM project is write-only through the API: it can be set, but is never sent back.
+            if (request->hasArg("tomProject") && request->arg("tomProject").length() > 0)
+                settings->setTomProject(request->arg("tomProject"));
+            if (request->hasArg("tomApiKey") && request->arg("tomApiKey").length() > 0)
+                settings->setTomApiKey(request->arg("tomApiKey"));
+            if (request->hasArg("tomHousehold") && request->arg("tomHousehold") != "---unchanged---") {
+                // Accepts the code or a whole TOM link; only a valid code (or an empty field) is stored.
+                const String input = request->arg("tomHousehold");
+                const std::string code = tom::extractHouseholdCode(input.c_str());
+                if (!code.empty() || input.length() == 0)
+                    settings->setTomHousehold(String(code.c_str()));
+            }
             if (request->hasArg("smartGrindMode"))
                 settings->setSmartGrindMode(request->arg("smartGrindMode").toInt());
             if (request->hasArg("mahlkonigActive"))
@@ -817,6 +833,10 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
     doc["dosingCupWeight"] = settings.getDosingCupWeight();
     doc["smartGrindActive"] = settings.isSmartGrindActive();
     doc["smartGrindIp"] = settings.getSmartGrindIp();
+    doc["tomUploadActive"] = settings.isTomUploadActive();
+    // The household code unlocks the whole TOM household, so the API only says whether one is saved.
+    doc["tomHousehold"] = settings.getTomHousehold().length() > 0 ? "---unchanged---" : "";
+    doc["tomStatus"] = settings.isTomUploadActive() ? TomUploadPlugin::status() : String("Off");
     doc["smartGrindMode"] = settings.getSmartGrindMode();
     doc["mahlkonigActive"] = settings.isMahlkonigActive();
     doc["mahlkonigRecipeProfiles"] = settings.getMahlkonigRecipeProfiles();

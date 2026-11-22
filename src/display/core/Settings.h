@@ -300,6 +300,12 @@ class Settings {
     String getMahlkonigRecipeProfiles() const { return mahlkonigRecipeProfiles.get(); }
     int getSmartGrindMode() const { return smartGrindMode.get(); }
     String getSmartGrindIp() const { return smartGrindIp.get(); }
+    // TOM shot inbox upload (TomUploadPlugin); the household code is a secret, never logged
+    bool isTomUploadActive() const { return tomUploadActive.get(); }
+    String getTomHousehold() const { return tomHousehold.get(); }
+    // Which TOM Firebase project this screen sends to; kept here, never in the firmware or the API output
+    String getTomProject() const { return tomProject.get(); }
+    String getTomApiKey() const { return tomApiKey.get(); }
     bool isHomeAssistant() const { return homeAssistant.get(); }
     String getHomeAssistantIP() const { return homeAssistantIP.get(); }
     String getHomeAssistantUser() const { return homeAssistantUser.get(); }
@@ -416,6 +422,10 @@ class Settings {
     void setMahlkonigActive(bool mahlkonig_active);
     void setMahlkonigRecipeProfiles(String profiles);
     void setSmartGrindIp(String smart_grind_ip);
+    void setTomUploadActive(bool active);
+    void setTomHousehold(const String &code);
+    void setTomProject(const String &projectId);
+    void setTomApiKey(const String &apiKey);
     void setSmartGrindMode(int smart_grind_mode);
     void setHomeAssistant(bool homeAssistant);
     void setHomeAssistantUser(const String &homeAssistantUser);
@@ -563,6 +573,10 @@ class Settings {
     Property<bool> smartGrindToggle{registry, "sg_t", false}; // legacy, seeds the smartGrindMode default
     Property<int> smartGrindMode{registry, "sg_m", 0};
     Property<String> smartGrindIp{registry, "sg_i", ""};
+    Property<bool> tomUploadActive{registry, "tom_a", false};
+    Property<String> tomHousehold{registry, "tom_h", ""}; // validated TOM household code (a-z0-9, 24-64)
+    Property<String> tomProject{registry, "tom_p", ""};   // TOM Firebase project id
+    Property<String> tomApiKey{registry, "tom_k", ""};    // TOM Firebase web API key
     Property<bool> mahlkonigActive{registry, "mk_a", false};
     Property<String> mahlkonigRecipeProfiles{registry, "mk_rp", ""}; // profile id per grinder recipe slot, "r1,r2,..."
     Property<bool> homeAssistant{registry, "ha_a", false};

@@ -22,3 +22,5 @@ sim_data/
 out/
 
 web/store
+# TOM project details for a local build; they belong in the screen's settings store, not in the repository
+src/display/plugins/tom/TomLocalConfig.h

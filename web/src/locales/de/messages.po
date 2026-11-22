@@ -1658,6 +1658,10 @@ msgstr "z. B. 2,5, mittelfein"
 msgid "e.g., Single Origin, Blend"
 msgstr "z. B. Single Origin, Blend"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
+msgstr ""
+
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgid "Ease In"
 msgstr "Ease In"
@@ -1726,6 +1730,10 @@ msgstr "Mahlkönig E64 WS Grind-by-Sync aktivieren"
 #: src/app/AppSettings.jsx
 msgid "Enable notifications"
 msgstr "Benachrichtigungen aktivieren"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Enable sending shots to TOM"
+msgstr ""
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Enable Smart Grind"
@@ -2111,6 +2119,7 @@ msgstr "Bei 120-V-Maschinen sollte die Heizungskoordination in der Regel aktivie
 msgid "For further information on how to use and configure GaggiMate please consult our documentation and guides!"
 msgstr "Für weitere Informationen zur Bedienung besuche bitte unsere Dokumentation!"
 
+#: src/pages/Settings/PluginCard.jsx
 #: src/pages/Settings/tabs/BluetoothTab.jsx
 msgid "Forget"
 msgstr "Vergessen"
@@ -3454,6 +3463,10 @@ msgstr "Passwort"
 msgid "Password"
 msgstr "Passwort"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Paste the TOM link or code"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/shotChart/controls/chartReplayControls.jsx
 msgid "Pause replay"
 msgstr "Replay pausieren"
@@ -4521,6 +4534,10 @@ msgstr "Gespeichert"
 msgid "Saved scale"
 msgstr "Gespeicherte Waage"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Saved. Paste a new link to change it"
+msgstr ""
+
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Saving calibration profile..."
 msgstr "Kalibrierprofil wird gespeichert..."
@@ -4726,6 +4743,10 @@ msgstr "Die Auswahl eines Profils füllt die Werte vor. Speichere, um sie zu üb
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Selecting calibration profile..."
 msgstr "Kalibrierprofil wird ausgewählt..."
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Send shots to TOM"
+msgstr ""
 
 #: src/services/VisualizerService.js
 msgid "Server error - the API may not support this data format or account type"
@@ -5240,6 +5261,10 @@ msgstr "Durchschnittswerte der Statistikdiagramme"
 #: src/pages/Statistics/components/StatisticsSearchHelp.jsx
 msgid "Statistics Search DSL"
 msgstr "Statistik-Such-DSL"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Status:"
+msgstr ""
 
 #: src/pages/Statistics/components/MetricsTable.jsx
 msgid "Std Dev"
@@ -5929,6 +5954,10 @@ msgstr "Angeheftete Profile zuerst umschalten"
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Toggle pinned shots first"
 msgstr "Angeheftete Shots zuerst umschalten"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "TOM household link"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/analysisTable/AnalysisTable.jsx
 #: src/pages/Statistics/components/PhaseStatistics.jsx

@@ -23,6 +23,7 @@
 #include <display/plugins/ShotHistoryPlugin.h>
 #include <display/plugins/SmartDosePlugin.h>
 #include <display/plugins/SmartGrindPlugin.h>
+#include <display/plugins/TomUploadPlugin.h>
 #include <display/plugins/WebUIPlugin.h>
 #include <display/plugins/mahlkonig/MahlkonigPlugin.h>
 #include <display/util/FsUtil.h>
@@ -114,6 +115,9 @@ void Controller::setup() {
     pluginManager->registerPlugin(new ImprovPlugin());
 #endif
     pluginManager->registerPlugin(&ShotHistory);
+    if (settings.isTomUploadActive()) {
+        pluginManager->registerPlugin(new TomUploadPlugin()); // after ShotHistory: listens to its saved-shot event
+    }
 #ifndef GAGGIMATE_SIM
     pluginManager->registerPlugin(&BLEScales);
 #endif

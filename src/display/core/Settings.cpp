@@ -263,6 +263,14 @@ void Settings::setMahlkonigRecipeProfiles(String profiles) { mahlkonigRecipeProf
 
 void Settings::setSmartGrindIp(String smart_grind_ip) { smartGrindIp.set(smart_grind_ip); }
 
+void Settings::setTomUploadActive(bool active) { tomUploadActive.set(active); }
+
+void Settings::setTomHousehold(const String &code) { tomHousehold.set(code); }
+
+void Settings::setTomProject(const String &projectId) { tomProject.set(projectId); }
+
+void Settings::setTomApiKey(const String &apiKey) { tomApiKey.set(apiKey); }
+
 void Settings::setSmartGrindMode(int smart_grind_mode) { smartGrindMode.set(smart_grind_mode); }
 
 void Settings::setHomeAssistant(const bool homeAssistant) { this->homeAssistant.set(homeAssistant); }

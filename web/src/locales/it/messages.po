@@ -1662,6 +1662,10 @@ msgstr "es. 2.5, medio-fine"
 msgid "e.g., Single Origin, Blend"
 msgstr "es. monorigine, miscela"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
+msgstr ""
+
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgid "Ease In"
 msgstr "Ease In"
@@ -1730,6 +1734,10 @@ msgstr "Attiva Mahlkönig E64 WS Grind-by-Sync"
 #: src/app/AppSettings.jsx
 msgid "Enable notifications"
 msgstr "Attiva notifiche"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Enable sending shots to TOM"
+msgstr ""
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Enable Smart Grind"
@@ -2115,6 +2123,7 @@ msgstr "Per le macchine a 120 V il coordinamento delle resistenze dovrebbe in ge
 msgid "For further information on how to use and configure GaggiMate please consult our documentation and guides!"
 msgstr "Per maggiori informazioni su come usare e configurare GaggiMate, consulta la nostra documentazione e le nostre guide!"
 
+#: src/pages/Settings/PluginCard.jsx
 #: src/pages/Settings/tabs/BluetoothTab.jsx
 msgid "Forget"
 msgstr "Dimentica"
@@ -3458,6 +3467,10 @@ msgstr "password"
 msgid "Password"
 msgstr "Password"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Paste the TOM link or code"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/shotChart/controls/chartReplayControls.jsx
 msgid "Pause replay"
 msgstr "Metti in pausa il replay"
@@ -4525,6 +4538,10 @@ msgstr "Salvata"
 msgid "Saved scale"
 msgstr "Bilancia salvata"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Saved. Paste a new link to change it"
+msgstr ""
+
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Saving calibration profile..."
 msgstr "Salvataggio profilo di calibrazione..."
@@ -4730,6 +4747,10 @@ msgstr "Selezionando un profilo i valori vengono precompilati. Salva per applica
 #: src/components/PumpFlowCalibration/usePumpFlowCalibration.js
 msgid "Selecting calibration profile..."
 msgstr "Selezione profilo di calibrazione..."
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Send shots to TOM"
+msgstr ""
 
 #: src/services/VisualizerService.js
 msgid "Server error - the API may not support this data format or account type"
@@ -5244,6 +5265,10 @@ msgstr "Medie del grafico statistiche"
 #: src/pages/Statistics/components/StatisticsSearchHelp.jsx
 msgid "Statistics Search DSL"
 msgstr "DSL di ricerca statistiche"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Status:"
+msgstr ""
 
 #: src/pages/Statistics/components/MetricsTable.jsx
 msgid "Std Dev"
@@ -5933,6 +5958,10 @@ msgstr "Attiva/disattiva profili fissati in cima"
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Toggle pinned shots first"
 msgstr "Attiva/disattiva shot fissati in cima"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "TOM household link"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/analysisTable/AnalysisTable.jsx
 #: src/pages/Statistics/components/PhaseStatistics.jsx
