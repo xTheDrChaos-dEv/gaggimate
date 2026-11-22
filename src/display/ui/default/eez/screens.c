@@ -1570,7 +1570,7 @@ void create_screen_brew_screen() {
                     // startButton
                     lv_obj_t *obj = lv_imgbtn_create(parent_obj);
                     objects.start_button = obj;
-                    lv_obj_set_pos(obj, 0, 130);
+                    lv_obj_set_pos(obj, 0, 144);
                     lv_obj_set_size(obj, 40, 40);
                     lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_play_40x40, NULL);
                     lv_obj_add_event_cb(obj, event_handler_cb_brew_screen_start_button, LV_EVENT_ALL, flowState);
@@ -2689,9 +2689,9 @@ void create_screen_status_screen() {
                             // pauseButton
                             lv_obj_t *obj = lv_imgbtn_create(parent_obj);
                             objects.pause_button = obj;
-                            lv_obj_set_pos(obj, 0, 130);
+                            lv_obj_set_pos(obj, 0, 144);
                             lv_obj_set_size(obj, 40, 40);
-                            lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_pause_40x40, NULL);
+                            lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_stop_40x40, NULL);
                             lv_obj_add_event_cb(obj, event_handler_cb_status_screen_pause_button, LV_EVENT_ALL, flowState);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2703,7 +2703,7 @@ void create_screen_status_screen() {
                             // processVolume
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.process_volume = obj;
-                            lv_obj_set_pos(obj, 0, 0);
+                            lv_obj_set_pos(obj, 0, 96);
                             lv_obj_set_size(obj, 180, 30);
                             lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2716,7 +2716,7 @@ void create_screen_status_screen() {
                             // checkButton
                             lv_obj_t *obj = lv_imgbtn_create(parent_obj);
                             objects.check_button = obj;
-                            lv_obj_set_pos(obj, 0, 130);
+                            lv_obj_set_pos(obj, 0, 144);
                             lv_obj_set_size(obj, 40, 40);
                             lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_check_40x40, NULL);
                             lv_obj_add_event_cb(obj, event_handler_cb_status_screen_check_button, LV_EVENT_ALL, flowState);
@@ -2730,8 +2730,8 @@ void create_screen_status_screen() {
                             // currentDuration
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.current_duration = obj;
-                            lv_obj_set_pos(obj, 0, 70);
-                            lv_obj_set_size(obj, 320, 50);
+                            lv_obj_set_pos(obj, 0, -2);
+                            lv_obj_set_size(obj, 358, 60);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             add_style_text_theme_color(obj);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_34, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2743,7 +2743,7 @@ void create_screen_status_screen() {
                             // targetDuration_1
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.target_duration_1 = obj;
-                            lv_obj_set_pos(obj, 80, -120);
+                            lv_obj_set_pos(obj, 80, -138);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             add_style_text_theme_color(obj);
@@ -2755,7 +2755,7 @@ void create_screen_status_screen() {
                             // targetWeight_2
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.target_weight_2 = obj;
-                            lv_obj_set_pos(obj, 80, -120);
+                            lv_obj_set_pos(obj, 80, -138);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             add_style_text_theme_color(obj);
@@ -2767,7 +2767,7 @@ void create_screen_status_screen() {
                             // targetTemp_1
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.target_temp_1 = obj;
-                            lv_obj_set_pos(obj, -40, -120);
+                            lv_obj_set_pos(obj, -40, -138);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             add_style_text_theme_color(obj);
@@ -2779,7 +2779,7 @@ void create_screen_status_screen() {
                             // Image7
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.image7 = obj;
-                            lv_obj_set_pos(obj, -90, -120);
+                            lv_obj_set_pos(obj, -90, -138);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_thermometer_half_40x40);
                             lv_img_set_zoom(obj, 200);
@@ -2791,7 +2791,7 @@ void create_screen_status_screen() {
                             // Image8
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.image8 = obj;
-                            lv_obj_set_pos(obj, 25, -120);
+                            lv_obj_set_pos(obj, 25, -138);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_clock_40x40);
                             lv_img_set_zoom(obj, 200);
@@ -2803,7 +2803,7 @@ void create_screen_status_screen() {
                             // Image9
                             lv_obj_t *obj = lv_img_create(parent_obj);
                             objects.image9 = obj;
-                            lv_obj_set_pos(obj, 25, -120);
+                            lv_obj_set_pos(obj, 25, -138);
                             lv_obj_set_size(obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
                             lv_img_set_src(obj, &img_equality_40x40);
                             lv_img_set_zoom(obj, 150);
@@ -2815,8 +2815,8 @@ void create_screen_status_screen() {
                             // stepLabel
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.step_label = obj;
-                            lv_obj_set_pos(obj, 0, -65);
-                            lv_obj_set_size(obj, 200, 30);
+                            lv_obj_set_pos(obj, 0, -100);
+                            lv_obj_set_size(obj, 245, 30);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             add_style_text_theme_color(obj);
                             lv_obj_set_style_text_font(obj, &lv_font_montserrat_18, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -2831,8 +2831,8 @@ void create_screen_status_screen() {
                             // phaseLabel
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.phase_label = obj;
-                            lv_obj_set_pos(obj, 0, -40);
-                            lv_obj_set_size(obj, 300, 30);
+                            lv_obj_set_pos(obj, 0, -70);
+                            lv_obj_set_size(obj, 340, 34);
                             lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             add_style_text_theme_color(obj);
@@ -2848,8 +2848,8 @@ void create_screen_status_screen() {
                             // phaseProgress
                             lv_obj_t *obj = lv_label_create(parent_obj);
                             objects.phase_progress = obj;
-                            lv_obj_set_pos(obj, 0, 20);
-                            lv_obj_set_size(obj, 320, 20);
+                            lv_obj_set_pos(obj, 0, 70);
+                            lv_obj_set_size(obj, 320, 22);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLLABLE);
                             lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_text_color(obj, lv_color_hex(theme_colors[eez_flow_get_selected_theme_index()][3]),
@@ -2864,8 +2864,8 @@ void create_screen_status_screen() {
                             // barContainer
                             lv_obj_t *obj = lv_obj_create(parent_obj);
                             objects.bar_container = obj;
-                            lv_obj_set_pos(obj, 0, 0);
-                            lv_obj_set_size(obj, 320, 20);
+                            lv_obj_set_pos(obj, 0, 48);
+                            lv_obj_set_size(obj, 320, 16);
                             lv_obj_set_style_pad_left(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_pad_top(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
                             lv_obj_set_style_pad_right(obj, 0, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -3086,7 +3086,7 @@ void create_screen_status_screen() {
                             objects.pause_button_1 = obj;
                             lv_obj_set_pos(obj, 0, 190);
                             lv_obj_set_size(obj, 40, 40);
-                            lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_pause_40x40, NULL);
+                            lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_stop_40x40, NULL);
                             lv_obj_add_event_cb(obj, event_handler_cb_status_screen_pause_button_1, LV_EVENT_ALL, flowState);
                             lv_obj_clear_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
                             lv_obj_set_style_align(obj, LV_ALIGN_CENTER, LV_PART_MAIN | LV_STATE_DEFAULT);
@@ -4322,7 +4322,7 @@ void create_screen_water_screen() {
                     // waterStartButton
                     lv_obj_t *obj = lv_imgbtn_create(parent_obj);
                     objects.water_start_button = obj;
-                    lv_obj_set_pos(obj, 0, 130);
+                    lv_obj_set_pos(obj, 0, 144);
                     lv_obj_set_size(obj, 40, 40);
                     lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_play_40x40, NULL);
                     lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_CHECKED_RELEASED, NULL, &img_pause_40x40, NULL);
@@ -4466,7 +4466,7 @@ void create_screen_grind_screen() {
                     // grindStartButton
                     lv_obj_t *obj = lv_imgbtn_create(parent_obj);
                     objects.grind_start_button = obj;
-                    lv_obj_set_pos(obj, 0, 130);
+                    lv_obj_set_pos(obj, 0, 144);
                     lv_obj_set_size(obj, 40, 40);
                     lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_RELEASED, NULL, &img_play_40x40, NULL);
                     lv_imgbtn_set_src(obj, LV_IMGBTN_STATE_CHECKED_RELEASED, NULL, &img_pause_40x40, NULL);
@@ -9066,9 +9066,9 @@ void change_color_theme(uint32_t theme_index) {
 }
 static const char *theme_names[] = {"Dark", "Light", "AmoledDark"};
 uint32_t theme_colors[3][9] = {
-    {0xfffafafa, 0xff131313, 0xff1ffba3, 0xffcccccc, 0xff0069ad, 0xffebebeb, 0xfff62c2c, 0xff2ca4f6, 0xfffbbe23},
-    {0xff131313, 0xfffafafa, 0xff1ffba3, 0xffcccccc, 0xff0069ad, 0xffebebeb, 0xfff62c2c, 0xff2a92f6, 0xfffbbe23},
-    {0xfffafafa, 0xff000000, 0xff1ffba3, 0xffcccccc, 0xff0069ad, 0xffebebeb, 0xfff62c2c, 0xff2ca4f6, 0xfffbbe23},
+    {0xfff6efe6, 0xff2b0f13, 0xfff0a08f, 0xffc7aaa6, 0xffd98a5f, 0xffead9cf, 0xffff6b5c, 0xff7fd4c6, 0xfff4bd64},
+    {0xff3a1216, 0xfff8f1e7, 0xffb23a3a, 0xff7a5a57, 0xff9a4a2c, 0xff7a5d59, 0xffc2331f, 0xff0b6b5d, 0xff925408},
+    {0xfff6efe6, 0xff000000, 0xfff0a08f, 0xffc7aaa6, 0xffd98a5f, 0xffead9cf, 0xffff6b5c, 0xff7fd4c6, 0xfff4bd64},
 };
 
 //

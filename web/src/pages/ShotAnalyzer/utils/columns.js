@@ -60,24 +60,6 @@ export const columnConfig = [
   createColumn({ id: 'w_mm', label: msg`Weight (g)`, type: COLUMN_TYPES.MM, group: 'weight' }),
   createColumn({ id: 'w_avg', label: msg`Weight (g)`, type: COLUMN_TYPES.AVG, group: 'weight' }),
   createColumn({
-    id: 'wf_se',
-    label: msg`Weight Flow (g/s)`,
-    type: COLUMN_TYPES.SE,
-    group: 'weightflow',
-  }),
-  createColumn({
-    id: 'wf_mm',
-    label: msg`Weight Flow (g/s)`,
-    type: COLUMN_TYPES.MM,
-    group: 'weightflow',
-  }),
-  createColumn({
-    id: 'wf_avg',
-    label: msg`Weight Flow (g/s)`,
-    type: COLUMN_TYPES.AVG,
-    group: 'weightflow',
-  }),
-  createColumn({
     id: 'p_se',
     label: msg`Pressure (bar)`,
     type: COLUMN_TYPES.SE,

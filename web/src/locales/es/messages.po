@@ -532,6 +532,7 @@ msgstr "Flujo medio en la pastilla"
 msgid "Avg. Puck Resistance"
 msgstr "Resistencia media de la pastilla"
 
+#: src/pages/Home/cards/ProfileCard.jsx
 #: src/pages/ShotAnalyzer/components/shotChart/compare/CompareMetricContent.jsx
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotMetricCards.jsx
 msgid "Avg. Pump Flow"
@@ -545,10 +546,6 @@ msgstr "Temperatura objetivo media"
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotMetricCards.jsx
 msgid "Avg. Temperature"
 msgstr "Temperatura media"
-
-#: src/pages/ShotAnalyzer/components/shotChart/compare/CompareMetricContent.jsx
-msgid "Avg. Weight Flow"
-msgstr "Flujo de peso medio"
 
 #: src/app/MachineSetup.jsx
 #: src/components/PumpFlowCalibration/Footer.jsx
@@ -684,8 +681,8 @@ msgid "Brew PID Values"
 msgstr "Valores PID de extracción"
 
 #: src/components/OverviewChart.jsx
-msgid "Brew Progress - {windowSeconds}s View"
-msgstr "Progreso de la extracción - vista de {windowSeconds}s"
+msgid "Brew progress · elapsed time"
+msgstr ""
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Brew Status Display"
@@ -1047,6 +1044,7 @@ msgstr "Conectando con {host}…"
 msgid "Connecting to {name}…"
 msgstr "Conectando con {name}…"
 
+#: src/components/OverviewChart.jsx
 #: src/pages/Home/useDashboardState.js
 msgid "Connecting to the machine..."
 msgstr "Conectando con la máquina..."
@@ -1171,10 +1169,6 @@ msgstr "Los coeficientes actuales no son numéricos: \"{raw}\""
 #: src/components/PumpFlowCalibration/IdleSection.jsx
 msgid "Current coefficients:"
 msgstr "Coeficientes actuales:"
-
-#: src/components/OverviewChart.jsx
-msgid "Current Flow"
-msgstr "Flujo actual"
 
 #: src/components/OverviewChart.jsx
 #: src/pages/ShotHistory/HistoryChart.jsx
@@ -2043,7 +2037,6 @@ msgid "Flexible Space"
 msgstr "Espacio flexible"
 
 #: src/components/ExtendedProfileChart.jsx
-#: src/pages/Home/cards/ProfileCard.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx
 #: src/utils/metricDefinitions.js
 msgid "Flow"
@@ -2074,11 +2067,6 @@ msgstr "Flujo por debajo de"
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
 msgid "Flow Limit"
 msgstr "Límite de flujo"
-
-#: src/pages/ProfileEdit/ExtendedPhase.jsx
-#: src/pages/ProfileEdit/StandardProfileForm.jsx
-msgid "Flow rate in grams per second"
-msgstr "Caudal en gramos por segundo"
 
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Flow target"
@@ -2243,11 +2231,6 @@ msgstr "Buena"
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
 msgid "grams"
 msgstr "gramos"
-
-#: src/pages/ProfileEdit/ExtendedPhase.jsx
-#: src/pages/ProfileEdit/StandardProfileForm.jsx
-msgid "grams per second"
-msgstr "gramos por segundo"
 
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotDetailsCard.jsx
 msgid "Grind"
@@ -2659,8 +2642,8 @@ msgid "live connection failed ({reason})"
 msgstr "falló la conexión en vivo ({reason})"
 
 #: src/components/OverviewChart.jsx
-msgid "Live Metrics"
-msgstr "Métricas en vivo"
+msgid "Live metrics · last {windowSeconds} s"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/analyzerActionBar/ActionBarButtons.jsx
 msgid "Load a profile to open statistics"
@@ -2934,10 +2917,6 @@ msgstr "Páginas de métricas"
 #: src/pages/DashboardSettings/index.jsx
 msgid "Metric Selection"
 msgstr "Selección de métricas"
-
-#: src/components/OverviewChart.jsx
-msgid "Metrics - Recent Brew"
-msgstr "Métricas - Última extracción"
 
 #: src/pages/DashboardSettings/index.jsx
 msgid "Metrics Columns"
@@ -3323,6 +3302,10 @@ msgstr "Notificaciones"
 msgid "Notifications are blocked. Allow them for GaggiMate in your phone's settings."
 msgstr "Las notificaciones están bloqueadas. Permítelas para GaggiMate en los ajustes del teléfono."
 
+#: src/components/OverviewChart.jsx
+msgid "now"
+msgstr ""
+
 #: src/pages/Home/cards/ProfileCard.jsx
 msgid "Now Brewing"
 msgstr "Extrayendo ahora"
@@ -3471,15 +3454,11 @@ msgstr "contraseña"
 msgid "Password"
 msgstr "Contraseña"
 
-#: src/pages/Home/utils.js
-msgctxt "process action"
-msgid "Pause"
-msgstr "Pausar"
-
 #: src/pages/ShotAnalyzer/components/shotChart/controls/chartReplayControls.jsx
 msgid "Pause replay"
 msgstr "Pausar reproducción"
 
+#: src/pages/Home/cards/ProfileCard.jsx
 #: src/pages/ShotAnalyzer/components/shotChart/compare/CompareMetricContent.jsx
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotMetricCards.jsx
 msgid "Peak Pressure"
@@ -3726,7 +3705,7 @@ msgid "Press <0><1/></0> to build a statistic."
 msgstr "Pulsa <0><1/></0> para generar una estadística."
 
 #: src/components/ExtendedProfileChart.jsx
-#: src/pages/Home/cards/ProfileCard.jsx
+#: src/components/OverviewChart.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx
 #: src/pages/ShotAnalyzer/components/shotChart/labelVisuals.js
 #: src/pages/Statistics/components/MetricsTable.jsx
@@ -3999,6 +3978,7 @@ msgstr "Resistencia de la pastilla (s·√bar/mL)"
 msgid "Pump Assist Cutoff"
 msgstr "Corte de asistencia de la bomba"
 
+#: src/components/OverviewChart.jsx
 #: src/pages/ShotAnalyzer/components/analysisTable/analysisTableModel.js
 #: src/pages/ShotAnalyzer/components/shotChart/compare/CompareMetricContent.jsx
 #: src/pages/ShotAnalyzer/components/shotChart/labelVisuals.js
@@ -4193,6 +4173,7 @@ msgid "Raw Data Points"
 msgstr "Datos sin procesar"
 
 #: src/app/notifications.js
+#: src/pages/Home/cards/ActionCard.jsx
 msgid "Ready to brew"
 msgstr "Lista para extraer"
 
@@ -4203,6 +4184,10 @@ msgstr "Lista para vaporizar, abre el vaporizador"
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgid "Rebuild Shot History"
 msgstr "Reconstruir historial de extracciones"
+
+#: src/components/OverviewChart.jsx
+msgid "Recent brew · last {windowSeconds} s"
+msgstr ""
 
 #: src/pages/DashboardSettings/index.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx
@@ -5009,6 +4994,7 @@ msgstr "Muestra los paneles de la columna de control como tarjetas separadas o a
 #: src/pages/Settings/PatchNotes.jsx
 msgid "showing the newest {0}"
 msgstr "se muestran los {0} más recientes"
+
 #: src/pages/Statistics/components/StatisticsShotCompareSection.jsx
 msgid "Showing up to 100 latest shots. Refine with filters."
 msgstr "Se muestran hasta las 100 extracciones más recientes. Afina con los filtros."
@@ -5325,6 +5311,11 @@ msgstr "Sigue en modo vapor"
 msgid "Stop"
 msgstr "Detener"
 
+#: src/pages/Home/utils.js
+msgctxt "process action"
+msgid "Stop"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/shotChart/tooltip/StaticTooltipContent.jsx
 msgctxt "shot stop"
 msgid "Stop"
@@ -5510,6 +5501,7 @@ msgid "Target F"
 msgstr "Obj. F"
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
+#: src/pages/ProfileEdit/StandardProfileForm.jsx
 msgid "Target Flow"
 msgstr "Flujo objetivo"
 
@@ -5609,6 +5601,7 @@ msgctxt "temperature"
 msgid "Temp"
 msgstr "Temp."
 
+#: src/components/OverviewChart.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx
 #: src/pages/ProfileEdit/ProfileMainInformation.jsx
 #: src/pages/ShotAnalyzer/components/analysisTable/analysisTableModel.js
@@ -6525,14 +6518,8 @@ msgid "Weight (total)"
 msgstr "Peso (total)"
 
 #: src/pages/ShotAnalyzer/components/shotChart/labelVisuals.js
-#: src/pages/ShotHistory/HistoryChart.jsx
 msgid "Weight Flow"
 msgstr "Flujo de peso"
-
-#: src/pages/ShotAnalyzer/utils/columns.js
-#: src/pages/ShotAnalyzer/utils/constants.js
-msgid "Weight Flow (g/s)"
-msgstr "Flujo de peso (g/s)"
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgid "Weight in phase"

@@ -42,7 +42,6 @@ const groupMessages = {
   temp: msg`Temperature (℃)`,
   target_temp: msg`Target Temp (℃)`,
   weight: msg`Weight (g)`,
-  weightflow: msg`Weight Flow (g/s)`,
   system: msg`System Info`,
 };
 

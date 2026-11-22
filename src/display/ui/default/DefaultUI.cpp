@@ -65,11 +65,128 @@ static void formatDuration(unsigned long ms, char *buf, size_t len) {
     snprintf(buf, len, "%d:%02d", minutes, secs);
 }
 
+LV_FONT_DECLARE(gm_font_timer_64)
+LV_FONT_DECLARE(gm_font_timer_44)
+
+// The brew readout is "m:ss" for timed shots and "12.3 g / m:ss" when the shot has a weight target. The time alone
+// gets the 64 px numerals; the combined yield-and-time form needs the narrower 44 px face to fit inside the dial.
+static void applyBrewReadoutFace() {
+    lv_obj_t *label = objects.current_duration;
+    if (label == nullptr) {
+        return;
+    }
+    const char *text = lv_label_get_text(label);
+    const lv_font_t *face = (text != nullptr && strchr(text, 'g') != nullptr) ? &gm_font_timer_44 : &gm_font_timer_64;
+    if (lv_obj_get_style_text_font(label, LV_PART_MAIN) != face) {
+        lv_obj_set_style_text_font(label, face, LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+}
+
+// Ready view: the caption above the profile name ("Selected profile" in the EEZ project) carries the machine
+// state instead, readable from across the counter: "Heating • 62 / 93 °C" while warming up, then
+// "Ready • 93 °C • 0:28" (or the yield target for weight-targeted profiles).
+static void applyBrewReadySummary(bool stable, float currentTemp, float targetTemp, const char *profileTime, bool volumetric,
+                                  float targetWeight) {
+    lv_obj_t *label = objects.obj6; // static caption label on the brew screen
+    if (label == nullptr) {
+        return;
+    }
+    char text[48];
+    if (!stable) {
+        snprintf(text, sizeof(text), "Heating \xE2\x80\xA2 %.0f / %.0f \xC2\xB0" "C", currentTemp, targetTemp);
+    } else if (volumetric && targetWeight > 0.0f) {
+        snprintf(text, sizeof(text), "Ready \xE2\x80\xA2 %.0f \xC2\xB0" "C \xE2\x80\xA2 %.0f g", targetTemp, targetWeight);
+    } else {
+        snprintf(text, sizeof(text), "Ready \xE2\x80\xA2 %.0f \xC2\xB0" "C \xE2\x80\xA2 %s", targetTemp, profileTime);
+    }
+    if (strcmp(lv_label_get_text(label), text) != 0) {
+        lv_label_set_text(label, text);
+    }
+    if (lv_obj_get_style_text_font(label, LV_PART_MAIN) != &lv_font_montserrat_20) {
+        lv_obj_set_style_text_font(label, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+}
+
+// Finished view: the phase-type tag ("BREW") has no meaning once the shot is over, and the space the progress bar
+// leaves is used for the result: peak pressure and average pump flow. The result label is created here (it is not
+// part of the EEZ project) and found again by its tag, so a recreated screen simply gets a new one.
+static const char BREW_RESULT_TAG = 0;
+static void applyBrewResult(bool complete, float peakPressure, float avgPumpFlow) {
+    lv_obj_t *parent = objects.progress_view;
+    if (parent == nullptr) {
+        return;
+    }
+    if (objects.step_label != nullptr) {
+        if (complete) {
+            lv_obj_add_flag(objects.step_label, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_clear_flag(objects.step_label, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+    // With the tag and progress bar gone, centre what remains between the target row and the acknowledge control
+    // instead of leaving it crowded at the top: state, time, result, plus the yield when the shot was weighed.
+    // The "running" values are the EEZ project positions.
+    const bool showsYield =
+        complete && objects.process_volume != nullptr && !lv_obj_has_flag(objects.process_volume, LV_OBJ_FLAG_HIDDEN);
+    const lv_coord_t resultY = showsYield ? 60 : 49;
+    if (objects.phase_label != nullptr) {
+        lv_obj_set_y(objects.phase_label, !complete ? -70 : (showsYield ? -76 : -59));
+    }
+    if (objects.current_duration != nullptr) {
+        lv_obj_set_y(objects.current_duration, !complete ? -2 : (showsYield ? -26 : -5));
+    }
+    if (objects.process_volume != nullptr) {
+        lv_obj_set_y(objects.process_volume, showsYield ? 24 : 96);
+    }
+    lv_obj_t *label = nullptr;
+    const uint32_t count = lv_obj_get_child_cnt(parent);
+    for (uint32_t i = 0; i < count; i++) {
+        lv_obj_t *child = lv_obj_get_child(parent, i);
+        if (lv_obj_get_user_data(child) == &BREW_RESULT_TAG) {
+            label = child;
+            break;
+        }
+    }
+    if (label == nullptr) {
+        if (!complete) {
+            return;
+        }
+        label = lv_label_create(parent);
+        lv_obj_set_user_data(label, const_cast<char *>(&BREW_RESULT_TAG));
+        lv_obj_set_style_text_font(label, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_align(label, LV_ALIGN_CENTER, 0, resultY);
+    }
+    if (!complete) {
+        lv_obj_add_flag(label, LV_OBJ_FLAG_HIDDEN);
+        return;
+    }
+    char text[48];
+    snprintf(text, sizeof(text), "Peak %.1f bar \xE2\x80\xA2 avg %.1f ml/s", peakPressure, avgPumpFlow);
+    if (strcmp(lv_label_get_text(label), text) != 0) {
+        lv_label_set_text(label, text);
+    }
+    if (objects.phase_label != nullptr) {
+        lv_obj_set_style_text_color(label, lv_obj_get_style_text_color(objects.phase_label, LV_PART_MAIN),
+                                    LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
+    lv_obj_set_y(label, resultY);
+    lv_obj_clear_flag(label, LV_OBJ_FLAG_HIDDEN);
+}
+
 static float clampPercentage(float pct) { return pct < 0.0f ? 0.0f : (pct > 100.0f ? 100.0f : pct); }
 
 // Shot chart styling, after the community concept UI: thin lines, endpoint dot, no grid or fill.
 // Theme color slots (Pressure, Progress, Temperature, Warning) so the chart matches the rest of the UI.
 static constexpr int SHOT_THEME_COLORS[SHOT_SERIES_COUNT] = {7, 7, 2, 2, 6, 8};
+// Theme colour 2 is the accent (progress bar, start ring), which the Oxblood palette makes coral. Pump flow keeps
+// its own sage tone in every theme (dark, light, AMOLED) so it cannot be confused with the temperature trace.
+static constexpr uint32_t SHOT_FLOW_COLORS[3] = {0xb3d5a5, 0x527341, 0xb3d5a5};
+static lv_color_t shotSeriesColor(int theme, int series) {
+    if (series == SHOT_FLOW || series == SHOT_TARGET_FLOW) {
+        return lv_color_hex(SHOT_FLOW_COLORS[theme]);
+    }
+    return lv_color_hex(theme_colors[theme][SHOT_THEME_COLORS[series]]);
+}
 static constexpr int SHOT_GUIDE_COLOR = 3; // theme SemiDark, for the baseline and phase markers
 static constexpr lv_coord_t SHOT_DOT_RADIUS = 3;
 static constexpr bool SHOT_IS_TARGET[SHOT_SERIES_COUNT] = {false, true, false, true, false, false};
@@ -957,6 +1074,8 @@ void DefaultUI::updateBrewProcess() {
     brewProcess.profile_target_weight(selected.getTotalVolume());
     brewProcess.boiler_target_temperature(controller->getTargetTemp());
     brewProcess.current_flow(controller->getCurrentPumpFlow());
+    applyBrewReadySummary(controller->getWarnings().isTemperatureStable(), controller->getCurrentTemp(), controller->getTargetTemp(), buf,
+                          selected.isVolumetric(), selected.getTotalVolume());
 
     // Hold the process lock across every deref below — the logic/AsyncTCP/BLE tasks delete
     // the process at any time (GM-147).
@@ -978,6 +1097,7 @@ void DefaultUI::updateBrewProcess() {
             brewProcess.elapsed_time("0:00");
         brewProcess.elapsed_percentage(0.0f);
         brewProcess.is_complete(false);
+        applyBrewResult(false, 0.0f, 0.0f);
         return;
     }
 
@@ -1051,6 +1171,8 @@ void DefaultUI::updateBrewProcess() {
     brewProcess.is_complete(process->isComplete());
     brewProcess.shot_max_pressure(shotMaxPressure);
     brewProcess.shot_avg_flow(shotFlowSamples > 0 ? shotFlowSum / shotFlowSamples : 0.0f);
+    applyBrewReadoutFace();
+    applyBrewResult(process->isComplete(), shotMaxPressure, shotFlowSamples > 0 ? shotFlowSum / shotFlowSamples : 0.0f);
 }
 
 void DefaultUI::updateMenuScreen() {
@@ -1081,7 +1203,10 @@ void DefaultUI::applyShotChartTheme() {
         return;
     const int theme = currentThemeMode >= 0 ? currentThemeMode : 0;
     for (int i = 0; i < SHOT_SERIES_COUNT; i++)
-        lv_chart_set_series_color(shotChart, shotSeries[i], lv_color_hex(theme_colors[theme][SHOT_THEME_COLORS[i]]));
+        lv_chart_set_series_color(shotChart, shotSeries[i], shotSeriesColor(theme, i));
+    if (objects.chart_legend_flow != nullptr) { // the generated theme code colours this legend with the accent
+        lv_obj_set_style_text_color(objects.chart_legend_flow, shotSeriesColor(theme, SHOT_FLOW), LV_PART_MAIN | LV_STATE_DEFAULT);
+    }
     lv_chart_refresh(shotChart);
 }
 

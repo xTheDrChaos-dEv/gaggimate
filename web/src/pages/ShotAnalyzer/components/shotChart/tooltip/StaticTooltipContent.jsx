@@ -179,7 +179,6 @@ function getSinglePagedMetricRows({ metricContext = null, rows = [] }) {
     [SINGLE_METRIC_PAGE_KEYS.PRESSURE_FLOW]: ['Pressure', 'Target P', 'Pump Flow', 'Target F'],
     [SINGLE_METRIC_PAGE_KEYS.FLOW_VOLUME]: [
       'Weight',
-      'Weight Flow',
       WATER_DRAWN_PHASE_LABEL,
       'Puck Flow',
     ],

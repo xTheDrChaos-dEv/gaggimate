@@ -54,6 +54,12 @@ export function ActionCard({
 
   const primaryLabel = getPrimaryLabel(isActive, isFinished);
   const shownWarnings = showStandby ? [] : activeWarnings(warnings);
+  // Brew mode, nothing running: say outright whether the machine is still heating or ready.
+  const showReadiness =
+    mode === 1 && !isActive && !isFinished && Number.isFinite(currentTemperature);
+  const heating =
+    shownWarnings.some(w => w.key === 'temperature') ||
+    Math.abs((targetTemperature ?? 0) - (currentTemperature ?? 0)) > 3;
 
   useEffect(() => {
     setPreheated(false);
@@ -79,6 +85,13 @@ export function ActionCard({
           />
         </div>
       )}
+      {showReadiness && (
+        <p className='gm-readiness col-span-full' data-state={heating ? 'heating' : 'ready'}>
+          {heating
+            ? `${t`Preheating...`} ${currentTemperature.toFixed(0)} / ${(targetTemperature ?? 0).toFixed(0)} °C`
+            : t`Ready to brew`}
+        </p>
+      )}
       {!showStandby && (
         <div className='flex items-center justify-start gap-2' aria-label={t`Active warnings`}>
           {shownWarnings.map(w => (
@@ -94,12 +107,22 @@ export function ActionCard({
       {showPrimary && (
         <button
           type='button'
-          className='btn btn-circle btn-lg btn-primary'
+          className={
+            isActive
+              ? 'btn btn-lg gm-stop'
+              : isFinished
+                ? 'btn btn-lg btn-primary gm-done'
+                : 'btn btn-circle btn-lg btn-primary'
+          }
           onClick={handlePrimary}
           aria-label={primaryLabel}
           title={primaryLabel}
         >
-          <FontAwesomeIcon icon={getPrimaryIcon(isActive, isFinished)} className='text-2xl' />
+          <FontAwesomeIcon
+            icon={getPrimaryIcon(isActive, isFinished)}
+            className={isActive || isFinished ? 'text-lg' : 'text-2xl'}
+          />
+          {(isActive || isFinished) && <span>{primaryLabel}</span>}
         </button>
       )}
       {showStandby && (

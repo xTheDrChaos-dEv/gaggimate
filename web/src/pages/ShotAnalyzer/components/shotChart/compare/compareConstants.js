@@ -98,7 +98,6 @@ export const DETAIL_CHARTS = [
   createDetailChartWithoutTarget('puck-resistance', 'Puck Resistance', 'puckResistance'),
   createDetailChartWithoutTarget('liquid-resistance', 'Liquid Resistance', 'liquidResistance'),
   createDetailChartWithoutTarget('weight', 'Weight', 'weight'),
-  createDetailChartWithoutTarget('weight-flow', 'Weight Flow', 'weightFlow'),
   {
     id: 'temperature',
     title: 'Temperature',

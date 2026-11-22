@@ -114,7 +114,6 @@ export const LEGEND_THIN_LINE_LABELS = new Set([
   'Puck Resistance',
   'Liquid Resistance',
   'Weight',
-  'Weight Flow',
 ]);
 
 export const TOOLTIP_WATER_LABELS = new Set([WATER_DRAWN_PHASE_LABEL, WATER_DRAWN_TOTAL_LABEL]);
@@ -130,7 +129,6 @@ export const LEGEND_ORDER = [
   'Puck Resistance',
   'Liquid Resistance',
   'Weight',
-  'Weight Flow',
   'Temp',
   'Target T',
 ];
@@ -145,7 +143,6 @@ const TOOLTIP_ORDER = [
   'Puck Flow',
   'Puck Resistance',
   'Liquid Resistance',
-  'Weight Flow',
   'Weight',
   WATER_DRAWN_PHASE_LABEL,
   WATER_DRAWN_TOTAL_LABEL,
@@ -218,7 +215,6 @@ export const UNIT_BY_LABEL = {
   'Puck Resistance': 's·√bar/mL',
   'Liquid Resistance': 'bar·s/mL',
   Weight: 'g',
-  'Weight Flow': 'g/s',
   [WATER_DRAWN_PHASE_LABEL]: 'ml',
   [WATER_DRAWN_TOTAL_LABEL]: 'ml',
 };

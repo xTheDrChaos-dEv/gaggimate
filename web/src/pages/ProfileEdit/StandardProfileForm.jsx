@@ -422,10 +422,10 @@ function Phase({ phase, index, onChange, onRemove, pressureAvailable }) {
                   onChange={e =>
                     onFieldChange('pump', { ...phase.pump, flow: parseFloat(e.target.value) })
                   }
-                  aria-label={t`Flow rate in grams per second`}
+                  aria-label={`${t`Target Flow`} (ml/s)`}
                   min='0'
                 />
-                <span aria-label={t`grams per second`}>g/s</span>
+                <span>ml/s</span>
               </label>
             </div>
           </div>

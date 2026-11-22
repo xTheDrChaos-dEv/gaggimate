@@ -134,7 +134,7 @@ export function CompareShotCharts({
   }, []);
   const hiddenLegendLabels = getHiddenLegendLabels({ showPhaseAnnotations, showStopAnnotations });
   const hasWeightData = hasCompareSampleValue(compareEntries, 'v');
-  const hasWeightFlowData = hasCompareSampleValue(compareEntries, 'vf');
+  const hasWeightFlowData = false;
 
   useEffect(() => {
     setDetailMetricPageByChartId({});
