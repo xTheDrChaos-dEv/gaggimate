@@ -19,13 +19,46 @@ if (import.meta.env.DEV) {
 import { render } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 import { LocationProvider, Router, Route, ErrorBoundary, useLocation } from 'preact-iso';
-import lazy from 'preact-iso/lazy';
+import isoLazy from 'preact-iso/lazy';
 
 import ApiService, { ApiServiceContext, machine } from './services/ApiService.js';
 import { effect } from '@preact/signals';
 import { Navigation } from './components/Navigation.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
+
+// A page part that will not load nearly always means the machine was updated while this page stayed open: the
+// new firmware has the same pages under new file names. A home-screen web app is the usual victim, because the
+// phone keeps it alive in the background for days, and it then showed the menu with an empty page next to it.
+// Loading the page again fetches the current files; if that just happened and it still fails, say so instead.
+const STALE_RELOAD_KEY = 'gaggimate-stale-reload';
+function PageLoadFailed() {
+  return (
+    <div className='bg-base-200 mx-auto mt-8 max-w-md rounded-lg p-6 text-center'>
+      <p className='mb-4'>This page could not be loaded from the machine.</p>
+      <button className='btn btn-primary' onClick={() => window.location.reload()}>
+        Reload
+      </button>
+    </div>
+  );
+}
+function recoverFromStalePage() {
+  let reloadedAt = 0;
+  try {
+    reloadedAt = Number(window.sessionStorage.getItem(STALE_RELOAD_KEY)) || 0;
+    if (Date.now() - reloadedAt > 20000) {
+      window.sessionStorage.setItem(STALE_RELOAD_KEY, String(Date.now()));
+    }
+  } catch {
+    reloadedAt = Date.now(); // no storage to guard against a reload loop, so do not start one
+  }
+  if (Date.now() - reloadedAt > 20000) {
+    window.location.reload();
+    return new Promise(() => {}); // the page is going away; show nothing in the meantime
+  }
+  return PageLoadFailed;
+}
+const lazy = load => isoLazy(() => load().catch(recoverFromStalePage));
 
 // Each page lazy-loads as its own Vite chunk so the initial bundle stays small.
 // Chart.js, FontAwesome icon sets, and the analyzer/statistics views are too
