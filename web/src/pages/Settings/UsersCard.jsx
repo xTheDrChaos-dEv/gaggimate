@@ -8,8 +8,11 @@ import {
   MAX_NAME_LENGTH,
   MAX_PEOPLE,
   backgroundStyles,
-  displayThemes,
+  displayColors,
+  displayModes,
   initialOf,
+  themeFor,
+  themeParts,
 } from '../../utils/people.js';
 
 // People who share the machine. With two or more, waking it by touch asks who is brewing, and each person gets
@@ -21,7 +24,8 @@ export function UsersCard({ formData, setField, onChange }) {
     Math.max(Number(formData.activeUser ?? 0), 0),
     Math.max(people.length - 1, 0),
   );
-  const themes = displayThemes();
+  const colors = displayColors();
+  const modes = displayModes();
   const backgrounds = backgroundStyles();
 
   const setPeople = next => setField('users', next);
@@ -46,7 +50,7 @@ export function UsersCard({ formData, setField, onChange }) {
   return (
     <div className='space-y-4'>
       <p className='text-base-content/70 text-sm'>
-        {t`Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets.`}
+        {t`Each person keeps their own display color, light or dark mode and background, selected and favorite profiles, and brew, steam, water and grind targets.`}
       </p>
       {people.map((person, index) => (
         <div key={index} className='bg-base-200/60 space-y-2 rounded-xl p-2'>
@@ -79,16 +83,34 @@ export function UsersCard({ formData, setField, onChange }) {
           <div className='flex items-center gap-2'>
             <select
               className='select select-bordered min-w-0 flex-1'
-              value={person.theme}
-              aria-label={t`Display theme for ${person.name || t`this person`}`}
-              onChange={e => update(index, { theme: Number(e.target.value) })}
+              value={themeParts(person.theme).color}
+              aria-label={t`Display color for ${person.name || t`this person`}`}
+              onChange={e =>
+                update(index, { theme: themeFor(e.target.value, themeParts(person.theme).mode) })
+              }
             >
-              {themes.map(theme => (
-                <option key={theme.value} value={theme.value}>
-                  {theme.label}
+              {colors.map(color => (
+                <option key={color.value} value={color.value}>
+                  {color.label}
                 </option>
               ))}
             </select>
+            <select
+              className='select select-bordered min-w-0 flex-1'
+              value={themeParts(person.theme).mode}
+              aria-label={t`Light or dark for ${person.name || t`this person`}`}
+              onChange={e =>
+                update(index, { theme: themeFor(themeParts(person.theme).color, e.target.value) })
+              }
+            >
+              {modes.map(mode => (
+                <option key={mode.value} value={mode.value}>
+                  {mode.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className='flex items-center gap-2'>
             <select
               className='select select-bordered min-w-0 flex-1'
               value={person.bg ?? DEFAULT_BACKGROUND}

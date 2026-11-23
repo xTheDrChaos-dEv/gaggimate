@@ -194,7 +194,7 @@ static float clampPercentage(float pct) { return pct < 0.0f ? 0.0f : (pct > 100.
 static constexpr int SHOT_THEME_COLORS[SHOT_SERIES_COUNT] = {7, 7, 2, 2, 6, 8};
 // Theme colour 2 is the accent (progress bar, start ring), which the Oxblood palette makes coral. Pump flow keeps
 // its own sage tone in every theme (dark, light, AMOLED) so it cannot be confused with the temperature trace.
-static constexpr uint32_t SHOT_FLOW_COLORS[5] = {0xb3d5a5, 0x527341, 0xb3d5a5, 0xb3d5a5, 0xb3d5a5};
+static constexpr uint32_t SHOT_FLOW_COLORS[7] = {0xb3d5a5, 0x527341, 0xb3d5a5, 0xb3d5a5, 0xb3d5a5, 0x527341, 0x527341};
 static lv_color_t shotSeriesColor(int theme, int series) {
     if (series == SHOT_FLOW || series == SHOT_TARGET_FLOW) {
         return lv_color_hex(SHOT_FLOW_COLORS[theme]);
@@ -212,8 +212,8 @@ static constexpr uint32_t SHOT_ZOOM_ANIM_MS = 400;
 static constexpr int32_t SHOT_ZOOM_ANIM_STEPS = 1000;
 
 // Pressure teal and flow pink as in the web UI's profile chart, deepened where the profile card is light (dark themes).
-static constexpr uint32_t PROFILE_COLORS[5][2] = {
-    {0x2a8f8f, 0xe05a5a}, {0x4bc0c0, 0xffc0c0}, {0x2a8f8f, 0xe05a5a}, {0x2a8f8f, 0xe05a5a}, {0x2a8f8f, 0xe05a5a}};
+static constexpr uint32_t PROFILE_COLORS[7][2] = {{0x2a8f8f, 0xe05a5a}, {0x4bc0c0, 0xffc0c0}, {0x2a8f8f, 0xe05a5a}, {0x2a8f8f, 0xe05a5a},
+                                                  {0x2a8f8f, 0xe05a5a}, {0x4bc0c0, 0xffc0c0}, {0x4bc0c0, 0xffc0c0}};
 static constexpr lv_coord_t PROFILE_LINE_WIDTH = 4;     // limit lines draw dashed and thinner
 static constexpr float PROFILE_CHART_STEP = 0.1f;       // s, matches the web UI profile chart
 static constexpr float PROFILE_CHART_MIN_RANGE = 10.0f; // bar / ml/s
@@ -1588,7 +1588,7 @@ String DefaultUI::getErrorMessage() { return controller->getSystemStateMessage()
 void DefaultUI::applyTheme() {
     const ::Settings &settings = controller->getSettings();
     int newThemeMode = settings.getThemeMode();
-    if (newThemeMode < 0 || newThemeMode > THEME_ID_PURPLE) { // a stored value from another build must not index past the tables
+    if (newThemeMode < 0 || newThemeMode > THEME_ID_PURPLE_LIGHT) { // a stored value from another build must not index past the tables
         newThemeMode = THEME_ID_DARK;
     }
 #ifndef GAGGIMATE_SIM // Amoled-specific black theme override is device-only
@@ -1609,7 +1609,7 @@ void DefaultUI::applyTheme() {
     if (themeChanged) {
         currentThemeMode = newThemeMode;
         // Via EEZ so its selected index updates too; on-demand screens (new profile) read it when created.
-        static const char *const THEME_NAMES[] = {"Dark", "Light", "AmoledDark", "Olive", "Purple"};
+        static const char *const THEME_NAMES[] = {"Dark", "Light", "AmoledDark", "Olive", "Purple", "OliveLight", "PurpleLight"};
         eez_flow_set_theme(THEME_NAMES[currentThemeMode]);
         applyShotChartTheme();
         if (profileChart != nullptr) {
@@ -1642,7 +1642,7 @@ LV_FONT_DECLARE(gm_font_initial_72)
 
 static constexpr uint32_t USER_SELECT_TIMEOUT_MS = 20000;
 
-static int clampTheme(int theme) { return theme < 0 || theme > THEME_ID_PURPLE ? THEME_ID_DARK : theme; }
+static int clampTheme(int theme) { return theme < 0 || theme > THEME_ID_PURPLE_LIGHT ? THEME_ID_DARK : theme; }
 
 static void userSelectBackdropCb(lv_event_t *e) {
     if (lv_event_get_target(e) == lv_event_get_current_target(e)) { // a tap beside the buttons cancels

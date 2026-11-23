@@ -20,6 +20,8 @@ export function Backdrop() {
               width={tile.size}
               height={tile.size}
               patternUnits='userSpaceOnUse'
+              // The markup is one of the two tile files bundled above, never user input.
+              // eslint-disable-next-line react/no-danger
               dangerouslySetInnerHTML={{ __html: tile.markup }}
             />
           </defs>

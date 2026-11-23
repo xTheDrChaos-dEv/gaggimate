@@ -1272,15 +1272,11 @@ msgstr "Media diaria: <0>{dailyAvg} extracciones</0>"
 
 #: src/app/AppSettings.jsx
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Dark"
 msgstr "Oscuro"
-
-#: src/pages/Settings/tabs/GeneralTab.jsx
-#: src/utils/people.js
-msgid "Dark Theme"
-msgstr "Tema oscuro"
 
 #: src/components/Navigation.jsx
 msgid "Dashboard"
@@ -1546,17 +1542,17 @@ msgid "Dismiss"
 msgstr "Cerrar"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
-msgid "Display Settings"
-msgstr "Ajustes de pantalla"
-
-#: src/pages/Settings/tabs/GeneralTab.jsx
-msgid "Display Theme"
-msgstr "Tema de la pantalla"
+msgid "Display Color"
+msgstr ""
 
 #. placeholder {0}: person.name || t`this person`
 #: src/pages/Settings/UsersCard.jsx
-msgid "Display theme for {0}"
+msgid "Display color for {0}"
 msgstr ""
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "Display Settings"
+msgstr "Ajustes de pantalla"
 
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgid "Display Version"
@@ -1706,7 +1702,7 @@ msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flus
 msgstr ""
 
 #: src/pages/Settings/UsersCard.jsx
-msgid "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
+msgid "Each person keeps their own display color, light or dark mode and background, selected and favorite profiles, and brew, steam, water and grind targets."
 msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
@@ -2693,15 +2689,20 @@ msgstr "Permite que un E64 WS inicie extracciones con su mando y ajuste su molie
 
 #: src/app/AppSettings.jsx
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Light"
 msgstr "Claro"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
-#: src/utils/people.js
-msgid "Light Theme"
-msgstr "Tema claro"
+msgid "Light / Dark"
+msgstr ""
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Light or dark for {0}"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgctxt "ramp style"
@@ -3434,6 +3435,12 @@ msgctxt "theme"
 msgid "Olive"
 msgstr ""
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Olive Light"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "On startup (s)"
 msgstr "Al arrancar (s)"
@@ -3537,6 +3544,11 @@ msgstr "O cada"
 #: src/pages/SetupWizard/WifiStep.jsx
 msgid "Other network…"
 msgstr "Otra red…"
+
+#: src/utils/people.js
+msgctxt "theme"
+msgid "Oxblood"
+msgstr ""
 
 #: src/pages/DashboardSettings/index.jsx
 msgid "Pack to top"
@@ -4221,6 +4233,12 @@ msgstr "Objetivo de agua bombeada"
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Purple"
+msgstr ""
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Purple Light"
 msgstr ""
 
 #: src/pages/Statistics/utils/statisticsSearchDsl.js

@@ -25,7 +25,7 @@
       (function () {
         try {
           var key = 'gaggimate-daisyui-theme';
-          var allowed = ['light', 'dark', 'olive', 'purple', 'coffee', 'nord'];
+          var allowed = ['light', 'dark', 'olive', 'olive-light', 'purple', 'purple-light', 'coffee', 'nord'];
           var saved = localStorage.getItem(key);
           // 'machine' follows the machine's display theme; use the last one it reported until it reconnects.
           if (saved === 'machine') saved = localStorage.getItem('gaggimate-machine-theme') || 'dark';

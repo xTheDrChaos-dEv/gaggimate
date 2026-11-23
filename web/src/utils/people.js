@@ -5,13 +5,31 @@ import { t } from '@lingui/core/macro';
 export const MAX_PEOPLE = 4;
 export const MAX_NAME_LENGTH = 16;
 
-// Display theme values understood by the round screen (2 is the automatic AMOLED black variant of 0).
-export const displayThemes = () => [
-  { value: 0, label: t`Dark Theme` },
-  { value: 1, label: t`Light Theme` },
-  { value: 3, label: t({ message: 'Olive', context: 'theme' }) },
-  { value: 4, label: t({ message: 'Purple', context: 'theme' }) },
+// The display theme is one number on the machine (2 is the automatic AMOLED black variant of 0), but it is
+// picked as a colour and a light or dark mode: every colour comes in both.
+const THEME_IDS = {
+  oxblood: { dark: 0, light: 1 },
+  olive: { dark: 3, light: 5 },
+  purple: { dark: 4, light: 6 },
+};
+export const displayColors = () => [
+  { value: 'oxblood', label: t({ message: 'Oxblood', context: 'theme' }) },
+  { value: 'olive', label: t({ message: 'Olive', context: 'theme' }) },
+  { value: 'purple', label: t({ message: 'Purple', context: 'theme' }) },
 ];
+export const displayModes = () => [
+  { value: 'dark', label: t({ message: 'Dark', context: 'theme' }) },
+  { value: 'light', label: t({ message: 'Light', context: 'theme' }) },
+];
+export const themeFor = (color, mode) => THEME_IDS[color]?.[mode] ?? 0;
+export const themeParts = theme => {
+  for (const [color, modes] of Object.entries(THEME_IDS)) {
+    for (const [mode, id] of Object.entries(modes)) {
+      if (id === Number(theme)) return { color, mode };
+    }
+  }
+  return { color: 'oxblood', mode: 'dark' };
+};
 
 // What is drawn behind the screens (firmware: backdrop::Style). Any theme works with any background.
 export const DEFAULT_BACKGROUND = 3;
@@ -41,7 +59,9 @@ export const webBackgroundForStyle = style =>
 
 // Web theme that matches a display theme, for the "match the machine" web theme option.
 export const webThemeForDisplayTheme = theme =>
-  ({ 0: 'dark', 1: 'light', 2: 'dark', 3: 'olive', 4: 'purple' })[theme] ?? 'dark';
+  ({ 0: 'dark', 1: 'light', 2: 'dark', 3: 'olive', 4: 'purple', 5: 'olive-light', 6: 'purple-light' })[
+    theme
+  ] ?? 'dark';
 
 export const initialOf = name => (String(name ?? '').match(/[a-z]/i)?.[0] ?? '?').toUpperCase();
 

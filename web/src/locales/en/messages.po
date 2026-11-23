@@ -1272,15 +1272,11 @@ msgstr "Daily average: <0>{dailyAvg} shots</0>"
 
 #: src/app/AppSettings.jsx
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Dark"
 msgstr "Dark"
-
-#: src/pages/Settings/tabs/GeneralTab.jsx
-#: src/utils/people.js
-msgid "Dark Theme"
-msgstr "Dark Theme"
 
 #: src/components/Navigation.jsx
 msgid "Dashboard"
@@ -1546,17 +1542,17 @@ msgid "Dismiss"
 msgstr "Dismiss"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
-msgid "Display Settings"
-msgstr "Display Settings"
-
-#: src/pages/Settings/tabs/GeneralTab.jsx
-msgid "Display Theme"
-msgstr "Display Theme"
+msgid "Display Color"
+msgstr "Display Color"
 
 #. placeholder {0}: person.name || t`this person`
 #: src/pages/Settings/UsersCard.jsx
-msgid "Display theme for {0}"
-msgstr "Display theme for {0}"
+msgid "Display color for {0}"
+msgstr "Display color for {0}"
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "Display Settings"
+msgstr "Display Settings"
 
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgid "Display Version"
@@ -1706,8 +1702,8 @@ msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flus
 msgstr "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
 
 #: src/pages/Settings/UsersCard.jsx
-msgid "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
-msgstr "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
+msgid "Each person keeps their own display color, light or dark mode and background, selected and favorite profiles, and brew, steam, water and grind targets."
+msgstr "Each person keeps their own display color, light or dark mode and background, selected and favorite profiles, and brew, steam, water and grind targets."
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgid "Ease In"
@@ -2693,15 +2689,20 @@ msgstr "Lets an E64 WS start shots with its knob and dial in its grind from the 
 
 #: src/app/AppSettings.jsx
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Light"
 msgstr "Light"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
-#: src/utils/people.js
-msgid "Light Theme"
-msgstr "Light Theme"
+msgid "Light / Dark"
+msgstr "Light / Dark"
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Light or dark for {0}"
+msgstr "Light or dark for {0}"
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgctxt "ramp style"
@@ -3434,6 +3435,12 @@ msgctxt "theme"
 msgid "Olive"
 msgstr "Olive"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Olive Light"
+msgstr "Olive Light"
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "On startup (s)"
 msgstr "On startup (s)"
@@ -3537,6 +3544,11 @@ msgstr "Or every"
 #: src/pages/SetupWizard/WifiStep.jsx
 msgid "Other network…"
 msgstr "Other network…"
+
+#: src/utils/people.js
+msgctxt "theme"
+msgid "Oxblood"
+msgstr "Oxblood"
 
 #: src/pages/DashboardSettings/index.jsx
 msgid "Pack to top"
@@ -4222,6 +4234,12 @@ msgstr "Pumped-water target"
 msgctxt "theme"
 msgid "Purple"
 msgstr "Purple"
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Purple Light"
+msgstr "Purple Light"
 
 #: src/pages/Statistics/utils/statisticsSearchDsl.js
 msgid "Query clause {clauseNumber}: {valueError}"

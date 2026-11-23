@@ -89,6 +89,9 @@ uint16_t pack(const Rgb &c, int x, int y) {
     return lv_color_make(static_cast<uint8_t>(r << 3), static_cast<uint8_t>(g << 2), static_cast<uint8_t>(b << 3)).full;
 }
 
+// Light paper themes need gentler lines and artwork than the dark ones.
+bool isLightTheme(int theme) { return theme == THEME_ID_LIGHT || theme == THEME_ID_OLIVE_LIGHT || theme == THEME_ID_PURPLE_LIGHT; }
+
 struct Palette {
     Rgb background, text, accent, aux;
 };
@@ -169,6 +172,8 @@ void drawArtwork(int theme) {
             Rgb c;
             switch (theme) {
             case THEME_ID_LIGHT:
+            case THEME_ID_OLIVE_LIGHT:
+            case THEME_ID_PURPLE_LIGHT:
                 c = paper(fx, fy, palette);
                 break;
             case THEME_ID_AMOLED_DARK:
@@ -224,7 +229,7 @@ enum Pattern { PATTERN_NONE = 0, PATTERN_BEANS = 1, PATTERN_FLORAL = 2 };
 
 // How much of the theme's accent colour goes into the lines, toned down so that text on top stays easy to read.
 // Light paper needs less for the same visible weight; pure black (AMOLED) a little less as well.
-float lineStrength(int theme) { return theme == THEME_ID_LIGHT ? 0.30f : (theme == THEME_ID_AMOLED_DARK ? 0.34f : 0.40f); }
+float lineStrength(int theme) { return isLightTheme(theme) ? 0.30f : (theme == THEME_ID_AMOLED_DARK ? 0.34f : 0.40f); }
 
 // The bean tile: the theme's background colour with the outlines in its accent colour. Wraps on all four edges.
 bool paintBeans(int theme) {
@@ -277,7 +282,7 @@ void paintFloral(int theme) {
     constexpr int TILE = backdrop_floral::TILE;
     const Palette palette = paletteOf(theme);
     const Rgb stroke = mix(palette.background, palette.accent, lineStrength(theme));
-    const Rgb fill = mix(palette.background, palette.accent, theme == THEME_ID_LIGHT ? 0.07f : 0.10f);
+    const Rgb fill = mix(palette.background, palette.accent, isLightTheme(theme) ? 0.07f : 0.10f);
     const uint16_t flat = lv_color_hex(theme_colors[theme][1]).full;
     for (int i = 0; i < TILE * TILE; i++) {
         const uint8_t cell = backdrop_floral::COVERAGE[i];
@@ -363,7 +368,7 @@ bool driftsDiagonally(int style) { return style == backdrop::STYLE_BEANS_DIAGONA
 namespace backdrop {
 
 void render(int theme, int style) {
-    if (theme < 0 || theme > THEME_ID_PURPLE) {
+    if (theme < 0 || theme > THEME_ID_PURPLE_LIGHT) {
         theme = THEME_ID_DARK;
     }
     if (style < 0 || style >= STYLE_COUNT) {
@@ -420,7 +425,7 @@ void applyTo(lv_obj_t *screen) {
 }
 
 static bool isThemeBackground(lv_color_t color) {
-    for (int theme = 0; theme <= THEME_ID_PURPLE; theme++) {
+    for (int theme = 0; theme <= THEME_ID_PURPLE_LIGHT; theme++) {
         if (lv_color_hex(theme_colors[theme][1]).full == color.full) {
             return true;
         }

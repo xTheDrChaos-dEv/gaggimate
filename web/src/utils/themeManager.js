@@ -8,7 +8,9 @@ const AVAILABLE_THEMES = [
   'light',
   'dark',
   'olive',
+  'olive-light',
   'purple',
+  'purple-light',
   'coffee',
   'nord',
 ];
@@ -59,6 +61,8 @@ export function getAvailableThemes() {
     light: t({ message: 'Light', context: 'theme' }),
     dark: t({ message: 'Dark', context: 'theme' }),
     olive: t({ message: 'Olive', context: 'theme' }),
+    'olive-light': t({ message: 'Olive Light', context: 'theme' }),
+    'purple-light': t({ message: 'Purple Light', context: 'theme' }),
     purple: t({ message: 'Purple', context: 'theme' }),
     coffee: t({ message: 'Coffee', context: 'theme' }),
   };

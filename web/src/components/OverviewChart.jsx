@@ -418,7 +418,9 @@ const TRACE_TONES = {
 };
 
 export function OverviewChart() {
-  const traceTone = TRACE_TONES[document.documentElement.dataset.theme] ?? TRACE_TONES.default;
+  // olive-light and purple-light share their colour's card.
+  const pageTheme = (document.documentElement.dataset.theme ?? '').replace('-light', '');
+  const traceTone = TRACE_TONES[pageTheme] ?? TRACE_TONES.default;
   const { history, status, capabilities, connected } = machine.value;
   const chartData = getChartData(history);
   for (const scale of Object.values(chartData.options.scales)) {

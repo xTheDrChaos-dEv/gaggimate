@@ -147,6 +147,76 @@
 
 /* https://daisyui.com/theme-generator/#theme=eJx9lOuOnDAMhV8lQqrUSotF7knfhgHTQcuQUcKo21Z992aS6ZJZYH9if8c-diz-VHN7wep71blhQKxeqrr2bT_eQh1wwm5xPiapx0uZGkac-hhvQH7InNxbyYfxN5aFGmDyKbdWWhMn53tMba9vKdDjdTnfofQ1uzHg46tzk_N16M6Yhuhb_5qYHD-1AWvaNDHjXqfu_JWJL6SBhnHCmQXdmG8faVbSNNP0kOYFTVWiqT2kOzcvOC_vCs2Ay-zIMqItUGZL0Yy3xbdT0QFktkRlbKKAKbrDb_oYDrxhSdjwPeE4D251ZUHYBCtOqBEg5dMo4dZ1GMLKC9AsV9eMUE6BUlUKfrZ-Hucfqx0DVN55KojRd3FJo_fpUh7FNXBqEswMibWN3jjfzEslGGvyotgnI2yFAqzIDxK9HY-yFWpQPB-LOZppz6b4r5I7s139eGn9r3UXFKxVeRecKAZaPpkLGDv0pYKL2EHmDpZQGy_MilLSxj0UjgQD9Th6LQhjArixO5b2FsdtPhomPrO2vU0V3yovoZHHFrc6A5K9P1VhtcehvU0RHNop4Et19TigD-nPkGN__wFALWAe */
 @plugin "daisyui/theme" {
+  name: 'olive-light';
+  default: false;
+  prefersdark: false;
+  color-scheme: 'light';
+  --color-base-100: #fbfaf0;
+  --color-base-200: #f1f0dc;
+  --color-base-300: #e5e4c9;
+  --color-base-content: #262c11;
+  --color-primary: #5f6b1e;
+  --color-primary-content: #fbfaf0;
+  --color-secondary: #0b6b5d;
+  --color-secondary-content: #f1fbf8;
+  --color-accent: oklch(59.939% 0.191 335.171);
+  --color-accent-content: oklch(11.988% 0.038 335.171);
+  --color-neutral: oklch(19.616% 0.063 257.651);
+  --color-neutral-content: oklch(83.923% 0.012 257.651);
+  --color-info: #0e7490;
+  --color-info-content: #f0fbff;
+  --color-success: #0b6b5d;
+  --color-success-content: #f1fbf8;
+  --color-warning: #a85a08;
+  --color-warning-content: #fff7ed;
+  --color-error: oklch(73.092% 0.11 20.076);
+  --color-error-content: oklch(14.618% 0.022 20.076);
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: 'purple-light';
+  default: false;
+  prefersdark: false;
+  color-scheme: 'light';
+  --color-base-100: #fcf9ff;
+  --color-base-200: #f3ecfb;
+  --color-base-300: #e7dcf5;
+  --color-base-content: #2a1640;
+  --color-primary: #6b3fb0;
+  --color-primary-content: #fcf9ff;
+  --color-secondary: #0b6b5d;
+  --color-secondary-content: #f1fbf8;
+  --color-accent: oklch(59.939% 0.191 335.171);
+  --color-accent-content: oklch(11.988% 0.038 335.171);
+  --color-neutral: oklch(19.616% 0.063 257.651);
+  --color-neutral-content: oklch(83.923% 0.012 257.651);
+  --color-info: #0e7490;
+  --color-info-content: #f0fbff;
+  --color-success: #0b6b5d;
+  --color-success-content: #f1fbf8;
+  --color-warning: #a85a08;
+  --color-warning-content: #fff7ed;
+  --color-error: oklch(73.092% 0.11 20.076);
+  --color-error-content: oklch(14.618% 0.022 20.076);
+  --radius-selector: 1rem;
+  --radius-field: 0.5rem;
+  --radius-box: 1rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 0;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
   name: 'coffee';
   default: false;
   prefersdark: false;
@@ -985,11 +1055,11 @@ html[data-theme='olive'] {
 }
 
 /* Live chart card follows the olive theme. */
-html[data-theme='olive'] .gm-trace { background: #2c3314; color: #f3f0e2; }
-html[data-theme='olive'] .gm-trace-heading p { color: #c9cba9; }
-html[data-theme='olive'] .gm-readings,
-html[data-theme='olive'] .gm-readings div { border-color: #5d6636; }
-html[data-theme='olive'] .gm-readings dt { color: #e3e4cc; }
+html[data-theme^='olive'] .gm-trace { background: #2c3314; color: #f3f0e2; }
+html[data-theme^='olive'] .gm-trace-heading p { color: #c9cba9; }
+html[data-theme^='olive'] .gm-readings,
+html[data-theme^='olive'] .gm-readings div { border-color: #5d6636; }
+html[data-theme^='olive'] .gm-readings dt { color: #e3e4cc; }
 
 html[data-theme='purple'] {
   --analyzer-pressure-text: #70d6c2;
@@ -1063,11 +1133,11 @@ html[data-theme='purple'] {
 }
 
 /* Live chart card follows the purple theme. */
-html[data-theme='purple'] .gm-trace { background: #28163f; color: #f3eef8; }
-html[data-theme='purple'] .gm-trace-heading p { color: #c7b8dc; }
-html[data-theme='purple'] .gm-readings,
-html[data-theme='purple'] .gm-readings div { border-color: #5a4479; }
-html[data-theme='purple'] .gm-readings dt { color: #e6dcf2; }
+html[data-theme^='purple'] .gm-trace { background: #28163f; color: #f3eef8; }
+html[data-theme^='purple'] .gm-trace-heading p { color: #c7b8dc; }
+html[data-theme^='purple'] .gm-readings,
+html[data-theme^='purple'] .gm-readings div { border-color: #5a4479; }
+html[data-theme^='purple'] .gm-readings dt { color: #e6dcf2; }
 
 /* Page background that mirrors the round screen's background style (components/Backdrop.jsx). data-bg on <html>
    comes from the machine: solid | beans[-left|-diagonal] | floral[-left|-diagonal] | art. The layer sits behind

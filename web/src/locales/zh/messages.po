@@ -1272,15 +1272,11 @@ msgstr "日均：<0>{dailyAvg} 次萃取</0>"
 
 #: src/app/AppSettings.jsx
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Dark"
 msgstr "深色"
-
-#: src/pages/Settings/tabs/GeneralTab.jsx
-#: src/utils/people.js
-msgid "Dark Theme"
-msgstr "深色主题"
 
 #: src/components/Navigation.jsx
 msgid "Dashboard"
@@ -1546,17 +1542,17 @@ msgid "Dismiss"
 msgstr "忽略"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
-msgid "Display Settings"
-msgstr "显示设置"
-
-#: src/pages/Settings/tabs/GeneralTab.jsx
-msgid "Display Theme"
-msgstr "显示主题"
+msgid "Display Color"
+msgstr ""
 
 #. placeholder {0}: person.name || t`this person`
 #: src/pages/Settings/UsersCard.jsx
-msgid "Display theme for {0}"
+msgid "Display color for {0}"
 msgstr ""
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "Display Settings"
+msgstr "显示设置"
 
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgid "Display Version"
@@ -1706,7 +1702,7 @@ msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flus
 msgstr ""
 
 #: src/pages/Settings/UsersCard.jsx
-msgid "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
+msgid "Each person keeps their own display color, light or dark mode and background, selected and favorite profiles, and brew, steam, water and grind targets."
 msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
@@ -2693,15 +2689,20 @@ msgstr "允许 E64 WS 通过旋钮启动萃取，并根据萃取时间和重量�
 
 #: src/app/AppSettings.jsx
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Light"
 msgstr "浅色"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
-#: src/utils/people.js
-msgid "Light Theme"
-msgstr "浅色主题"
+msgid "Light / Dark"
+msgstr ""
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Light or dark for {0}"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgctxt "ramp style"
@@ -3434,6 +3435,12 @@ msgctxt "theme"
 msgid "Olive"
 msgstr ""
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Olive Light"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "On startup (s)"
 msgstr "开机时 (s)"
@@ -3537,6 +3544,11 @@ msgstr "或每"
 #: src/pages/SetupWizard/WifiStep.jsx
 msgid "Other network…"
 msgstr "其他网络…"
+
+#: src/utils/people.js
+msgctxt "theme"
+msgid "Oxblood"
+msgstr ""
 
 #: src/pages/DashboardSettings/index.jsx
 msgid "Pack to top"
@@ -4221,6 +4233,12 @@ msgstr "泵水量目标"
 #: src/utils/themeManager.js
 msgctxt "theme"
 msgid "Purple"
+msgstr ""
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Purple Light"
 msgstr ""
 
 #: src/pages/Statistics/utils/statisticsSearchDsl.js

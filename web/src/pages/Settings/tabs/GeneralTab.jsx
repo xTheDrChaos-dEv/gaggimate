@@ -1,6 +1,13 @@
 import { grindAvailable } from '../../../utils/grind.js';
 import { UsersCard } from '../UsersCard.jsx';
-import { DEFAULT_BACKGROUND, backgroundStyles } from '../../../utils/people.js';
+import {
+  DEFAULT_BACKGROUND,
+  backgroundStyles,
+  displayColors,
+  displayModes,
+  themeFor,
+  themeParts,
+} from '../../../utils/people.js';
 import { computed } from '@preact/signals';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -99,6 +106,18 @@ export function GeneralTab({
   // Snap legacy free-form values onto the 5 s steps the slider offers.
   const { t } = useLingui();
   const flushDuration = Math.min(20, Math.round(Number(formData.flushDuration ?? 5) / 5) * 5);
+  // The live display theme belongs to whoever is brewing now, so their entry in People follows it.
+  const setDisplayTheme = theme => {
+    setField('themeMode', theme);
+    const people = Array.isArray(formData.users) ? formData.users : [];
+    const active = Number(formData.activeUser ?? 0);
+    if (people[active]) {
+      setField(
+        'users',
+        people.map((person, i) => (i === active ? { ...person, theme } : person)),
+      );
+    }
+  };
   return (
     <div className='space-y-4 sm:space-y-6 lg:grid lg:grid-cols-2 lg:gap-4'>
       {/* People who share the machine */}
@@ -268,31 +287,36 @@ export function GeneralTab({
                 onChange={onChange('mainBrightness')}
               />
             </SettingsFormField>
-            <SettingsFormField label={t`Display Theme`} htmlFor='themeMode' noMargin>
+            <SettingsFormField label={t`Display Color`} htmlFor='themeColor' noMargin>
               <select
-                id='themeMode'
-                name='themeMode'
+                id='themeColor'
                 className='select select-bordered w-full'
-                value={formData.themeMode}
-                onChange={e => {
-                  onChange('themeMode')(e);
-                  // The live display theme belongs to whoever is brewing now.
-                  const people = Array.isArray(formData.users) ? formData.users : [];
-                  const active = Number(formData.activeUser ?? 0);
-                  if (people[active]) {
-                    setField(
-                      'users',
-                      people.map((person, i) =>
-                        i === active ? { ...person, theme: Number(e.target.value) } : person,
-                      ),
-                    );
-                  }
-                }}
+                value={themeParts(formData.themeMode).color}
+                onChange={e =>
+                  setDisplayTheme(themeFor(e.target.value, themeParts(formData.themeMode).mode))
+                }
               >
-                <option value={0}>{t`Dark Theme`}</option>
-                <option value={1}>{t`Light Theme`}</option>
-                <option value={3}>{t({ message: 'Olive', context: 'theme' })}</option>
-                <option value={4}>{t({ message: 'Purple', context: 'theme' })}</option>
+                {displayColors().map(color => (
+                  <option key={color.value} value={color.value}>
+                    {color.label}
+                  </option>
+                ))}
+              </select>
+            </SettingsFormField>
+            <SettingsFormField label={t`Light / Dark`} htmlFor='themeShade' noMargin>
+              <select
+                id='themeShade'
+                className='select select-bordered w-full'
+                value={themeParts(formData.themeMode).mode}
+                onChange={e =>
+                  setDisplayTheme(themeFor(themeParts(formData.themeMode).color, e.target.value))
+                }
+              >
+                {displayModes().map(mode => (
+                  <option key={mode.value} value={mode.value}>
+                    {mode.label}
+                  </option>
+                ))}
               </select>
             </SettingsFormField>
             <SettingsFormField label={t`Background`} htmlFor='backgroundStyle' noMargin>
@@ -432,6 +456,12 @@ export function GeneralTab({
                 <option value='dark'>{t({ message: 'Dark', context: 'theme' })}</option>
                 <option value='olive'>{t({ message: 'Olive', context: 'theme' })}</option>
                 <option value='purple'>{t({ message: 'Purple', context: 'theme' })}</option>
+                <option value='olive-light'>
+                  {t({ message: 'Olive Light', context: 'theme' })}
+                </option>
+                <option value='purple-light'>
+                  {t({ message: 'Purple Light', context: 'theme' })}
+                </option>
                 <option value='coffee'>{t({ message: 'Coffee', context: 'theme' })}</option>
                 <option value='nord'>Nord</option>
               </select>
