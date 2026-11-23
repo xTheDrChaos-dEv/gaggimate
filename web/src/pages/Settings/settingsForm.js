@@ -19,6 +19,7 @@ export const CHECKBOX_KEYS = [
   'autowakeupEnabled',
   'smartGrindToggle',
   'tomUploadActive',
+  'usersAskOnWake',
 ];
 
 export function splitPidString(pidString) {

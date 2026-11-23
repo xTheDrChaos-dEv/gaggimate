@@ -79,6 +79,11 @@ class DefaultUI {
     void markProfileClean() { profileDirty = false; }
 
     void applyTheme();
+    // "Who's brewing?" picker shown over the standby screen when the machine is woken by touch and at least two
+    // people are set up. Returns false when there is nothing to ask, so the caller wakes the machine directly.
+    bool showUserSelect();
+    void closeUserSelect();
+    void wakeAs(int userIndex);
 
     bool isTaskHealthy() const {
         return is_task_healthy(eTaskGetState(taskHandle)) && is_task_healthy(eTaskGetState(profileTaskHandle));
@@ -245,6 +250,8 @@ class DefaultUI {
     std::vector<bool> favoritedHasImage;
     int profilesGeneration = 0; // bumped on every reload so previews re-render
     int currentThemeMode = -1;  // Force applyTheme on first loop
+    lv_obj_t *userSelect = nullptr;        // runtime-built picker on lv_layer_top(), not part of the EEZ project
+    lv_timer_t *userSelectTimer = nullptr; // closes the picker if nobody answers
 
     // Screen change
     ScreensEnum targetScreen = ScreensEnum::SCREEN_ID_STANDBY_SCREEN;

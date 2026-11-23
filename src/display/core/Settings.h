@@ -305,6 +305,14 @@ class Settings {
     String getTomHousehold() const { return tomHousehold.get(); }
     // Which TOM Firebase project this screen sends to; kept here, never in the firmware or the API output
     String getTomProject() const { return tomProject.get(); }
+    // People who share the machine (see core/Users.h): the list as JSON, whether waking by touch asks who is
+    // brewing, and whose defaults the live settings currently are
+    String getUsersConfig() const { return usersConfig.get(); }
+    bool isUsersAskOnWake() const { return usersAskOnWake.get(); }
+    int getActiveUser() const { return activeUser.get(); }
+    void setUsersConfig(const String &json) { usersConfig.set(json); }
+    void setUsersAskOnWake(bool ask) { usersAskOnWake.set(ask); }
+    void setActiveUser(int index) { activeUser.set(index); }
     String getTomApiKey() const { return tomApiKey.get(); }
     bool isHomeAssistant() const { return homeAssistant.get(); }
     String getHomeAssistantIP() const { return homeAssistantIP.get(); }
@@ -576,6 +584,9 @@ class Settings {
     Property<bool> tomUploadActive{registry, "tom_a", false};
     Property<String> tomHousehold{registry, "tom_h", ""}; // validated TOM household code (a-z0-9, 24-64)
     Property<String> tomProject{registry, "tom_p", ""};   // TOM Firebase project id
+    Property<String> usersConfig{registry, "usr_cfg", ""}; // JSON array, see core/Users.h
+    Property<bool> usersAskOnWake{registry, "usr_ask", true};
+    Property<int> activeUser{registry, "usr_act", 0};
     Property<String> tomApiKey{registry, "tom_k", ""};    // TOM Firebase web API key
     Property<bool> mahlkonigActive{registry, "mk_a", false};
     Property<String> mahlkonigRecipeProfiles{registry, "mk_rp", ""}; // profile id per grinder recipe slot, "r1,r2,..."

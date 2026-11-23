@@ -200,6 +200,9 @@ function buildSubmitFormData(formData, autowakeupSchedules, restart, importedKey
     if (CHECKBOX_KEYS.includes(key)) {
       // Always explicit: the firmware leaves absent booleans untouched (GM-214).
       formDataToSubmit.set(key, value ? '1' : '0');
+    } else if (key === 'users') {
+      // People who share the machine travel as one JSON list.
+      formDataToSubmit.set(key, JSON.stringify(Array.isArray(value) ? value : []));
     } else {
       formDataToSubmit.set(key, String(value));
     }
@@ -638,6 +641,7 @@ export function Settings() {
             <GeneralTab
               formData={formData}
               onChange={onChange}
+              setField={setField}
               profiles={profiles}
               currentTheme={currentTheme}
               setCurrentTheme={setCurrentTheme}

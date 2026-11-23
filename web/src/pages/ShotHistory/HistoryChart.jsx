@@ -67,7 +67,7 @@ function getChartData(shot) {
   // Series colours follow the dashboard's live chart (temperature red, pressure teal, pump flow sage, weight
   // gold). The history card sits on the page background, so dark themes get the light tones and light themes
   // the deep ones.
-  const darkPage = ['dark', 'coffee'].includes(document.documentElement.dataset.theme);
+  const darkPage = ['dark', 'coffee', 'olive', 'purple'].includes(document.documentElement.dataset.theme);
   const series = darkPage
     ? {
         temp: '#FF6B5C',

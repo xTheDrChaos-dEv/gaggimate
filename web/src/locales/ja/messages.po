@@ -221,6 +221,10 @@ msgstr "{label} をお気に入りに追加"
 msgid "Add {name}"
 msgstr "{name} を追加"
 
+#: src/pages/Settings/UsersCard.jsx
+msgid "Add at least two people for the question to appear."
+msgstr ""
+
 #: src/app/MachineSetup.jsx
 msgid "Add machine by address"
 msgstr "アドレスでマシンを追加"
@@ -236,6 +240,10 @@ msgstr "新しいプロファイルを追加"
 #: src/app/MachineSwitcher.jsx
 msgid "Add or manage machines"
 msgstr "マシンの追加・管理"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Add person"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedProfileForm.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -383,6 +391,10 @@ msgstr "適用してコントローラーを待機中…"
 #: src/pages/ShotAnalyzer/components/library/LibraryPanel.jsx
 msgid "Are you sure you want to delete \"{itemName}\"?"
 msgstr "「{itemName}」を削除してもよろしいですか？"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Ask who's brewing when the machine is woken by touch"
+msgstr ""
 
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "At how many bars should the pump assist stop. This makes it so the pump will only run when steam is flowing."
@@ -701,6 +713,10 @@ msgstr "重量で抽出"
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Brewing Filter Alpha"
 msgstr "抽出フィルター Alpha"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Brewing now"
+msgstr ""
 
 #: src/app/notifications.js
 msgid "Brewing…"
@@ -1241,6 +1257,7 @@ msgid "Dark"
 msgstr "ダーク"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 msgid "Dark Theme"
 msgstr "ダークテーマ"
 
@@ -1515,6 +1532,11 @@ msgstr "ディスプレイ設定"
 msgid "Display Theme"
 msgstr "ディスプレイのテーマ"
 
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Display theme for {0}"
+msgstr ""
+
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgid "Display Version"
 msgstr "ディスプレイのバージョン"
@@ -1660,6 +1682,10 @@ msgstr "例: シングルオリジン、ブレンド"
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
+msgstr ""
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Each person keeps their own display theme, selected and favorite profiles, and brew, steam, water and grind targets."
 msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
@@ -1838,6 +1864,10 @@ msgstr "均等に埋める"
 #: src/pages/Settings/tabs/CleaningSection.jsx
 msgid "Every"
 msgstr "毎"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Everyone sees this profile. Tap to keep it to yourself."
+msgstr ""
 
 #: src/pages/Statistics/components/StatisticsSearchHelp.jsx
 msgid "Examples"
@@ -2568,6 +2598,10 @@ msgstr "{field} の値が無効です: {valueError}"
 msgid "iOS only lets GaggiMate stay connected to your machines while the app is open. Notifications stop a few seconds after you switch to another app or lock your phone."
 msgstr "iOS では、アプリを開いている間しか GaggiMate がマシンとの接続を維持できません。別のアプリに切り替えたりスマートフォンをロックしたりすると、数秒後に通知が停止します。"
 
+#: src/pages/ProfileList/index.jsx
+msgid "Keep {label} to yourself"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "Keep selected profile"
 msgstr "選択中のプロファイルを維持"
@@ -2575,6 +2609,10 @@ msgstr "選択中のプロファイルを維持"
 #: src/pages/ShotAnalyzer/components/shotChart/controls/ShotChartControls.jsx
 msgid "Keep this window focused while the replay is being recorded."
 msgstr "リプレイの録画中はこのウィンドウを前面に表示したままにしてください。"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Keep to myself"
+msgstr ""
 
 #: src/app/MachineSetup.jsx
 msgid "Kitchen"
@@ -2628,6 +2666,7 @@ msgid "Light"
 msgstr "ライト"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 msgid "Light Theme"
 msgstr "ライトテーマ"
 
@@ -2851,6 +2890,12 @@ msgstr "手動停止"
 msgid "Mark complete"
 msgstr "完了にする"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Match the machine"
+msgstr ""
+
 #: src/pages/Statistics/components/PhaseStatistics.jsx
 msgid "Max"
 msgstr "最大"
@@ -3046,6 +3091,7 @@ msgctxt "update channel"
 msgid "My fork (screen only)"
 msgstr ""
 
+#: src/pages/Settings/UsersCard.jsx
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "名前"
@@ -3073,6 +3119,11 @@ msgstr "新しいプリセットの名前:"
 #: src/components/MachineProfileControl.jsx
 msgid "Name for the exported configuration"
 msgstr "エクスポートする設定の名前"
+
+#. placeholder {0}: index + 1
+#: src/pages/Settings/UsersCard.jsx
+msgid "Name of person {0}"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -3343,6 +3394,13 @@ msgstr "古いファームウェア"
 msgid "Oldest First"
 msgstr "古い順"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Olive"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "On startup (s)"
 msgstr "起動時 (s)"
@@ -3362,6 +3420,10 @@ msgstr "プロファイル欄にはプロファイルファイルのみインポ
 #: src/pages/ShotAnalyzer/components/library/libraryImport.js
 msgid "Only shot files can be imported in the shot field."
 msgstr "ショット欄にはショットファイルのみインポートできます。"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Only you see this profile. Tap to share it with everyone."
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -3492,6 +3554,10 @@ msgstr "ピーク圧力: {0} bar、解放後: {1} bar"
 #: src/pages/SetupWizard/TestStep.jsx
 msgid "Peak: {0} bar"
 msgstr "ピーク: {0} bar"
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "People"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/shotChart/controls/compareControls.jsx
 msgid "Per Shot"
@@ -4117,6 +4183,13 @@ msgstr "送水量で停止"
 msgid "Pumped-water target"
 msgstr "送水量の目標"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Purple"
+msgstr ""
+
 #: src/pages/Statistics/utils/statisticsSearchDsl.js
 msgid "Query clause {clauseNumber}: {valueError}"
 msgstr "クエリ条件 {clauseNumber}: {valueError}"
@@ -4248,6 +4321,11 @@ msgstr "認証情報を保存"
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
 msgid "Remove"
 msgstr "削除"
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Remove {0}"
+msgstr ""
 
 #: src/pages/ProfileList/index.jsx
 msgid "Remove {label} from favorites"
@@ -4749,6 +4827,16 @@ msgstr "プロファイルを選択すると値が入力されます。保存す
 msgid "Selecting calibration profile..."
 msgstr "キャリブレーションプロファイルを選択中..."
 
+#. placeholder {0}: person.name
+#: src/pages/ProfileList/index.jsx
+msgid "Send a copy of {label} to {0}"
+msgstr ""
+
+#. placeholder {0}: person.name
+#: src/pages/ProfileList/index.jsx
+msgid "Send a copy to {0}"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "Send shots to TOM"
 msgstr ""
@@ -4809,6 +4897,14 @@ msgstr "設定を保存しました。温度異常を検出しました。温度
 #: src/pages/ShotAnalyzer/components/shotChart/controls/chartReplayControls.jsx
 msgid "Share"
 msgstr "共有"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Share {label} with everyone"
+msgstr ""
+
+#: src/pages/ProfileList/index.jsx
+msgid "Share with everyone"
+msgstr ""
 
 #: src/pages/Statistics/components/StatisticsMultiSelectDropdown.jsx
 msgid "Shift = Range"
@@ -5873,6 +5969,10 @@ msgstr "この機能は Home Assistant または MQTT に接続し、現在の�
 #: src/pages/Settings/PluginCard.jsx
 msgid "This feature controls a Tasmota Plug to turn off your grinder after the target has been reached."
 msgstr "この機能は Tasmota プラグを制御し、目標に達した後にグラインダーをオフにします。"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "this person"
+msgstr ""
 
 #: src/utils/machineProfiles.js
 msgid "This profile includes settings outside machine configuration. Remove them from the profile before importing it."

@@ -225,6 +225,10 @@ msgstr "Aggiungi {label} ai preferiti"
 msgid "Add {name}"
 msgstr "Aggiungi {name}"
 
+#: src/pages/Settings/UsersCard.jsx
+msgid "Add at least two people for the question to appear."
+msgstr ""
+
 #: src/app/MachineSetup.jsx
 msgid "Add machine by address"
 msgstr "Aggiungi macchina tramite indirizzo"
@@ -240,6 +244,10 @@ msgstr "Aggiungi nuovo profilo"
 #: src/app/MachineSwitcher.jsx
 msgid "Add or manage machines"
 msgstr "Aggiungi o gestisci macchine"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Add person"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedProfileForm.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -387,6 +395,10 @@ msgstr "Applicazione e attesa del controller…"
 #: src/pages/ShotAnalyzer/components/library/LibraryPanel.jsx
 msgid "Are you sure you want to delete \"{itemName}\"?"
 msgstr "Vuoi davvero eliminare \"{itemName}\"?"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Ask who's brewing when the machine is woken by touch"
+msgstr ""
 
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "At how many bars should the pump assist stop. This makes it so the pump will only run when steam is flowing."
@@ -705,6 +717,10 @@ msgstr "Erogato a peso"
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Brewing Filter Alpha"
 msgstr "Alfa filtro erogazione"
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Brewing now"
+msgstr ""
 
 #: src/app/notifications.js
 msgid "Brewing…"
@@ -1245,6 +1261,7 @@ msgid "Dark"
 msgstr "Scuro"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 msgid "Dark Theme"
 msgstr "Tema scuro"
 
@@ -1519,6 +1536,11 @@ msgstr "Impostazioni display"
 msgid "Display Theme"
 msgstr "Tema display"
 
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Display theme for {0}"
+msgstr ""
+
 #: src/pages/Settings/tabs/SystemTab.jsx
 msgid "Display Version"
 msgstr "Versione display"
@@ -1664,6 +1686,10 @@ msgstr "es. monorigine, miscela"
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
+msgstr ""
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "Each person keeps their own display theme, selected and favorite profiles, and brew, steam, water and grind targets."
 msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
@@ -1842,6 +1868,10 @@ msgstr "Riempimento uniforme"
 #: src/pages/Settings/tabs/CleaningSection.jsx
 msgid "Every"
 msgstr "Ogni"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Everyone sees this profile. Tap to keep it to yourself."
+msgstr ""
 
 #: src/pages/Statistics/components/StatisticsSearchHelp.jsx
 msgid "Examples"
@@ -2572,6 +2602,10 @@ msgstr "Valore non valido per {field}: {valueError}"
 msgid "iOS only lets GaggiMate stay connected to your machines while the app is open. Notifications stop a few seconds after you switch to another app or lock your phone."
 msgstr "iOS consente a GaggiMate di restare connesso alle tue macchine solo mentre l'app è aperta. Le notifiche si interrompono pochi secondi dopo che passi a un'altra app o blocchi il telefono."
 
+#: src/pages/ProfileList/index.jsx
+msgid "Keep {label} to yourself"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "Keep selected profile"
 msgstr "Mantieni il profilo selezionato"
@@ -2579,6 +2613,10 @@ msgstr "Mantieni il profilo selezionato"
 #: src/pages/ShotAnalyzer/components/shotChart/controls/ShotChartControls.jsx
 msgid "Keep this window focused while the replay is being recorded."
 msgstr "Mantieni questa finestra in primo piano durante la registrazione del replay."
+
+#: src/pages/ProfileList/index.jsx
+msgid "Keep to myself"
+msgstr ""
 
 #: src/app/MachineSetup.jsx
 msgid "Kitchen"
@@ -2632,6 +2670,7 @@ msgid "Light"
 msgstr "Chiaro"
 
 #: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
 msgid "Light Theme"
 msgstr "Tema chiaro"
 
@@ -2855,6 +2894,12 @@ msgstr "Arrestato manualmente"
 msgid "Mark complete"
 msgstr "Segna come completato"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Match the machine"
+msgstr ""
+
 #: src/pages/Statistics/components/PhaseStatistics.jsx
 msgid "Max"
 msgstr "Max"
@@ -3050,6 +3095,7 @@ msgctxt "update channel"
 msgid "My fork (screen only)"
 msgstr ""
 
+#: src/pages/Settings/UsersCard.jsx
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "Nome"
@@ -3077,6 +3123,11 @@ msgstr "Nome del nuovo preset:"
 #: src/components/MachineProfileControl.jsx
 msgid "Name for the exported configuration"
 msgstr "Nome della configurazione esportata"
+
+#. placeholder {0}: index + 1
+#: src/pages/Settings/UsersCard.jsx
+msgid "Name of person {0}"
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -3347,6 +3398,13 @@ msgstr "Firmware obsoleto"
 msgid "Oldest First"
 msgstr "Prima i meno recenti"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Olive"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "On startup (s)"
 msgstr "All'avvio (s)"
@@ -3366,6 +3424,10 @@ msgstr "Nel campo profilo si possono importare solo file di profilo."
 #: src/pages/ShotAnalyzer/components/library/libraryImport.js
 msgid "Only shot files can be imported in the shot field."
 msgstr "Nel campo estrazione si possono importare solo file di estrazioni"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Only you see this profile. Tap to share it with everyone."
+msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 #: src/pages/ProfileEdit/StandardProfileForm.jsx
@@ -3496,6 +3558,10 @@ msgstr "Pressione di picco: {0} bar, dopo il rilascio: {1} bar"
 #: src/pages/SetupWizard/TestStep.jsx
 msgid "Peak: {0} bar"
 msgstr "Picco: {0} bar"
+
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "People"
+msgstr ""
 
 #: src/pages/ShotAnalyzer/components/shotChart/controls/compareControls.jsx
 msgid "Per Shot"
@@ -4121,6 +4187,13 @@ msgstr "Arresto ad acqua pompata"
 msgid "Pumped-water target"
 msgstr "Obiettivo acqua pompata"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+#: src/utils/people.js
+#: src/utils/themeManager.js
+msgctxt "theme"
+msgid "Purple"
+msgstr ""
+
 #: src/pages/Statistics/utils/statisticsSearchDsl.js
 msgid "Query clause {clauseNumber}: {valueError}"
 msgstr "Clausola di ricerca {clauseNumber}: {valueError}"
@@ -4252,6 +4325,11 @@ msgstr "Ricorda credenziali"
 #: src/pages/ProfileEdit/ProfileImageUpload.jsx
 msgid "Remove"
 msgstr "Rimuovi"
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Remove {0}"
+msgstr ""
 
 #: src/pages/ProfileList/index.jsx
 msgid "Remove {label} from favorites"
@@ -4753,6 +4831,16 @@ msgstr "Selezionando un profilo i valori vengono precompilati. Salva per applica
 msgid "Selecting calibration profile..."
 msgstr "Selezione profilo di calibrazione..."
 
+#. placeholder {0}: person.name
+#: src/pages/ProfileList/index.jsx
+msgid "Send a copy of {label} to {0}"
+msgstr ""
+
+#. placeholder {0}: person.name
+#: src/pages/ProfileList/index.jsx
+msgid "Send a copy to {0}"
+msgstr ""
+
 #: src/pages/Settings/PluginCard.jsx
 msgid "Send shots to TOM"
 msgstr ""
@@ -4813,6 +4901,14 @@ msgstr "Impostazioni salvate. Rilevato un errore di temperatura. Controlla il se
 #: src/pages/ShotAnalyzer/components/shotChart/controls/chartReplayControls.jsx
 msgid "Share"
 msgstr "Condividi"
+
+#: src/pages/ProfileList/index.jsx
+msgid "Share {label} with everyone"
+msgstr ""
+
+#: src/pages/ProfileList/index.jsx
+msgid "Share with everyone"
+msgstr ""
 
 #: src/pages/Statistics/components/StatisticsMultiSelectDropdown.jsx
 msgid "Shift = Range"
@@ -5877,6 +5973,10 @@ msgstr "Questa funzione consente di connettersi a un'installazione Home Assistan
 #: src/pages/Settings/PluginCard.jsx
 msgid "This feature controls a Tasmota Plug to turn off your grinder after the target has been reached."
 msgstr "Questa funzione controlla una presa Tasmota per spegnere il macinacaffè una volta raggiunto l'obiettivo."
+
+#: src/pages/Settings/UsersCard.jsx
+msgid "this person"
+msgstr ""
 
 #: src/utils/machineProfiles.js
 msgid "This profile includes settings outside machine configuration. Remove them from the profile before importing it."

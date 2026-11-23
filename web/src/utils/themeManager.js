@@ -1,7 +1,17 @@
 import { t } from '@lingui/core/macro';
 
 const THEME_STORAGE_KEY = 'gaggimate-daisyui-theme';
-const AVAILABLE_THEMES = ['system', 'light', 'dark', 'coffee', 'nord'];
+const MACHINE_THEME_KEY = 'gaggimate-machine-theme'; // last web theme derived from the machine's display theme
+const AVAILABLE_THEMES = [
+  'system',
+  'machine',
+  'light',
+  'dark',
+  'olive',
+  'purple',
+  'coffee',
+  'nord',
+];
 
 const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -37,15 +47,19 @@ export function applyTheme(theme) {
   if (!AVAILABLE_THEMES.includes(theme)) {
     return;
   }
-  const actualTheme = theme === 'system' ? getSystemTheme() : theme;
+  const actualTheme =
+    theme === 'system' ? getSystemTheme() : theme === 'machine' ? getMachineTheme() : theme;
   document.documentElement.setAttribute('data-theme', actualTheme);
 }
 
 export function getAvailableThemes() {
   const labels = {
     system: t({ message: 'System', context: 'theme' }),
+    machine: t({ message: 'Match the machine', context: 'theme' }),
     light: t({ message: 'Light', context: 'theme' }),
     dark: t({ message: 'Dark', context: 'theme' }),
+    olive: t({ message: 'Olive', context: 'theme' }),
+    purple: t({ message: 'Purple', context: 'theme' }),
     coffee: t({ message: 'Coffee', context: 'theme' }),
   };
   return AVAILABLE_THEMES.map(theme => ({
@@ -57,6 +71,28 @@ export function getAvailableThemes() {
 function onSystemThemeChange() {
   if (getStoredTheme() === 'system') {
     applyTheme('system');
+  }
+}
+
+// 'machine' follows the display theme of whoever is brewing; until the machine reports one, the last known
+// value (or the system theme) is used.
+function getMachineTheme() {
+  try {
+    return localStorage.getItem(MACHINE_THEME_KEY) || getSystemTheme();
+  } catch {
+    return getSystemTheme();
+  }
+}
+
+export function setMachineTheme(webTheme) {
+  try {
+    if (localStorage.getItem(MACHINE_THEME_KEY) === webTheme) return;
+    localStorage.setItem(MACHINE_THEME_KEY, webTheme);
+  } catch {
+    // Without storage the theme still follows the machine for this page view.
+  }
+  if (getStoredTheme() === 'machine') {
+    document.documentElement.setAttribute('data-theme', webTheme);
   }
 }
 

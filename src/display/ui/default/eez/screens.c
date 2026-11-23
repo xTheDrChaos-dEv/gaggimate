@@ -9064,11 +9064,13 @@ void change_color_theme(uint32_t theme_index) {
     if (objects.welcome_screen)
         lv_obj_invalidate(objects.welcome_screen);
 }
-static const char *theme_names[] = {"Dark", "Light", "AmoledDark"};
-uint32_t theme_colors[3][9] = {
+static const char *theme_names[] = {"Dark", "Light", "AmoledDark", "Olive", "Purple"};
+uint32_t theme_colors[5][9] = {
     {0xfff6efe6, 0xff2b0f13, 0xfff0a08f, 0xffc7aaa6, 0xffd98a5f, 0xffead9cf, 0xffff6b5c, 0xff7fd4c6, 0xfff4bd64},
     {0xff3a1216, 0xfff8f1e7, 0xffb23a3a, 0xff7a5a57, 0xff9a4a2c, 0xff7a5d59, 0xffc2331f, 0xff0b6b5d, 0xff925408},
     {0xfff6efe6, 0xff000000, 0xfff0a08f, 0xffc7aaa6, 0xffd98a5f, 0xffead9cf, 0xffff6b5c, 0xff7fd4c6, 0xfff4bd64},
+    {0xfff3f0e2, 0xff23280f, 0xffc9d48a, 0xffb4b89a, 0xffd9a65f, 0xffe3e2cf, 0xffff8a5c, 0xff7fd4c6, 0xfff4bd64},
+    {0xfff3eef8, 0xff1f0f33, 0xffc9a4f5, 0xffb3a6c6, 0xffd98ac0, 0xffe4dcef, 0xffff7a6b, 0xff7fd4c6, 0xfff4bd64},
 };
 
 //

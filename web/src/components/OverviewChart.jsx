@@ -410,12 +410,20 @@ function getChartData(data) {
   };
 }
 
+// Grid and tick tones for the live chart card, per page theme (the card keeps a dark surface in every theme).
+const TRACE_TONES = {
+  olive: { ticks: '#c3c6a4', grid: '#454d26' },
+  purple: { ticks: '#bfaed6', grid: '#45305f' },
+  default: { ticks: '#d2b3ad', grid: '#55282c' },
+};
+
 export function OverviewChart() {
+  const traceTone = TRACE_TONES[document.documentElement.dataset.theme] ?? TRACE_TONES.default;
   const { history, status, capabilities, connected } = machine.value;
   const chartData = getChartData(history);
   for (const scale of Object.values(chartData.options.scales)) {
-    scale.ticks.color = '#d2b3ad';
-    scale.grid = { color: '#55282c', ...scale.grid };
+    scale.ticks.color = traceTone.ticks;
+    scale.grid = { color: traceTone.grid, ...scale.grid };
   }
   const live = connected && history.length > 0 && status.controllerLink !== 'none';
   const process = status.process;

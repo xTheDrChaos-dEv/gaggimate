@@ -16817,6 +16817,36 @@
         "#7fd4c6",
         "#f4bd64"
       ]
+    },
+    {
+      "objID": "51a68e30-2a2d-46d9-8ecc-24852c8ab192",
+      "name": "Olive",
+      "colors": [
+        "#f3f0e2",
+        "#23280f",
+        "#c9d48a",
+        "#b4b89a",
+        "#d9a65f",
+        "#e3e2cf",
+        "#ff8a5c",
+        "#7fd4c6",
+        "#f4bd64"
+      ]
+    },
+    {
+      "objID": "57395a1a-6642-4219-8d40-f8fbd4e7de75",
+      "name": "Purple",
+      "colors": [
+        "#f3eef8",
+        "#1f0f33",
+        "#c9a4f5",
+        "#b3a6c6",
+        "#d98ac0",
+        "#e4dcef",
+        "#ff7a6b",
+        "#7fd4c6",
+        "#f4bd64"
+      ]
     }
   ]
 }

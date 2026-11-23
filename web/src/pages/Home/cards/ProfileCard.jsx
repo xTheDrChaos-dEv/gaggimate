@@ -218,6 +218,7 @@ export function ProfileCard({
     <>
       <div className='text-base-content/50 text-[0.6rem] tracking-wider uppercase'>
         <Trans>Profile</Trans>
+        {machine.value.status.activeUserName ? ` · ${machine.value.status.activeUserName}` : ''}
       </div>
       <div className='flex items-center justify-between gap-2'>
         <span className='text-base-content truncate text-sm font-semibold'>

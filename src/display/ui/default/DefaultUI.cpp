@@ -180,7 +180,7 @@ static float clampPercentage(float pct) { return pct < 0.0f ? 0.0f : (pct > 100.
 static constexpr int SHOT_THEME_COLORS[SHOT_SERIES_COUNT] = {7, 7, 2, 2, 6, 8};
 // Theme colour 2 is the accent (progress bar, start ring), which the Oxblood palette makes coral. Pump flow keeps
 // its own sage tone in every theme (dark, light, AMOLED) so it cannot be confused with the temperature trace.
-static constexpr uint32_t SHOT_FLOW_COLORS[3] = {0xb3d5a5, 0x527341, 0xb3d5a5};
+static constexpr uint32_t SHOT_FLOW_COLORS[5] = {0xb3d5a5, 0x527341, 0xb3d5a5, 0xb3d5a5, 0xb3d5a5};
 static lv_color_t shotSeriesColor(int theme, int series) {
     if (series == SHOT_FLOW || series == SHOT_TARGET_FLOW) {
         return lv_color_hex(SHOT_FLOW_COLORS[theme]);
@@ -198,7 +198,8 @@ static constexpr uint32_t SHOT_ZOOM_ANIM_MS = 400;
 static constexpr int32_t SHOT_ZOOM_ANIM_STEPS = 1000;
 
 // Pressure teal and flow pink as in the web UI's profile chart, deepened where the profile card is light (dark themes).
-static constexpr uint32_t PROFILE_COLORS[3][2] = {{0x2a8f8f, 0xe05a5a}, {0x4bc0c0, 0xffc0c0}, {0x2a8f8f, 0xe05a5a}};
+static constexpr uint32_t PROFILE_COLORS[5][2] = {
+    {0x2a8f8f, 0xe05a5a}, {0x4bc0c0, 0xffc0c0}, {0x2a8f8f, 0xe05a5a}, {0x2a8f8f, 0xe05a5a}, {0x2a8f8f, 0xe05a5a}};
 static constexpr lv_coord_t PROFILE_LINE_WIDTH = 4;     // limit lines draw dashed and thinner
 static constexpr float PROFILE_CHART_STEP = 0.1f;       // s, matches the web UI profile chart
 static constexpr float PROFILE_CHART_MIN_RANGE = 10.0f; // bar / ml/s
@@ -1562,6 +1563,9 @@ String DefaultUI::getErrorMessage() { return controller->getSystemStateMessage()
 void DefaultUI::applyTheme() {
     const ::Settings &settings = controller->getSettings();
     int newThemeMode = settings.getThemeMode();
+    if (newThemeMode < 0 || newThemeMode > THEME_ID_PURPLE) { // a stored value from another build must not index past the tables
+        newThemeMode = THEME_ID_DARK;
+    }
 #ifndef GAGGIMATE_SIM // Amoled-specific black theme override is device-only
     if (newThemeMode == 0 && panelDriver == AmoledDisplayDriver::getInstance()) {
         newThemeMode = THEME_ID_AMOLED_DARK;
@@ -1571,7 +1575,7 @@ void DefaultUI::applyTheme() {
     if (newThemeMode != currentThemeMode) {
         currentThemeMode = newThemeMode;
         // Via EEZ so its selected index updates too; on-demand screens (new profile) read it when created.
-        static const char *const THEME_NAMES[] = {"Dark", "Light", "AmoledDark"};
+        static const char *const THEME_NAMES[] = {"Dark", "Light", "AmoledDark", "Olive", "Purple"};
         eez_flow_set_theme(THEME_NAMES[currentThemeMode]);
         applyShotChartTheme();
         if (profileChart != nullptr) {
@@ -1596,4 +1600,120 @@ void DefaultUI::profileLoopTask(void *arg) {
         ui->loopProfiles();
         vTaskDelay(25 / portTICK_PERIOD_MS);
     }
+}
+
+// ---- "Who's brewing?" picker -------------------------------------------------------------------------------------
+// Built here at runtime (it is not in the EEZ project). Each person gets a round button in their own theme colours.
+LV_FONT_DECLARE(gm_font_initial_72)
+
+static constexpr uint32_t USER_SELECT_TIMEOUT_MS = 20000;
+
+static int clampTheme(int theme) { return theme < 0 || theme > THEME_ID_PURPLE ? THEME_ID_DARK : theme; }
+
+static void userSelectBackdropCb(lv_event_t *e) {
+    if (lv_event_get_target(e) == lv_event_get_current_target(e)) { // a tap beside the buttons cancels
+        static_cast<DefaultUI *>(lv_event_get_user_data(e))->closeUserSelect();
+    }
+}
+
+static void userSelectPickCb(lv_event_t *e) {
+    auto *ui = static_cast<DefaultUI *>(lv_event_get_user_data(e));
+    const int index = static_cast<int>(reinterpret_cast<intptr_t>(lv_obj_get_user_data(lv_event_get_current_target(e)))) - 1;
+    ui->wakeAs(index);
+}
+
+static void userSelectTimeoutCb(lv_timer_t *timer) { static_cast<DefaultUI *>(timer->user_data)->closeUserSelect(); }
+
+bool DefaultUI::showUserSelect() {
+    if (userSelect != nullptr) {
+        return true;
+    }
+    if (!controller->isUserSelectOnWake()) {
+        return false;
+    }
+    const std::vector<MachineUser> people = controller->getUsers();
+    const size_t count = people.size();
+    const int theme = clampTheme(currentThemeMode);
+    const lv_color_t text = lv_color_hex(theme_colors[theme][0]);
+
+    lv_obj_t *panel = lv_obj_create(lv_layer_top());
+    lv_obj_remove_style_all(panel);
+    lv_obj_set_size(panel, 480, 480);
+    lv_obj_center(panel);
+    lv_obj_set_style_bg_color(panel, lv_color_hex(theme_colors[theme][1]), LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_bg_opa(panel, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_add_flag(panel, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_clear_flag(panel, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_add_event_cb(panel, userSelectBackdropCb, LV_EVENT_CLICKED, this);
+
+    lv_obj_t *title = lv_label_create(panel);
+    lv_label_set_text(title, "Who's brewing?");
+    lv_obj_set_style_text_font(title, &lv_font_montserrat_24, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_set_style_text_color(title, text, LV_PART_MAIN | LV_STATE_DEFAULT);
+    lv_obj_align(title, LV_ALIGN_CENTER, 0, count > 3 ? -178 : -138);
+
+    // Button centres relative to the middle of the panel; everything stays inside the 480 px circle.
+    static const lv_coord_t X2[] = {-96, 96};
+    static const lv_coord_t X3[] = {-140, 0, 140};
+    static const lv_coord_t X4[] = {-82, 82, -82, 82};
+    static const lv_coord_t Y4[] = {-78, -78, 82, 82};
+    const lv_coord_t diameter = count <= 2 ? 150 : 112;
+    for (size_t i = 0; i < count; i++) {
+        const MachineUser &person = people[i];
+        const int own = clampTheme(person.theme);
+        const lv_coord_t x = count <= 2 ? X2[i] : (count == 3 ? X3[i] : X4[i]);
+        const lv_coord_t y = count > 3 ? Y4[i] : -8;
+
+        lv_obj_t *button = lv_obj_create(panel);
+        lv_obj_remove_style_all(button);
+        lv_obj_set_size(button, diameter, diameter);
+        lv_obj_align(button, LV_ALIGN_CENTER, x, y);
+        lv_obj_set_style_radius(button, LV_RADIUS_CIRCLE, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_color(button, lv_color_hex(theme_colors[own][1]), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_bg_opa(button, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_border_color(button, lv_color_hex(theme_colors[own][2]), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_border_width(button, 4, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_border_opa(button, LV_OPA_COVER, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_add_flag(button, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_clear_flag(button, LV_OBJ_FLAG_SCROLLABLE);
+        lv_obj_set_user_data(button, reinterpret_cast<void *>(static_cast<intptr_t>(i + 1)));
+        lv_obj_add_event_cb(button, userSelectPickCb, LV_EVENT_CLICKED, this);
+
+        const char initial[2] = {person.letter(), '\0'};
+        lv_obj_t *letter = lv_label_create(button);
+        lv_label_set_text(letter, initial);
+        lv_obj_set_style_text_font(letter, person.letter() == '?' ? &lv_font_montserrat_34 : &gm_font_initial_72,
+                                   LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_color(letter, lv_color_hex(theme_colors[own][0]), LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_center(letter);
+
+        lv_obj_t *name = lv_label_create(panel);
+        lv_label_set_text(name, person.name.c_str());
+        lv_obj_set_style_text_font(name, &lv_font_montserrat_20, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_set_style_text_color(name, text, LV_PART_MAIN | LV_STATE_DEFAULT);
+        lv_obj_align(name, LV_ALIGN_CENTER, x, y + diameter / 2 + 22);
+    }
+
+    userSelect = panel;
+    userSelectTimer = lv_timer_create(userSelectTimeoutCb, USER_SELECT_TIMEOUT_MS, this);
+    return true;
+}
+
+void DefaultUI::closeUserSelect() {
+    if (userSelectTimer != nullptr) {
+        lv_timer_del(userSelectTimer);
+        userSelectTimer = nullptr;
+    }
+    if (userSelect != nullptr) {
+        lv_obj_del_async(userSelect); // may be called from one of its own event handlers
+        userSelect = nullptr;
+    }
+}
+
+void DefaultUI::wakeAs(int userIndex) {
+    closeUserSelect();
+    controller->setActiveUser(userIndex);
+    changeScreen(SCREEN_ID_BREW_SCREEN);
+    controller->deactivate();
+    controller->setMode(MODE_BREW);
 }

@@ -12,6 +12,9 @@ void action_on_wakeup(lv_event_t *e) {
         !controller.isReady()) {
         return;
     }
+    if (controller.getUI()->showUserSelect()) {
+        return; // the person tapped on the picker wakes the machine (DefaultUI::wakeAs)
+    }
     controller.getUI()->changeScreen(SCREEN_ID_BREW_SCREEN);
     controller.deactivate();
     controller.setMode(MODE_BREW);

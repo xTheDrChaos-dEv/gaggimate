@@ -451,6 +451,8 @@ enum Themes {
     THEME_ID_DARK,
     THEME_ID_LIGHT,
     THEME_ID_AMOLED_DARK,
+    THEME_ID_OLIVE,
+    THEME_ID_PURPLE,
 };
 enum Colors {
     COLOR_ID_NICE_WHITE,
@@ -464,7 +466,7 @@ enum Colors {
     COLOR_ID_WARNING,
 };
 void change_color_theme(uint32_t themeIndex);
-extern uint32_t theme_colors[3][9];
+extern uint32_t theme_colors[5][9];
 
 #ifdef __cplusplus
 }

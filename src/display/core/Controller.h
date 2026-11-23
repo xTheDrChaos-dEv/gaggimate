@@ -36,6 +36,8 @@ enum SystemState {
 };
 const char *systemStateKey(SystemState state);
 
+#include <display/core/Users.h>
+
 class Controller {
   public:
     Controller() = default;
@@ -131,6 +133,13 @@ class Controller {
     void deactivateGrind();
     void activateStandby();
     void deactivateStandby();
+
+    // People who share the machine. Switching stores the live defaults for the person leaving and restores the
+    // other's; it is refused while a process runs.
+    std::vector<MachineUser> getUsers() const;
+    bool isUserSelectOnWake() const; // at least two people and the setting is on
+    bool setActiveUser(int index);
+    void updateUsers(const std::vector<MachineUser> &edited); // from the settings page
     void onOTAUpdate();
     void onScreenReady();
     void onTargetToggle();

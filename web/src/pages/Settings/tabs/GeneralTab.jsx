@@ -1,4 +1,5 @@
 import { grindAvailable } from '../../../utils/grind.js';
+import { UsersCard } from '../UsersCard.jsx';
 import { computed } from '@preact/signals';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -84,6 +85,7 @@ function PasswordField({ id, label, placeholder, value, onChange, shown, setShow
 export function GeneralTab({
   formData,
   onChange,
+  setField,
   profiles,
   currentTheme,
   setCurrentTheme,
@@ -98,6 +100,10 @@ export function GeneralTab({
   const flushDuration = Math.min(20, Math.round(Number(formData.flushDuration ?? 5) / 5) * 5);
   return (
     <div className='space-y-4 sm:space-y-6 lg:grid lg:grid-cols-2 lg:gap-4'>
+      {/* People who share the machine */}
+      <Section title={t`People`} className='h-full'>
+        <UsersCard formData={formData} setField={setField} onChange={onChange} />
+      </Section>
       {/* User Preferences */}
       <Section title={t`User Preferences`} className='h-full'>
         <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
@@ -267,10 +273,25 @@ export function GeneralTab({
                 name='themeMode'
                 className='select select-bordered w-full'
                 value={formData.themeMode}
-                onChange={onChange('themeMode')}
+                onChange={e => {
+                  onChange('themeMode')(e);
+                  // The live display theme belongs to whoever is brewing now.
+                  const people = Array.isArray(formData.users) ? formData.users : [];
+                  const active = Number(formData.activeUser ?? 0);
+                  if (people[active]) {
+                    setField(
+                      'users',
+                      people.map((person, i) =>
+                        i === active ? { ...person, theme: Number(e.target.value) } : person,
+                      ),
+                    );
+                  }
+                }}
               >
                 <option value={0}>{t`Dark Theme`}</option>
                 <option value={1}>{t`Light Theme`}</option>
+                <option value={3}>{t({ message: 'Olive', context: 'theme' })}</option>
+                <option value={4}>{t({ message: 'Purple', context: 'theme' })}</option>
               </select>
             </SettingsFormField>
             {pressureAvailable.value && (
@@ -375,8 +396,13 @@ export function GeneralTab({
                 }}
               >
                 <option value='system'>{t({ message: 'System', context: 'theme' })}</option>
+                <option value='machine'>
+                  {t({ message: 'Match the machine', context: 'theme' })}
+                </option>
                 <option value='light'>{t({ message: 'Light', context: 'theme' })}</option>
                 <option value='dark'>{t({ message: 'Dark', context: 'theme' })}</option>
+                <option value='olive'>{t({ message: 'Olive', context: 'theme' })}</option>
+                <option value='purple'>{t({ message: 'Purple', context: 'theme' })}</option>
                 <option value='coffee'>{t({ message: 'Coffee', context: 'theme' })}</option>
                 <option value='nord'>Nord</option>
               </select>

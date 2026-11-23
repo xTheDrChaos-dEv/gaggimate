@@ -1,5 +1,6 @@
 import './style.css';
-import { initializeTheme } from './utils/themeManager.js';
+import { initializeTheme, setMachineTheme } from './utils/themeManager.js';
+import { webThemeForDisplayTheme } from './utils/people.js';
 import { I18nProvider } from '@lingui/react';
 import { activateLocale, i18n } from './i18n.js';
 import { isApp } from './app/platform.js';
@@ -19,7 +20,8 @@ import { useEffect, useState } from 'preact/hooks';
 import { LocationProvider, Router, Route, ErrorBoundary, useLocation } from 'preact-iso';
 import lazy from 'preact-iso/lazy';
 
-import ApiService, { ApiServiceContext } from './services/ApiService.js';
+import ApiService, { ApiServiceContext, machine } from './services/ApiService.js';
+import { effect } from '@preact/signals';
 import { Navigation } from './components/Navigation.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons/faBars';
@@ -170,6 +172,11 @@ async function boot() {
   apiService.connect();
   // Must be called before render
   initializeTheme();
+  // The "match the machine" web theme follows the display theme of whoever is brewing.
+  effect(() => {
+    const displayTheme = machine.value.status.displayTheme;
+    if (Number.isInteger(displayTheme)) setMachineTheme(webThemeForDisplayTheme(displayTheme));
+  });
   await activateLocale();
   render(
     <I18nProvider i18n={i18n}>

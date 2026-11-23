@@ -225,6 +225,8 @@ export default class ApiService {
     map('m', 'mode');
     map('p', 'selectedProfile');
     map('puid', 'selectedProfileId');
+    map('usr', 'activeUserName'); // who is brewing; '' without people set up
+    map('thm', 'displayTheme');
     map('bt', 'brewTarget', v => !!v);
     map('btd', 'brewTargetDuration', v => v || 0);
     map('bta', 'volumetricAvailable', v => v || false);

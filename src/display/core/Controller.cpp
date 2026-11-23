@@ -1390,6 +1390,75 @@ void Controller::deactivateStandby() {
     setMode(MODE_BREW);
 }
 
+std::vector<MachineUser> Controller::getUsers() const { return users::parse(settings.getUsersConfig()); }
+
+bool Controller::isUserSelectOnWake() const { return settings.isUsersAskOnWake() && getUsers().size() >= 2; }
+
+// The live settings are always the active person's; this copies them into that person's stored entry.
+static void storeLiveDefaults(MachineUser &user, const Settings &settings) {
+    user.hasDefaults = true;
+    user.theme = settings.getThemeMode();
+    user.selectedProfile = settings.getSelectedProfile();
+    user.favorites = settings.getFavoritedProfiles();
+    user.volumetricTarget = settings.isVolumetricTarget();
+    user.steamTemp = settings.getTargetSteamTemp();
+    user.waterTemp = settings.getTargetWaterTemp();
+    user.grindVolume = settings.getTargetGrindVolume();
+    user.grindDuration = settings.getTargetGrindDuration();
+}
+
+bool Controller::setActiveUser(int index) {
+    std::vector<MachineUser> list = getUsers();
+    if (index < 0 || index >= static_cast<int>(list.size()) || isActive()) {
+        return false;
+    }
+    const int current = settings.getActiveUser();
+    const bool changing = current != index;
+    if (changing && current >= 0 && current < static_cast<int>(list.size())) {
+        storeLiveDefaults(list[current], settings);
+    }
+    const MachineUser &next = list[index];
+    settings.setActiveUser(index);
+    settings.setThemeMode(next.theme);
+    if (changing && next.hasDefaults) {
+        settings.setFavoritedProfiles(next.favorites);
+        settings.setVolumetricTarget(next.volumetricTarget);
+        if (next.steamTemp > 0)
+            settings.setTargetSteamTemp(next.steamTemp);
+        if (next.waterTemp > 0)
+            settings.setTargetWaterTemp(next.waterTemp);
+        if (next.grindVolume > 0.0)
+            settings.setTargetGrindVolume(next.grindVolume);
+        if (next.grindDuration > 0)
+            settings.setTargetGrindDuration(next.grindDuration);
+        if (next.selectedProfile.length() > 0)
+            profileManager->selectProfile(next.selectedProfile);
+    }
+    settings.setUsersConfig(users::serialize(list));
+    pluginManager->trigger("controller:user:change", "index", index);
+    return true;
+}
+
+void Controller::updateUsers(const std::vector<MachineUser> &edited) {
+    std::vector<MachineUser> stored = getUsers();
+    const int current = settings.getActiveUser();
+    String activeName;
+    if (current >= 0 && current < static_cast<int>(stored.size())) {
+        activeName = stored[current].name;
+        storeLiveDefaults(stored[current], settings);
+    }
+    const std::vector<MachineUser> merged = users::merge(stored, edited);
+    int active = activeName.length() > 0 ? users::indexOf(merged, activeName) : -1;
+    if (active < 0) {
+        active = 0;
+    }
+    settings.setUsersConfig(users::serialize(merged));
+    settings.setActiveUser(active);
+    if (!merged.empty()) {
+        settings.setThemeMode(merged[active].theme); // the theme picked for the active person applies at once
+    }
+}
+
 bool Controller::isActive() const {
     std::lock_guard<std::recursive_mutex> guard(processMutex);
     return isActiveLocked();

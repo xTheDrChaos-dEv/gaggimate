@@ -21,6 +21,10 @@ import { ExtendedProfileChart } from '../../components/ExtendedProfileChart.jsx'
 import { useConfirmAction } from '../../hooks/useConfirmAction.js';
 import { ProfileAddCard } from './ProfileAddCard.jsx';
 import { ApiServiceContext, machine } from '../../services/ApiService.js';
+import { fetchPeople, initialOf, savePeople } from '../../utils/people.js';
+import { faShareFromSquare } from '@fortawesome/free-solid-svg-icons/faShareFromSquare';
+import { faLock } from '@fortawesome/free-solid-svg-icons/faLock';
+import { faLockOpen } from '@fortawesome/free-solid-svg-icons/faLockOpen';
 import {
   useCallback,
   useContext,
@@ -97,6 +101,10 @@ function ProfileCard({
   onSelect,
   onSetFavorite,
   onDuplicate,
+  otherPeople = [],
+  onSendCopy,
+  isPrivate = false,
+  onTogglePrivate,
   pending,
   favoriteDisabled,
   unfavoriteDisabled,
@@ -423,6 +431,45 @@ function ProfileCard({
                             </span>
                           </button>
                         </li>
+                        {!isSystem &&
+                          otherPeople.map(person => (
+                            <li role='none' key={`send-${person.index}`}>
+                              <button
+                                role='menuitem'
+                                onClick={() => {
+                                  onSendCopy(data.id, person.index);
+                                  closeMenu();
+                                }}
+                                disabled={busy}
+                                className='text-primary justify-start'
+                                aria-label={t`Send a copy of ${label} to ${person.name}`}
+                              >
+                                <FontAwesomeIcon icon={faShareFromSquare} />
+                                <span>{t`Send a copy to ${person.name}`}</span>
+                              </button>
+                            </li>
+                          ))}
+                        {!isSystem && onTogglePrivate && (
+                          <li role='none'>
+                            <button
+                              role='menuitem'
+                              onClick={() => {
+                                onTogglePrivate(data.id);
+                                closeMenu();
+                              }}
+                              disabled={busy}
+                              className='justify-start'
+                              aria-label={
+                                isPrivate
+                                  ? t`Share ${label} with everyone`
+                                  : t`Keep ${label} to yourself`
+                              }
+                            >
+                              <FontAwesomeIcon icon={isPrivate ? faLock : faLockOpen} />
+                              <span>{isPrivate ? t`Share with everyone` : t`Keep to myself`}</span>
+                            </button>
+                          </li>
+                        )}
                         {!isSystem && (
                           <li role='none'>
                             <button
@@ -519,6 +566,41 @@ function ProfileCard({
                       )}
                     </button>
                   </Tooltip>
+                  {!isSystem &&
+                    otherPeople.map(person => (
+                      <Tooltip key={person.index} content={t`Send a copy to ${person.name}`}>
+                        <button
+                          onClick={() => onSendCopy(data.id, person.index)}
+                          disabled={busy}
+                          className='btn btn-sm btn-ghost text-primary gap-1'
+                          aria-label={t`Send a copy of ${label} to ${person.name}`}
+                        >
+                          <FontAwesomeIcon icon={faShareFromSquare} />
+                          <span className='text-xs font-bold'>{initialOf(person.name)}</span>
+                        </button>
+                      </Tooltip>
+                    ))}
+                  {!isSystem && onTogglePrivate && (
+                    <Tooltip
+                      content={
+                        isPrivate
+                          ? t`Only you see this profile. Tap to share it with everyone.`
+                          : t`Everyone sees this profile. Tap to keep it to yourself.`
+                      }
+                    >
+                      <button
+                        onClick={() => onTogglePrivate(data.id)}
+                        disabled={busy}
+                        className='btn btn-sm btn-ghost'
+                        aria-label={
+                          isPrivate ? t`Share ${label} with everyone` : t`Keep ${label} to yourself`
+                        }
+                        aria-pressed={isPrivate}
+                      >
+                        <FontAwesomeIcon icon={isPrivate ? faLock : faLockOpen} />
+                      </button>
+                    </Tooltip>
+                  )}
                   {!isSystem && (
                     <Tooltip
                       content={
@@ -720,6 +802,7 @@ export function ProfileList() {
   const apiService = useContext(ApiServiceContext);
   const {
     profiles,
+    profiles: allProfiles,
     loading,
     invalidate: invalidateProfiles,
     setLoading,
@@ -779,7 +862,36 @@ export function ProfileList() {
   }, [apiService]);
 
   // Filtered profiles
+  // People who share the machine: a profile on someone else's private list is hidden from the active person.
+  const [people, setPeople] = useState({ users: [], activeUser: 0 });
+  useEffect(() => {
+    fetchPeople()
+      .then(setPeople)
+      .catch(() => {});
+  }, []);
+  const hiddenIds = useMemo(
+    () =>
+      new Set(
+        people.users.flatMap((person, i) =>
+          i === people.activeUser ? [] : (person.private ?? []),
+        ),
+      ),
+    [people],
+  );
+  const privateIds = useMemo(
+    () => new Set(people.users[people.activeUser]?.private ?? []),
+    [people],
+  );
+  const otherPeople = useMemo(
+    () =>
+      people.users
+        .map((person, index) => ({ ...person, index }))
+        .filter(person => person.index !== people.activeUser),
+    [people],
+  );
+
   const profilesToShow = useMemo(() => {
+    const profiles = allProfiles.filter(profile => !hiddenIds.has(profile.id));
     // Apply search filter
     if (searchTerm.trim()) {
       const search = searchTerm.toLowerCase().trim();
@@ -790,7 +902,7 @@ export function ProfileList() {
       );
     }
     return profiles;
-  }, [profiles, searchTerm]);
+  }, [allProfiles, hiddenIds, searchTerm]);
 
   const clearDropHighlights = useCallback(() => {
     if (!containerRef.current) return;
@@ -1043,6 +1155,57 @@ export function ProfileList() {
     [apiService, invalidateProfiles, withPending],
   );
 
+  // Gives another person their own independent copy: saved as a new profile and put on their private list.
+  const onSendCopy = useCallback(
+    (id, targetIndex) =>
+      withPending(id, 'duplicate', async () => {
+        const original = profilesRef.current.find(p => p.id === id);
+        if (original) {
+          const copy = { ...original };
+          delete copy.id;
+          delete copy.selected;
+          delete copy.favorite;
+          try {
+            const response = await apiService.request({ tp: 'req:profiles:save', profile: copy });
+            const newId = response?.profile?.id;
+            if (newId) {
+              const current = await fetchPeople();
+              const users = current.users.map((person, i) =>
+                i === targetIndex
+                  ? { ...person, private: [...(person.private ?? []), newId] }
+                  : person,
+              );
+              await savePeople(users);
+              setPeople({ ...current, users });
+            }
+          } catch {
+            // Resynced below.
+          }
+        }
+        await invalidateProfiles();
+      }),
+    [apiService, invalidateProfiles, withPending],
+  );
+
+  // Moves a profile on or off the active person's private list.
+  const onTogglePrivate = useCallback(async id => {
+    try {
+      const current = await fetchPeople();
+      const users = current.users.map((person, i) => {
+        if (i !== current.activeUser) return person;
+        const mine = person.private ?? [];
+        return {
+          ...person,
+          private: mine.includes(id) ? mine.filter(p => p !== id) : [...mine, id],
+        };
+      });
+      await savePeople(users);
+      setPeople({ ...current, users });
+    } catch {
+      // Left as it was; the next visit reloads the lists.
+    }
+  }, []);
+
   const onExport = useCallback(async () => {
     const exportedProfiles = [];
     for (const p of profiles) {
@@ -1209,6 +1372,10 @@ export function ProfileList() {
               unfavoriteDisabled={unfavoriteDisabled}
               onSetFavorite={setFavorite}
               onDuplicate={onDuplicate}
+              otherPeople={otherPeople}
+              onSendCopy={onSendCopy}
+              isPrivate={privateIds.has(data.id)}
+              onTogglePrivate={people.users.length >= 2 ? onTogglePrivate : undefined}
               disabledDrag={!!searchTerm.trim()}
               isDragging={isDragging}
               onMoveTop={moveProfileTop}

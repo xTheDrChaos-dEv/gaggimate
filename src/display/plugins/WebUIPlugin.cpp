@@ -663,6 +663,8 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
                 settings->setSteamPumpCutoff(request->arg("steamPumpCutoff").toFloat());
             if (request->hasArg("themeMode"))
                 settings->setThemeMode(request->arg("themeMode").toInt());
+            if (request->hasArg("usersAskOnWake"))
+                settings->setUsersAskOnWake(parseBoolArg(request->arg("usersAskOnWake")));
             if (request->hasArg("statusDisplayMode"))
                 settings->setStatusDisplayMode(request->arg("statusDisplayMode").toInt());
             if (request->hasArg("albaRefillInterlock"))
@@ -743,6 +745,15 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
             }
             saved = settings->save(true);
         });
+        // People who share the machine: the edited list (names, themes, private profile ids) and who is active.
+        // Handled after the batch above so the switch sees the just-saved values; stored defaults are kept by
+        // name (see Controller::updateUsers).
+        if (request->hasArg("users"))
+            controller->updateUsers(users::parse(request->arg("users")));
+        if (request->hasArg("activeUser"))
+            controller->setActiveUser(request->arg("activeUser").toInt());
+        if (request->hasArg("users") || request->hasArg("activeUser"))
+            controller->getSettings().save(true);
         if (!saved) {
             JsonDocument failure;
             failure["error"] = (profileError.isEmpty() ? controller->getSettings().getSaveError() : profileError) +
@@ -875,6 +886,20 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
     doc["steamPumpPercentage"] = settings.getSteamPumpPercentage();
     doc["steamPumpCutoff"] = settings.getSteamPumpCutoff();
     doc["themeMode"] = settings.getThemeMode();
+    {
+        JsonArray people = doc["users"].to<JsonArray>();
+        for (const MachineUser &user : controller->getUsers()) {
+            JsonObject item = people.add<JsonObject>();
+            item["name"] = user.name;
+            item["theme"] = user.theme;
+            JsonArray privateIds = item["private"].to<JsonArray>();
+            for (const String &id : user.privateProfiles) {
+                privateIds.add(id);
+            }
+        }
+        doc["usersAskOnWake"] = settings.isUsersAskOnWake();
+        doc["activeUser"] = settings.getActiveUser();
+    }
     doc["statusDisplayMode"] = settings.getStatusDisplayMode();
     doc["albaRefillInterlock"] = settings.getAlbaRefillInterlock();
     doc["sunriseIdle"] = settings.getSunriseIdle();

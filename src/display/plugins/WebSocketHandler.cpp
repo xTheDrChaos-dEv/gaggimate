@@ -417,6 +417,13 @@ void WebSocketHandler::publishState(unsigned long now) {
     const Profile &profile = controller->getProfileManager()->getSelectedProfile();
     doc["p"] = profile.label;
     doc["puid"] = profile.id;
+    {
+        // Who is brewing (empty without users) and the display theme, so the web UI can follow both.
+        const std::vector<MachineUser> people = controller->getUsers();
+        const int active = controller->getSettings().getActiveUser();
+        doc["usr"] = active >= 0 && active < static_cast<int>(people.size()) ? people[active].name : String("");
+        doc["thm"] = controller->getSettings().getThemeMode();
+    }
     const auto &caps = controller->getSystemInfo().capabilities;
     doc["sa"] = controller->isSteamHeaterActive();
     doc["sca"] = controller->isSteamControlsAvailable();
