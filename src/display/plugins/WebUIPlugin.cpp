@@ -581,6 +581,8 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
                 settings->setSmartGrindIp(request->arg("smartGrindIp"));
             if (request->hasArg("tomUploadActive"))
                 settings->setTomUploadActive(parseBoolArg(request->arg("tomUploadActive")));
+            if (request->hasArg("tomSendUnweighed"))
+                settings->setTomSendUnweighed(parseBoolArg(request->arg("tomSendUnweighed")));
             // The TOM project is write-only through the API: it can be set, but is never sent back.
             if (request->hasArg("tomProject") && request->arg("tomProject").length() > 0)
                 settings->setTomProject(request->arg("tomProject"));
@@ -850,6 +852,7 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
     doc["smartGrindActive"] = settings.isSmartGrindActive();
     doc["smartGrindIp"] = settings.getSmartGrindIp();
     doc["tomUploadActive"] = settings.isTomUploadActive();
+    doc["tomSendUnweighed"] = settings.isTomSendUnweighed();
     // The household code unlocks the whole TOM household, so the API only says whether one is saved.
     doc["tomHousehold"] = settings.getTomHousehold().length() > 0 ? "---unchanged---" : "";
     doc["tomStatus"] = settings.isTomUploadActive() ? TomUploadPlugin::status() : String("Off");

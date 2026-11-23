@@ -21,8 +21,11 @@ static constexpr const char *STATE_DIR = "/tom";
 static constexpr const char *QUEUE_PATH = "/tom/queue.txt";
 static constexpr const char *AUTH_PATH = "/tom/auth.txt"; // refresh token only; LittleFS, never the removable SD card
 static constexpr unsigned long POLL_MS = 2000;
-// mbedTLS needs roughly 40-50 KB of internal RAM for one handshake; below this, wait instead of failing mid-way.
-static constexpr size_t MIN_INTERNAL_BLOCK = 36 * 1024;
+// TLS itself runs from PSRAM on this firmware (WebUIPlugin points mbedTLS at it), so an upload only needs a little
+// internal RAM for the HTTP client and sockets. Asking for a 36 KB block, as this did at first, kept shots back
+// whenever a Bluetooth scale or a phone was connected and the internal heap was in smaller pieces.
+static constexpr size_t MIN_INTERNAL_BLOCK = 8 * 1024;
+static constexpr unsigned long MEMORY_RECHECK_MS = 10000;
 static constexpr uint32_t TASK_STACK = 10 * 1024;
 
 namespace {
@@ -210,7 +213,10 @@ void TomUploadPlugin::step() {
     }
     const size_t largest = heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
     if (largest < MIN_INTERNAL_BLOCK) {
-        failed("Low memory (" + String(largest / 1024) + " KB block free)");
+        // Not a failed try: nothing was sent, so look again shortly instead of backing off for minutes.
+        nextTryAt = millis() + MEMORY_RECHECK_MS;
+        setStatus("Waiting for free memory (" + String(largest / 1024) + " KB block), " + String(pending) +
+                  (pending == 1 ? " shot" : " shots") + " queued");
         return;
     }
     if (uploadHead(head, household)) {
@@ -242,7 +248,7 @@ bool TomUploadPlugin::uploadHead(uint32_t shotId, const std::string &household) 
         setStatus("Shot " + String(shotId) + " skipped: not a shot file");
         return true;
     }
-    const tom::Skip skip = tom::shouldSkip(meta);
+    const tom::Skip skip = tom::shouldSkip(meta, !controller->getSettings().isTomSendUnweighed());
     if (skip != tom::Skip::NONE) {
         ESP_LOGI(TAG, "Shot %u not sent: %s", shotId, tom::skipText(skip));
         setStatus("Shot " + String(shotId) + " not sent: " + tom::skipText(skip));

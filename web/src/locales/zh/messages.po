@@ -343,6 +343,10 @@ msgstr "Nightly 的全部更改"
 msgid "All Shots"
 msgstr "全部萃取"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Also send shots with nothing on the scale (for brewing without a scale)"
+msgstr ""
+
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Alt Relay / SSR2 Function"
 msgstr "备用继电器 / SSR2 功能"
@@ -1698,7 +1702,7 @@ msgid "e.g., Single Origin, Blend"
 msgstr "例如单品、拼配"
 
 #: src/pages/Settings/PluginCard.jsx
-msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
+msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles, shots under 5 s and shots with nothing on the scale are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
 msgstr ""
 
 #: src/pages/Settings/UsersCard.jsx

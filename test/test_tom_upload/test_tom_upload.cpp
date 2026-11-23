@@ -11,7 +11,9 @@ using namespace tom;
 void setUp() {}
 void tearDown() {}
 
-static std::vector<uint8_t> makeSlog(const char *profile, uint32_t durationMs, uint32_t startEpoch, size_t samples) {
+// finalWeightTenths: what the scale ended on, in 0.1 g (36.0 g unless a test says otherwise).
+static std::vector<uint8_t> makeSlog(const char *profile, uint32_t durationMs, uint32_t startEpoch, size_t samples,
+                                     uint16_t finalWeightTenths = 360) {
     ShotLogHeader h{};
     h.magic = SHOT_LOG_MAGIC;
     h.version = SHOT_LOG_VERSION;
@@ -22,6 +24,7 @@ static std::vector<uint8_t> makeSlog(const char *profile, uint32_t durationMs, u
     h.sampleCount = samples;
     h.durationMs = durationMs;
     h.startEpoch = startEpoch;
+    h.finalWeight = finalWeightTenths;
     strncpy(h.profileName, profile, sizeof(h.profileName) - 1);
     std::vector<uint8_t> bytes(sizeof(h) + samples * SHOT_LOG_SAMPLE_SIZE, 0);
     memcpy(bytes.data(), &h, sizeof(h));
@@ -75,6 +78,30 @@ void test_filters_like_tom() {
     m.utility = false;
     m.size = MAX_SLOG_BYTES + 1;
     TEST_ASSERT_TRUE(shouldSkip(m) == Skip::TOO_BIG);
+}
+
+static ShotMeta weighing(uint16_t tenths, uint32_t durationMs = 30000) {
+    std::vector<uint8_t> bytes = makeSlog("Classic 9 bar", durationMs, 1795000000, 4, tenths);
+    ShotMeta m;
+    TEST_ASSERT_TRUE(readSlogHeader(bytes.data(), bytes.size(), 42, m));
+    return m;
+}
+
+// A shot that put nothing on the scale (test run, choked or aborted shot) stays home unless the owner brews
+// without a scale and has said so.
+void test_empty_cup_is_not_sent() {
+    TEST_ASSERT_EQUAL_FLOAT(38.1f, weighing(381).finalWeightG);
+    TEST_ASSERT_TRUE(shouldSkip(weighing(381)) == Skip::NONE);
+    TEST_ASSERT_TRUE(shouldSkip(weighing(0)) == Skip::NO_WEIGHT);
+    TEST_ASSERT_TRUE(shouldSkip(weighing(9)) == Skip::NO_WEIGHT); // 0.9 g: drips, not a shot
+    TEST_ASSERT_TRUE(shouldSkip(weighing(10)) == Skip::NONE);
+    TEST_ASSERT_TRUE(shouldSkip(weighing(0), false) == Skip::NONE); // "also send shots with nothing on the scale"
+    // The 9.8 s shot with no weight from the bug report, and a long one with no weight.
+    TEST_ASSERT_TRUE(shouldSkip(weighing(0, 9800)) == Skip::NO_WEIGHT);
+    TEST_ASSERT_TRUE(shouldSkip(weighing(0, 74800)) == Skip::NO_WEIGHT);
+    // Earlier reasons still win, so the status line names the more basic one.
+    TEST_ASSERT_TRUE(shouldSkip(weighing(0, 3000)) == Skip::TOO_SHORT);
+    TEST_ASSERT_EQUAL_STRING("nothing on the scale", skipText(Skip::NO_WEIGHT));
 }
 
 void test_household_code() {
@@ -183,7 +210,7 @@ void test_outcomes() {
     TEST_ASSERT_EQUAL_UINT32(0, retryDelayMs(0));
     TEST_ASSERT_EQUAL_UINT32(30000, retryDelayMs(1));
     TEST_ASSERT_EQUAL_UINT32(60000, retryDelayMs(2));
-    TEST_ASSERT_EQUAL_UINT32(30 * 60 * 1000, retryDelayMs(50));
+    TEST_ASSERT_EQUAL_UINT32(5 * 60 * 1000, retryDelayMs(50));
 }
 
 void test_queue() {
@@ -206,6 +233,7 @@ int main() {
     UNITY_BEGIN();
     RUN_TEST(test_reads_header);
     RUN_TEST(test_filters_like_tom);
+    RUN_TEST(test_empty_cup_is_not_sent);
     RUN_TEST(test_household_code);
     RUN_TEST(test_base64_and_time);
     RUN_TEST(test_urls);

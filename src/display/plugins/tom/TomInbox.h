@@ -12,6 +12,7 @@
 namespace tom {
 
 constexpr uint32_t MIN_DURATION_MS = 5000;   // TOM ignores shorter shots, so they are never sent
+constexpr float MIN_WEIGHT_G = 1.0f;         // less than this on the scale counts as an empty cup
 constexpr size_t MAX_SLOG_BYTES = 256 * 1024; // keeps the document far below Firestore's 1 MB limit
 constexpr size_t MAX_QUEUE = 20;              // pending shots kept while offline; the oldest drop first
 
@@ -19,18 +20,21 @@ struct ShotMeta {
     uint32_t shotId = 0;
     uint32_t startEpoch = 0; // seconds; 0 when the clock was not set
     uint32_t durationMs = 0;
+    float finalWeightG = 0.0f; // highest weight the scale showed (what Shot History lists); 0 without a scale reading
     std::string profileName;
     size_t size = 0;
     bool utility = false; // the brew process ran a utility (flush/backflush/descale) profile
 };
 
-enum class Skip { NONE, NOT_A_SHOT, UTILITY, TOO_SHORT, TOO_BIG };
+enum class Skip { NONE, NOT_A_SHOT, UTILITY, TOO_SHORT, TOO_BIG, NO_WEIGHT };
 
 // Reads the fixed .slog header (shot_log_format.h). False when the bytes are not a shot log.
 bool readSlogHeader(const uint8_t *bytes, size_t len, uint32_t shotId, ShotMeta &out);
 
 // Same rules as TOM's inboxIgnored(): utility profiles, cleaning-like names and anything under 5 s stay home.
-Skip shouldSkip(const ShotMeta &meta);
+// With requireWeight, so does a shot that put nothing on the scale: a test run, a choked or aborted shot, or
+// water run through an empty basket is not coffee anyone wants to log.
+Skip shouldSkip(const ShotMeta &meta, bool requireWeight = true);
 bool isUtilityName(const std::string &profileName);
 const char *skipText(Skip skip);
 
@@ -86,7 +90,7 @@ std::vector<uint32_t> parseQueue(const std::string &text);
 // Appends unless already queued; drops the oldest beyond MAX_QUEUE. False when it was already there.
 bool enqueue(std::vector<uint32_t> &ids, uint32_t shotId);
 
-// Wait before the next try after `failures` failures in a row: 30 s doubling to 30 min.
+// Wait before the next try after `failures` failures in a row: 30 s doubling to 5 min.
 uint32_t retryDelayMs(uint32_t failures);
 
 } // namespace tom

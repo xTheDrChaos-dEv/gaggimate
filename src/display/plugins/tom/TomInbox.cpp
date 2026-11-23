@@ -68,6 +68,7 @@ bool readSlogHeader(const uint8_t *bytes, size_t len, uint32_t shotId, ShotMeta 
     out.shotId = shotId;
     out.startEpoch = header.startEpoch;
     out.durationMs = header.durationMs;
+    out.finalWeightG = static_cast<float>(header.finalWeight) / 10.0f;
     out.profileName = std::string(header.profileName, strnlen(header.profileName, sizeof(header.profileName)));
     out.size = len;
     return true;
@@ -90,7 +91,7 @@ bool isUtilityName(const std::string &profileName) {
     return false;
 }
 
-Skip shouldSkip(const ShotMeta &meta) {
+Skip shouldSkip(const ShotMeta &meta, bool requireWeight) {
     if (meta.utility || isUtilityName(meta.profileName)) {
         return Skip::UTILITY;
     }
@@ -99,6 +100,9 @@ Skip shouldSkip(const ShotMeta &meta) {
     }
     if (meta.size > MAX_SLOG_BYTES) {
         return Skip::TOO_BIG;
+    }
+    if (requireWeight && meta.finalWeightG < MIN_WEIGHT_G) {
+        return Skip::NO_WEIGHT;
     }
     return Skip::NONE;
 }
@@ -115,6 +119,8 @@ const char *skipText(Skip skip) {
         return "shorter than 5 s";
     case Skip::TOO_BIG:
         return "file too large";
+    case Skip::NO_WEIGHT:
+        return "nothing on the scale";
     }
     return "";
 }
@@ -402,7 +408,7 @@ bool enqueue(std::vector<uint32_t> &ids, uint32_t shotId) {
 
 uint32_t retryDelayMs(uint32_t failures) {
     const uint32_t base = 30000;
-    const uint32_t cap = 30 * 60 * 1000;
+    const uint32_t cap = 5 * 60 * 1000; // a kitchen machine is often switched off again within the half hour
     if (failures == 0) {
         return 0;
     }

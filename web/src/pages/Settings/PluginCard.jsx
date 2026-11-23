@@ -240,10 +240,25 @@ export function PluginCard({
             <p className='text-sm opacity-70'>
               <Trans>
                 Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes,
-                cleaning profiles and shots under 5 s are not sent. Needs internet on this
-                machine&apos;s Wi-Fi. Turning this on takes effect after a restart.
+                cleaning profiles, shots under 5 s and shots with nothing on the scale are not
+                sent. Needs internet on this machine&apos;s Wi-Fi. Turning this on takes effect
+                after a restart.
               </Trans>
             </p>
+            <label className='flex cursor-pointer items-center gap-3'>
+              <input
+                id='tomSendUnweighed'
+                name='tomSendUnweighed'
+                value='tomSendUnweighed'
+                type='checkbox'
+                className='toggle toggle-primary toggle-sm'
+                checked={!!formData.tomSendUnweighed}
+                onChange={onChange('tomSendUnweighed')}
+              />
+              <span className='text-sm'>
+                <Trans>Also send shots with nothing on the scale (for brewing without a scale)</Trans>
+              </span>
+            </label>
             <div className='form-control'>
               <label htmlFor='tomHousehold' className='mb-2 block text-sm font-medium'>
                 <Trans>TOM household link</Trans>

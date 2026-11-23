@@ -302,6 +302,8 @@ class Settings {
     String getSmartGrindIp() const { return smartGrindIp.get(); }
     // TOM shot inbox upload (TomUploadPlugin); the household code is a secret, never logged
     bool isTomUploadActive() const { return tomUploadActive.get(); }
+    bool isTomSendUnweighed() const { return tomSendUnweighed.get(); }
+    void setTomSendUnweighed(bool value) { tomSendUnweighed.set(value); }
     String getTomHousehold() const { return tomHousehold.get(); }
     // Which TOM Firebase project this screen sends to; kept here, never in the firmware or the API output
     String getTomProject() const { return tomProject.get(); }
@@ -584,6 +586,7 @@ class Settings {
     Property<int> smartGrindMode{registry, "sg_m", 0};
     Property<String> smartGrindIp{registry, "sg_i", ""};
     Property<bool> tomUploadActive{registry, "tom_a", false};
+    Property<bool> tomSendUnweighed{registry, "tom_nw", false}; // also send shots with nothing on the scale
     Property<String> tomHousehold{registry, "tom_h", ""}; // validated TOM household code (a-z0-9, 24-64)
     Property<String> tomProject{registry, "tom_p", ""};   // TOM Firebase project id
     Property<String> usersConfig{registry, "usr_cfg", ""}; // JSON array, see core/Users.h
