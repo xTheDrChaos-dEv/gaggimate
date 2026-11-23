@@ -94,6 +94,18 @@ void TomUploadPlugin::setStatus(const String &text) {
     statusText = text;
 }
 
+void TomUploadPlugin::seedLocalConfig(Settings &settings) {
+#if defined(TOM_LOCAL_PROJECT_ID) && defined(TOM_LOCAL_WEB_API_KEY)
+    if (settings.getTomProject().length() == 0 || settings.getTomApiKey().length() == 0) {
+        settings.setTomProject(TOM_LOCAL_PROJECT_ID);
+        settings.setTomApiKey(TOM_LOCAL_WEB_API_KEY);
+        ESP_LOGI(TAG, "TOM project stored in settings from the local build");
+    }
+#else
+    (void)settings;
+#endif
+}
+
 void TomUploadPlugin::setup(Controller *c, PluginManager *pm) {
     controller = c;
 #ifdef GAGGIMATE_SIM
@@ -102,16 +114,6 @@ void TomUploadPlugin::setup(Controller *c, PluginManager *pm) {
     networkAvailable = emulator != nullptr && emulator[0] != '\0';
     if (networkAvailable) {
         endpoints = tom::Endpoints::local(emulator);
-    }
-#endif
-#if defined(TOM_LOCAL_PROJECT_ID) && defined(TOM_LOCAL_WEB_API_KEY)
-    {
-        Settings &settings = controller->getSettings();
-        if (settings.getTomProject().length() == 0 || settings.getTomApiKey().length() == 0) {
-            settings.setTomProject(TOM_LOCAL_PROJECT_ID);
-            settings.setTomApiKey(TOM_LOCAL_WEB_API_KEY);
-            ESP_LOGI(TAG, "TOM project stored in settings from the local build");
-        }
     }
 #endif
     loadState();

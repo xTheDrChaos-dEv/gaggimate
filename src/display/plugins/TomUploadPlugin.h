@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <display/core/Plugin.h>
+#include <display/core/Settings.h>
 #include <display/plugins/tom/TomInbox.h>
 #include <atomic>
 #include <mutex>
@@ -16,6 +17,10 @@ class TomUploadPlugin : public Plugin {
   public:
     void setup(Controller *controller, PluginManager *pluginManager) override;
     void loop() override;
+
+    // Copies the TOM project from a local build into the settings store. Runs on every start, whether or not the
+    // plugin is switched on, so the details are in place before a published build replaces the local one.
+    static void seedLocalConfig(Settings &settings);
 
     // One line for the web settings card, e.g. "Sent shot 42 at 14:03" or "Waiting for Wi-Fi, 2 shots queued".
     static String status();

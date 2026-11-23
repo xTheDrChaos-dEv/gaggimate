@@ -115,6 +115,7 @@ void Controller::setup() {
     pluginManager->registerPlugin(new ImprovPlugin());
 #endif
     pluginManager->registerPlugin(&ShotHistory);
+    TomUploadPlugin::seedLocalConfig(settings);
     if (settings.isTomUploadActive()) {
         pluginManager->registerPlugin(new TomUploadPlugin()); // after ShotHistory: listens to its saved-shot event
     }
