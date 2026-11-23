@@ -58,7 +58,13 @@ function recoverFromStalePage() {
   }
   return PageLoadFailed;
 }
-const lazy = load => isoLazy(() => load().catch(recoverFromStalePage));
+// A missing part can also arrive as an empty script (the machine answers old file names with a reload script).
+const lazy = load =>
+  isoLazy(() =>
+    load()
+      .then(page => page || recoverFromStalePage())
+      .catch(recoverFromStalePage),
+  );
 
 // Each page lazy-loads as its own Vite chunk so the initial bundle stays small.
 // Chart.js, FontAwesome icon sets, and the analyzer/statistics views are too

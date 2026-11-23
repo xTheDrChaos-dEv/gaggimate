@@ -136,6 +136,18 @@ void WebUIPlugin::serveWebAsset(AsyncWebServerRequest *request) {
         // route, so it is not rewritten.
         asset = findWebAsset(WEB_UI_INDEX_PATH);
     }
+    if (asset == nullptr && path.endsWith(".js")) {
+        // A script this firmware does not have is asked for by a page from before the last update: a phone's
+        // home-screen web app can hold on to the old start page for days and then shows nothing but its background.
+        // Answer with a script that loads the current page instead (once; the page shows a Reload button after that).
+        AsyncResponseStream *response = request->beginResponseStream("application/javascript");
+        response->print(
+            "try{var k='gaggimate-stale-reload',t=+sessionStorage.getItem(k)||0;if(Date.now()-t>20000){"
+            "sessionStorage.setItem(k,String(Date.now()));location.replace(location.pathname+'?r='+Date.now());}}catch(e){}");
+        response->addHeader("Cache-Control", "no-store");
+        request->send(response);
+        return;
+    }
     if (asset == nullptr) {
         request->send(404, "text/plain", "Not found");
         return;
@@ -153,7 +165,9 @@ void WebUIPlugin::serveWebAsset(AsyncWebServerRequest *request) {
     if (path.startsWith("/assets/")) {
         response->addHeader("Cache-Control", "public, max-age=31536000, immutable");
     } else {
-        response->addHeader("Cache-Control", "no-cache");
+        // no-store, not no-cache: the start page must never come from a phone's cache, or an update leaves it
+        // pointing at scripts that are gone.
+        response->addHeader("Cache-Control", strcmp(asset->path, WEB_UI_INDEX_PATH) == 0 ? "no-store" : "no-cache");
     }
     request->send(response);
 }
