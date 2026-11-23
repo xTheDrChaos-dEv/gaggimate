@@ -296,6 +296,33 @@ export function PluginCard({
                 <Trans>Status:</Trans> {formData.tomStatus}
               </p>
             )}
+            {formData.tomQueue && (
+              <p className='text-sm'>
+                <Trans>Waiting to be sent:</Trans> {formData.tomQueue}
+              </p>
+            )}
+            {formData.tomLog && (
+              <div id='tomLog'>
+                <p className='mb-1 text-sm font-medium'>
+                  <Trans>Recent activity</Trans>
+                </p>
+                <ul className='space-y-1 text-xs opacity-80'>
+                  {String(formData.tomLog)
+                    .split('\n')
+                    .filter(Boolean)
+                    .reverse()
+                    .map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                </ul>
+              </div>
+            )}
+            <p className='text-sm opacity-70'>
+              <Trans>
+                A shot that did not arrive can be sent by hand: Shot History, paper plane button
+                on the shot.
+              </Trans>
+            </p>
           </div>
         )}
       </div>

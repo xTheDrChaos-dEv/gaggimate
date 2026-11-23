@@ -8,6 +8,7 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 import { faWeightScale } from '@fortawesome/free-solid-svg-icons/faWeightScale';
 import { faClock } from '@fortawesome/free-solid-svg-icons/faClock';
 import { faUpload } from '@fortawesome/free-solid-svg-icons/faUpload';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons/faPaperPlane';
 import { faStar } from '@fortawesome/free-solid-svg-icons/faStar';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faMinus } from '@fortawesome/free-solid-svg-icons/faMinus';
@@ -30,6 +31,22 @@ export default function HistoryCard({ shot, onDelete, onLoad, onNotesChanged }) 
   const { armed: confirmDelete, armOrRun: confirmOrDelete } = useConfirmAction(4000);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [tomMessage, setTomMessage] = useState('');
+  const [tomBusy, setTomBusy] = useState(false);
+
+  // For a shot that did not reach TOM by itself: the machine queues it first and answers in plain words.
+  const sendToTom = useCallback(async () => {
+    setTomBusy(true);
+    try {
+      const response = await fetch(`/api/tom/resend?id=${shot.id}`, { method: 'post' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const answer = await response.json();
+      setTomMessage(answer.message || '');
+    } catch {
+      setTomMessage(t`The machine did not answer. Check the connection and try again.`);
+    }
+    setTomBusy(false);
+  }, [shot.id, t]);
 
   const date = new Date(shot.timestamp * 1000);
 
@@ -201,6 +218,16 @@ export default function HistoryCard({ shot, onDelete, onLoad, onNotesChanged }) 
                       <FontAwesomeIcon icon={faUpload} />
                     </button>
                   </Tooltip>
+                  <Tooltip content={t`Send to TOM`}>
+                    <button
+                      onClick={sendToTom}
+                      disabled={tomBusy}
+                      className='text-base-content/50 hover:text-primary hover:bg-primary/10 cursor-pointer rounded-md p-2 transition-colors disabled:opacity-40'
+                      aria-label={t`Send this shot to TOM`}
+                    >
+                      <FontAwesomeIcon icon={faPaperPlane} className='h-4 w-4' />
+                    </button>
+                  </Tooltip>
                   <Tooltip content={confirmDelete ? t`Click to confirm delete` : t`Delete`}>
                     <button
                       onClick={() => {
@@ -220,6 +247,12 @@ export default function HistoryCard({ shot, onDelete, onLoad, onNotesChanged }) 
                 </div>
               </div>
             </div>
+
+            {tomMessage && (
+              <p className='text-primary mb-1 text-sm' aria-live='polite'>
+                TOM: {tomMessage}
+              </p>
+            )}
 
             {/* Stats Row */}
             <div className='text-base-content/80 mb-1 flex flex-row items-center gap-4 text-sm'>

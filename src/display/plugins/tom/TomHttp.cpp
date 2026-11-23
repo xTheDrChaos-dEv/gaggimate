@@ -41,7 +41,9 @@ HttpResult httpPost(const std::string &url, const char *contentType, const std::
     }
     esp_err_t err = esp_http_client_open(client, static_cast<int>(body.size()));
     if (err != ESP_OK) {
-        result.error = esp_err_to_name(err);
+        // "ESP_ERR_HTTP_CONNECT" alone covers DNS, TCP and TLS; the socket error narrows it down
+        // (12 = out of memory, 113 = no route, 104 = connection reset, 11 = timed out).
+        result.error = std::string(esp_err_to_name(err)) + ", errno " + std::to_string(esp_http_client_get_errno(client));
         esp_http_client_cleanup(client);
         return result;
     }
@@ -49,7 +51,8 @@ HttpResult httpPost(const std::string &url, const char *contentType, const std::
     while (written < body.size()) {
         const int n = esp_http_client_write(client, body.data() + written, static_cast<int>(body.size() - written));
         if (n <= 0) {
-            result.error = "write failed";
+            result.error = "write failed after " + std::to_string(written) + " of " + std::to_string(body.size()) +
+                           " bytes, errno " + std::to_string(esp_http_client_get_errno(client));
             esp_http_client_close(client);
             esp_http_client_cleanup(client);
             return result;

@@ -24,6 +24,14 @@ class TomUploadPlugin : public Plugin {
 
     // One line for the web settings card, e.g. "Sent shot 42 at 14:03" or "Waiting for Wi-Fi, 2 shots queued".
     static String status();
+    // The last few things that happened, one per line, newest last ("Nov 23 14:03 Shot 260 sent"). Kept across
+    // restarts, because the one status line above is overwritten by the next shot.
+    static String activity();
+    // Shot numbers still waiting, e.g. "260, 261"; "" when nothing waits.
+    static String queued();
+    // Puts a shot from Shot History at the front of the queue, whatever the scale showed. Returns what to tell
+    // the person who asked.
+    static String resend(uint32_t shotId);
 
   private:
     void onShotSaved(uint32_t shotId);
@@ -37,6 +45,7 @@ class TomUploadPlugin : public Plugin {
     void saveQueue();
     void saveAuth();
     void setStatus(const String &text);
+    void saveActivity();
     void failed(const String &why);
     size_t logHeap(const char *when);
 
@@ -48,6 +57,7 @@ class TomUploadPlugin : public Plugin {
 
     std::mutex queueLock;
     std::vector<uint32_t> queue; // shot ids waiting to be sent, oldest first
+    std::vector<uint32_t> byHand; // asked for with resend(): the "nothing on the scale" rule does not apply
     bool queueDirty = false;
 
     tom::Token token;
@@ -55,6 +65,11 @@ class TomUploadPlugin : public Plugin {
     std::atomic<uint32_t> failures{0};   // also reset from the shot-history task
     std::atomic<unsigned long> nextTryAt{0};
     size_t lowestFreeSeen = 0; // lowest internal free heap sampled around the last upload
+    uint32_t currentShot = 0;  // the shot the upload task is working on, for the activity list
+    uint32_t notedShot = 0;    // last failure written to the activity list, so a retry loop adds one line, not hundreds
+    String notedWhy;
+
+    static TomUploadPlugin *instance;
 };
 
 #endif // TOMUPLOADPLUGIN_H

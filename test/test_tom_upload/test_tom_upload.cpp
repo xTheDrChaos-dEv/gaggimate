@@ -229,6 +229,45 @@ void test_queue() {
     TEST_ASSERT_EQUAL_UINT32(110, q.front()); // oldest dropped first
 }
 
+// A profile name cut in the middle of a character (48-byte field) must not make Firestore refuse the shot.
+void test_clean_utf8() {
+    TEST_ASSERT_EQUAL_STRING("Classic 9 bar", cleanUtf8("Classic 9 bar").c_str());
+    TEST_ASSERT_EQUAL_STRING("Caf\xC3\xA9 \xE2\x80\x93 \xF0\x9F\x98\x80", cleanUtf8("Caf\xC3\xA9 \xE2\x80\x93 \xF0\x9F\x98\x80").c_str());
+    TEST_ASSERT_EQUAL_STRING("Caf", cleanUtf8("Caf\xC3").c_str());           // cut after the first byte of two
+    TEST_ASSERT_EQUAL_STRING("9 bar ", cleanUtf8("9 bar \xE2\x80").c_str()); // cut inside a dash
+    TEST_ASSERT_EQUAL_STRING("ab", cleanUtf8("a\xFF\x80" "b").c_str());      // bytes UTF-8 never uses
+    TEST_ASSERT_EQUAL_STRING("", cleanUtf8("\xED\xA0\x80").c_str());        // a UTF-16 surrogate
+    std::vector<uint8_t> bytes = makeSlog("Caf\xC3", 30000, 1795000000, 4);
+    ShotMeta m;
+    TEST_ASSERT_TRUE(readSlogHeader(bytes.data(), bytes.size(), 42, m));
+    TEST_ASSERT_NOT_EQUAL(std::string::npos, documentBody(m, bytes.data(), bytes.size(), "gm").find("\"profile\":{\"stringValue\":\"Caf\"}"));
+}
+
+void test_send_again_and_activity_list() {
+    std::vector<uint32_t> q = {258, 259, 260};
+    enqueueFirst(q, 260); // already waiting: moves to the front, no second copy
+    TEST_ASSERT_EQUAL_STRING("260\n258\n259\n", serializeQueue(q).c_str());
+    enqueueFirst(q, 12); // long gone from the queue
+    TEST_ASSERT_EQUAL_STRING("12\n260\n258\n259\n", serializeQueue(q).c_str());
+    for (uint32_t i = 300; i < 330; i++) {
+        enqueue(q, i);
+    }
+    enqueueFirst(q, 5);
+    TEST_ASSERT_EQUAL(MAX_QUEUE, q.size());
+    TEST_ASSERT_EQUAL_UINT32(5, q.front());
+
+    std::string log;
+    log = appendLogLine(log, "Shot 1 sent");
+    log = appendLogLine(log, "Shot 2 not sent yet:\nOffline");
+    TEST_ASSERT_EQUAL_STRING("Shot 1 sent\nShot 2 not sent yet: Offline\n", log.c_str());
+    for (int i = 3; i < 30; i++) {
+        log = appendLogLine(log, "Shot " + std::to_string(i) + " sent");
+    }
+    TEST_ASSERT_EQUAL(MAX_LOG_LINES, std::count(log.begin(), log.end(), '\n'));
+    TEST_ASSERT_EQUAL(0, log.find("Shot 20 sent\n")); // the oldest lines went
+    TEST_ASSERT_NOT_EQUAL(std::string::npos, log.find("Shot 29 sent\n"));
+}
+
 int main() {
     UNITY_BEGIN();
     RUN_TEST(test_reads_header);
@@ -241,5 +280,7 @@ int main() {
     RUN_TEST(test_token_parsing);
     RUN_TEST(test_outcomes);
     RUN_TEST(test_queue);
+    RUN_TEST(test_clean_utf8);
+    RUN_TEST(test_send_again_and_activity_list);
     return UNITY_END();
 }

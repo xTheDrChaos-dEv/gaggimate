@@ -46,6 +46,9 @@ std::string jsonEscape(const std::string &text);
 // "2026-11-22T14:03:12.000Z"; "" for clocks that were never set (before 2020).
 std::string isoTime(uint32_t epochSeconds, uint32_t extraMs);
 std::string padShotId(uint32_t shotId); // "000042", like ShotHistoryPlugin's file names
+// Drops bytes that are not valid UTF-8, e.g. a profile name cut off in the middle of a character by the fixed
+// 48-byte field in the shot file. Firestore refuses such a document outright (HTTP 400), which lost the shot.
+std::string cleanUtf8(const std::string &text);
 
 // Endpoints. base is "https://" for the real services; the simulator points everything at one local mock.
 struct Endpoints {
@@ -89,6 +92,12 @@ std::string serializeQueue(const std::vector<uint32_t> &ids);
 std::vector<uint32_t> parseQueue(const std::string &text);
 // Appends unless already queued; drops the oldest beyond MAX_QUEUE. False when it was already there.
 bool enqueue(std::vector<uint32_t> &ids, uint32_t shotId);
+// Puts a shot at the front (moving it there when it is already queued): "send this one again, now".
+void enqueueFirst(std::vector<uint32_t> &ids, uint32_t shotId);
+
+// The activity list on the settings page: one event per line, newest last, at most maxLines lines.
+constexpr size_t MAX_LOG_LINES = 10;
+std::string appendLogLine(const std::string &log, const std::string &line, size_t maxLines = MAX_LOG_LINES);
 
 // Wait before the next try after `failures` failures in a row: 30 s doubling to 5 min.
 uint32_t retryDelayMs(uint32_t failures);

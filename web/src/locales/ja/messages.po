@@ -176,6 +176,10 @@ msgstr "すぐに始められるよう、クラシックな 9 bar のショッ�
 msgid "A given alpha behaves faster in time at 80 SPS because it is applied more often. Tune the two alpha values independently for your installed sample rate. Changing sample rate resets both values to 0.80 at 10 SPS or 0.40 at 80 SPS as sensible starting points."
 msgstr "同じ alpha 値でも 80 SPS ではより頻繁に適用されるため、時間的には速く反応します。2 つの alpha 値は、使用するサンプルレートに合わせてそれぞれ調整してください。サンプルレートを変更すると、妥当な初期値として両方の値が 10 SPS では 0.80、80 SPS では 0.40 にリセットされます。"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "A shot that did not arrive can be sent by hand: Shot History, paper plane button on the shot."
+msgstr ""
+
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Access Point Password"
 msgstr "アクセスポイントのパスワード"
@@ -4331,6 +4335,10 @@ msgstr "スチームの準備ができました。ワンドを開いてくださ
 msgid "Rebuild Shot History"
 msgstr "ショット履歴を再構築"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Recent activity"
+msgstr ""
+
 #: src/components/OverviewChart.jsx
 msgid "Recent brew · last {windowSeconds} s"
 msgstr ""
@@ -4894,6 +4902,14 @@ msgstr ""
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Send shots to TOM"
+msgstr ""
+
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "Send this shot to TOM"
+msgstr ""
+
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "Send to TOM"
 msgstr ""
 
 #: src/services/VisualizerService.js
@@ -5932,6 +5948,10 @@ msgstr "グラインダーはこのアドレスで GaggiMate に接続するた�
 msgid "The heater runs at full power for up to 10 seconds. The test passes as soon as the boiler temperature has risen by a few degrees, which can take up to 30 more seconds on a larger boiler."
 msgstr "ヒーターを最大出力で最長 10 秒間動作させます。ボイラーの温度が数度上昇した時点でテストは合格です。大きなボイラーでは、さらに最長 30 秒かかる場合があります。"
 
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "The machine did not answer. Check the connection and try again."
+msgstr ""
+
 #: src/app/appSettings.js
 msgid "The machine has been in steam mode for 5 minutes."
 msgstr "マシンが 5 分間スチームモードのままです。"
@@ -6567,6 +6587,10 @@ msgstr "コントローラーの設定を待機中…"
 #: src/utils/machineProfiles.js
 msgid "Waiting for your controller to identify its board. Please keep the machine connected."
 msgstr "コントローラーがボードを識別するのを待っています。マシンを接続したままにしてください。"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Waiting to be sent:"
+msgstr ""
 
 #: src/utils/warnings.js
 msgctxt "warning level"

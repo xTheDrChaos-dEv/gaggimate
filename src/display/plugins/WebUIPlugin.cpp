@@ -189,6 +189,7 @@ void WebUIPlugin::setupServer() {
     server.on("/api/scales/scan", [this](AsyncWebServerRequest *request) { handleBLEScaleScan(request); });
     server.on("/api/scales/info", [this](AsyncWebServerRequest *request) { handleBLEScaleInfo(request); });
     server.on("/api/scales/forget", [this](AsyncWebServerRequest *request) { handleBLEScaleForget(request); });
+    server.on("/api/tom/resend", [this](AsyncWebServerRequest *request) { handleTomResend(request); });
     FS *fs = &LittleFS;
     if (controller->isSDCard()) {
         fs = &SD_MMC;
@@ -856,6 +857,8 @@ void WebUIPlugin::handleSettings(AsyncWebServerRequest *request) const {
     // The household code unlocks the whole TOM household, so the API only says whether one is saved.
     doc["tomHousehold"] = settings.getTomHousehold().length() > 0 ? "---unchanged---" : "";
     doc["tomStatus"] = settings.isTomUploadActive() ? TomUploadPlugin::status() : String("Off");
+    doc["tomLog"] = TomUploadPlugin::activity();
+    doc["tomQueue"] = TomUploadPlugin::queued();
     doc["smartGrindMode"] = settings.getSmartGrindMode();
     doc["mahlkonigActive"] = settings.isMahlkonigActive();
     doc["mahlkonigRecipeProfiles"] = settings.getMahlkonigRecipeProfiles();
@@ -999,6 +1002,25 @@ void WebUIPlugin::handleBLEScaleForget(AsyncWebServerRequest *request) {
     BLEScales.forget();
     JsonDocument doc(&psramAllocator);
     doc["success"] = true;
+    AsyncResponseStream *response = request->beginResponseStream("application/json");
+    serializeJson(doc, *response);
+    request->send(response);
+}
+
+// POST /api/tom/resend?id=260: send one shot from Shot History to TOM again, ahead of anything waiting.
+void WebUIPlugin::handleTomResend(AsyncWebServerRequest *request) {
+    if (request->method() != HTTP_POST) {
+        request->send(404);
+        return;
+    }
+    const String id = request->arg("id");
+    bool isNumber = id.length() > 0 && id.length() <= 9;
+    for (size_t i = 0; isNumber && i < id.length(); i++) {
+        isNumber = id[i] >= '0' && id[i] <= '9';
+    }
+    JsonDocument doc(&psramAllocator);
+    doc["message"] = isNumber ? TomUploadPlugin::resend(static_cast<uint32_t>(id.toInt()))
+                              : String("Type the shot number from Shot History");
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     serializeJson(doc, *response);
     request->send(response);

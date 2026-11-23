@@ -176,6 +176,10 @@ msgstr "已预装几条曲线，让你立即开始使用，从经典的 9 bar �
 msgid "A given alpha behaves faster in time at 80 SPS because it is applied more often. Tune the two alpha values independently for your installed sample rate. Changing sample rate resets both values to 0.80 at 10 SPS or 0.40 at 80 SPS as sensible starting points."
 msgstr "在 80 SPS 下，相同的 alpha 值在时间上响应更快，因为它被更频繁地应用。请根据实际安装的采样率分别调整两个 alpha 值。更改采样率会将两个值重置为合理的起始值：10 SPS 时为 0.80，80 SPS 时为 0.40。"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "A shot that did not arrive can be sent by hand: Shot History, paper plane button on the shot."
+msgstr ""
+
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Access Point Password"
 msgstr "热点密码"
@@ -4331,6 +4335,10 @@ msgstr "可以打蒸汽，请打开蒸汽棒"
 msgid "Rebuild Shot History"
 msgstr "重建萃取历史"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Recent activity"
+msgstr ""
+
 #: src/components/OverviewChart.jsx
 msgid "Recent brew · last {windowSeconds} s"
 msgstr ""
@@ -4894,6 +4902,14 @@ msgstr ""
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Send shots to TOM"
+msgstr ""
+
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "Send this shot to TOM"
+msgstr ""
+
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "Send to TOM"
 msgstr ""
 
 #: src/services/VisualizerService.js
@@ -5932,6 +5948,10 @@ msgstr "磨豆机通过此地址访问 GaggiMate，因此两者需处于同一�
 msgid "The heater runs at full power for up to 10 seconds. The test passes as soon as the boiler temperature has risen by a few degrees, which can take up to 30 more seconds on a larger boiler."
 msgstr "加热器将以全功率运行最多 10 秒。锅炉温度上升几度后即通过测试，较大的锅炉可能还需要最多 30 秒。"
 
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "The machine did not answer. Check the connection and try again."
+msgstr ""
+
 #: src/app/appSettings.js
 msgid "The machine has been in steam mode for 5 minutes."
 msgstr "咖啡机已处于蒸汽模式 5 分钟。"
@@ -6567,6 +6587,10 @@ msgstr "正在等待控制器配置…"
 #: src/utils/machineProfiles.js
 msgid "Waiting for your controller to identify its board. Please keep the machine connected."
 msgstr "正在等待控制器识别其主板。请保持咖啡机连接。"
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Waiting to be sent:"
+msgstr ""
 
 #: src/utils/warnings.js
 msgctxt "warning level"

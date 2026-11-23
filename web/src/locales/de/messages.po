@@ -176,6 +176,10 @@ msgstr "Einige Profile sind vorinstalliert, damit du sofort loslegen kannst – 
 msgid "A given alpha behaves faster in time at 80 SPS because it is applied more often. Tune the two alpha values independently for your installed sample rate. Changing sample rate resets both values to 0.80 at 10 SPS or 0.40 at 80 SPS as sensible starting points."
 msgstr "Ein gegebenes Alpha wirkt bei 80 SPS zeitlich schneller, weil es öfter angewendet wird. Stimme die beiden Alpha-Werte unabhängig voneinander für deine installierte Abtastrate ab. Eine Änderung der Abtastrate setzt beide Werte als sinnvollen Ausgangspunkt auf 0,80 bei 10 SPS bzw. 0,40 bei 80 SPS zurück."
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "A shot that did not arrive can be sent by hand: Shot History, paper plane button on the shot."
+msgstr ""
+
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Access Point Password"
 msgstr "Access-Point-Passwort"
@@ -4331,6 +4335,10 @@ msgstr "Bereit zum Dampfen, Dampflanze öffnen"
 msgid "Rebuild Shot History"
 msgstr "Shot-Verlauf neu aufbauen"
 
+#: src/pages/Settings/PluginCard.jsx
+msgid "Recent activity"
+msgstr ""
+
 #: src/components/OverviewChart.jsx
 msgid "Recent brew · last {windowSeconds} s"
 msgstr ""
@@ -4894,6 +4902,14 @@ msgstr ""
 
 #: src/pages/Settings/PluginCard.jsx
 msgid "Send shots to TOM"
+msgstr ""
+
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "Send this shot to TOM"
+msgstr ""
+
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "Send to TOM"
 msgstr ""
 
 #: src/services/VisualizerService.js
@@ -5932,6 +5948,10 @@ msgstr "Die Mühle erreicht GaggiMate unter dieser Adresse, daher müssen beide 
 msgid "The heater runs at full power for up to 10 seconds. The test passes as soon as the boiler temperature has risen by a few degrees, which can take up to 30 more seconds on a larger boiler."
 msgstr "Die Heizung läuft bis zu 10 Sekunden mit voller Leistung. Der Test ist bestanden, sobald die Boilertemperatur um einige Grad gestiegen ist. Bei einem größeren Boiler kann das bis zu 30 weitere Sekunden dauern."
 
+#: src/pages/ShotHistory/HistoryCard.jsx
+msgid "The machine did not answer. Check the connection and try again."
+msgstr ""
+
 #: src/app/appSettings.js
 msgid "The machine has been in steam mode for 5 minutes."
 msgstr "Die Maschine ist seit 5 Minuten im Dampfmodus."
@@ -6567,6 +6587,10 @@ msgstr "Warte auf Controller-Konfiguration…"
 #: src/utils/machineProfiles.js
 msgid "Waiting for your controller to identify its board. Please keep the machine connected."
 msgstr "Warte, bis dein Controller seine Platine erkannt hat. Bitte lass die Maschine verbunden."
+
+#: src/pages/Settings/PluginCard.jsx
+msgid "Waiting to be sent:"
+msgstr ""
 
 #: src/utils/warnings.js
 msgctxt "warning level"

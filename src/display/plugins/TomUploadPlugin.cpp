@@ -20,6 +20,7 @@ static constexpr const char *TAG = "TomUpload";
 static constexpr const char *STATE_DIR = "/tom";
 static constexpr const char *QUEUE_PATH = "/tom/queue.txt";
 static constexpr const char *AUTH_PATH = "/tom/auth.txt"; // refresh token only; LittleFS, never the removable SD card
+static constexpr const char *LOG_PATH = "/tom/log.txt";   // the activity list on the settings page
 static constexpr unsigned long POLL_MS = 2000;
 // TLS itself runs from PSRAM on this firmware (WebUIPlugin points mbedTLS at it), so an upload only needs a little
 // internal RAM for the HTTP client and sockets. Asking for a 36 KB block, as this did at first, kept shots back
@@ -31,6 +32,8 @@ static constexpr uint32_t TASK_STACK = 10 * 1024;
 namespace {
 std::mutex statusLock;
 String statusText = "Starts after the next restart";
+std::string activityText; // under statusLock
+bool activityDirty = false;
 
 std::string readFile(fs::FS &fs, const char *path, size_t limit, size_t *sizeOut = nullptr) {
     std::string out;
@@ -76,16 +79,83 @@ String clockText() {
     return String(" at ") + buf;
 }
 
-// Shown after a send so heap use can be read off the web UI without a serial console.
+// Shown after a send or a failure so memory can be read off the web UI without a serial console.
 String heapText() {
 #ifndef GAGGIMATE_SIM
-    return " (heap: " + String(heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT) / 1024) + " KB free, lowest since boot " +
+    return " (memory: " + String(heap_caps_get_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT) / 1024) + " KB free, largest block " +
+           String(heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT) / 1024) + " KB, lowest since boot " +
            String(heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT) / 1024) + " KB)";
 #else
     return "";
 #endif
 }
+
+// "Nov 23 14:03 " in front of an activity line; nothing while the clock is not set.
+String stampText() {
+    time_t now = time(nullptr);
+    if (now < 1577836800) {
+        return "";
+    }
+    struct tm local {};
+    localtime_r(&now, &local);
+    char buf[20];
+    strftime(buf, sizeof(buf), "%b %d %H:%M ", &local);
+    return buf;
+}
+
+// Adds a line to the activity list; the upload task writes it to flash on its next pass.
+void note(const String &line) {
+    const String stamped = stampText() + line;
+    std::lock_guard<std::mutex> guard(statusLock);
+    activityText = tom::appendLogLine(activityText, stamped.c_str());
+    activityDirty = true;
+}
 } // namespace
+
+TomUploadPlugin *TomUploadPlugin::instance = nullptr;
+
+String TomUploadPlugin::activity() {
+    std::lock_guard<std::mutex> guard(statusLock);
+    return activityText.c_str();
+}
+
+String TomUploadPlugin::queued() {
+    TomUploadPlugin *self = instance;
+    String out;
+    if (self == nullptr) {
+        return out;
+    }
+    std::lock_guard<std::mutex> guard(self->queueLock);
+    for (uint32_t id : self->queue) {
+        out += (out.length() ? ", " : "") + String(id);
+    }
+    return out;
+}
+
+String TomUploadPlugin::resend(uint32_t shotId) {
+    TomUploadPlugin *self = instance;
+    if (self == nullptr) {
+        return "Sending to TOM is off, or was switched on without a restart since";
+    }
+    fs::FS &historyFs = self->controller->isSDCard() ? static_cast<fs::FS &>(SD_MMC) : static_cast<fs::FS &>(LittleFS);
+    const std::string path = "/h/" + tom::padShotId(shotId) + ".slog";
+    if (!historyFs.exists(path.c_str())) {
+        return "Shot " + String(shotId) + " is not in Shot History";
+    }
+    {
+        std::lock_guard<std::mutex> guard(self->queueLock);
+        tom::enqueueFirst(self->queue, shotId);
+        if (std::find(self->byHand.begin(), self->byHand.end(), shotId) == self->byHand.end()) {
+            self->byHand.push_back(shotId);
+        }
+        self->queueDirty = true;
+    }
+    self->failures = 0;
+    self->nextTryAt = 0;
+    self->notedShot = 0; // a failure of this try is worth its own line again
+    note("Shot " + String(shotId) + " queued by hand");
+    return "Shot " + String(shotId) + " is queued and goes out next";
+}
 
 String TomUploadPlugin::status() {
     std::lock_guard<std::mutex> guard(statusLock);
@@ -120,6 +190,7 @@ void TomUploadPlugin::setup(Controller *c, PluginManager *pm) {
     }
 #endif
     loadState();
+    instance = this;
     setStatus(queue.empty() ? "Waiting for the next shot" : "Sending queued shots");
     // evt:history-shot-saved fires once the .slog is closed and indexed, and only for shots ShotHistory keeps.
     // (history:shot:recorded fires a moment earlier with no shot id, right before shots under 7.5 s are deleted.)
@@ -171,6 +242,7 @@ void TomUploadPlugin::step() {
             saveQueue();
         }
     }
+    saveActivity();
     if (!settings.isTomUploadActive()) {
         setStatus("Off");
         return;
@@ -215,15 +287,21 @@ void TomUploadPlugin::step() {
     if (largest < MIN_INTERNAL_BLOCK) {
         // Not a failed try: nothing was sent, so look again shortly instead of backing off for minutes.
         nextTryAt = millis() + MEMORY_RECHECK_MS;
+        if (notedShot != head || notedWhy != "memory") {
+            notedShot = head;
+            notedWhy = "memory";
+            note("Shot " + String(head) + " is waiting for free memory" + heapText());
+        }
         setStatus("Waiting for free memory (" + String(largest / 1024) + " KB block), " + String(pending) +
                   (pending == 1 ? " shot" : " shots") + " queued");
         return;
     }
+    currentShot = head;
     if (uploadHead(head, household)) {
         std::lock_guard<std::mutex> guard(queueLock);
-        if (!queue.empty() && queue.front() == head) {
-            queue.erase(queue.begin());
-        }
+        // By value, not "the front": a shot sent again by hand may have gone to the front meanwhile.
+        queue.erase(std::remove(queue.begin(), queue.end(), head), queue.end());
+        byHand.erase(std::remove(byHand.begin(), byHand.end(), head), byHand.end());
         saveQueue();
         queueDirty = false;
     }
@@ -236,22 +314,31 @@ bool TomUploadPlugin::uploadHead(uint32_t shotId, const std::string &household) 
     std::string bytes = readFile(historyFs, path.c_str(), tom::MAX_SLOG_BYTES, &fileSize);
     if (fileSize > tom::MAX_SLOG_BYTES) {
         setStatus("Shot " + String(shotId) + " not sent: " + tom::skipText(tom::Skip::TOO_BIG));
+        note("Shot " + String(shotId) + " not sent: " + tom::skipText(tom::Skip::TOO_BIG));
         return true;
     }
     if (bytes.empty()) {
         ESP_LOGW(TAG, "Shot %u is gone from history, dropped", shotId);
         setStatus("Shot " + String(shotId) + " was deleted before it could be sent");
+        note("Shot " + String(shotId) + " was deleted before it could be sent");
         return true;
     }
     tom::ShotMeta meta;
     if (!tom::readSlogHeader(reinterpret_cast<const uint8_t *>(bytes.data()), bytes.size(), shotId, meta)) {
         setStatus("Shot " + String(shotId) + " skipped: not a shot file");
+        note("Shot " + String(shotId) + " skipped: not a shot file");
         return true;
     }
-    const tom::Skip skip = tom::shouldSkip(meta, !controller->getSettings().isTomSendUnweighed());
+    bool askedByHand = false;
+    {
+        std::lock_guard<std::mutex> guard(queueLock);
+        askedByHand = std::find(byHand.begin(), byHand.end(), shotId) != byHand.end();
+    }
+    const tom::Skip skip = tom::shouldSkip(meta, !askedByHand && !controller->getSettings().isTomSendUnweighed());
     if (skip != tom::Skip::NONE) {
         ESP_LOGI(TAG, "Shot %u not sent: %s", shotId, tom::skipText(skip));
         setStatus("Shot " + String(shotId) + " not sent: " + tom::skipText(skip));
+        note("Shot " + String(shotId) + " not sent: " + tom::skipText(skip));
         return true;
     }
     std::string body = tom::documentBody(meta, reinterpret_cast<const uint8_t *>(bytes.data()), bytes.size(),
@@ -272,6 +359,8 @@ bool TomUploadPlugin::uploadHead(uint32_t shotId, const std::string &household) 
         failures = 0;
         nextTryAt = 0;
         setStatus("Sent shot " + String(shotId) + clockText() + heapText());
+        // 409: the inbox already holds this shot from an earlier try; TOM shows it until it is kept or skipped.
+        note("Shot " + String(shotId) + (res.status == 409 ? " was already in the TOM inbox" : " sent"));
         return true;
     case tom::Outcome::REAUTH:
         token.idToken.clear(); // expired or revoked; sign in again on the next pass
@@ -281,6 +370,8 @@ bool TomUploadPlugin::uploadHead(uint32_t shotId, const std::string &household) 
         ESP_LOGE(TAG, "TOM rejected shot %u: HTTP %d %s", shotId, res.status, res.body.c_str());
         failures = 0;
         setStatus("TOM rejected shot " + String(shotId) + " (HTTP " + String(res.status) + ")");
+        note("TOM rejected shot " + String(shotId) + " (HTTP " + String(res.status) + ": " +
+             String(tom::jsonField(res.body, "message").substr(0, 90).c_str()) + ")");
         return true;
     case tom::Outcome::RETRY:
     default:
@@ -354,6 +445,11 @@ void TomUploadPlugin::failed(const String &why) {
         pending = queue.size();
     }
     ESP_LOGW(TAG, "%s; retry in %u s", why.c_str(), static_cast<unsigned>(wait / 1000));
+    if (notedShot != currentShot || notedWhy != why) {
+        notedShot = currentShot;
+        notedWhy = why;
+        note("Shot " + String(currentShot) + " not sent yet: " + why + heapText());
+    }
     setStatus(why + ", " + String(pending) + " queued, retry in " + String(wait / 60000 ? wait / 60000 : wait / 1000) +
               (wait / 60000 ? " min" : " s"));
 }
@@ -361,6 +457,21 @@ void TomUploadPlugin::failed(const String &why) {
 void TomUploadPlugin::loadState() {
     queue = tom::parseQueue(readFile(LittleFS, QUEUE_PATH, 1024));
     token.refreshToken = tom::jsonField(readFile(LittleFS, AUTH_PATH, 2048), "refreshToken");
+    std::lock_guard<std::mutex> guard(statusLock);
+    activityText = readFile(LittleFS, LOG_PATH, 4096);
+}
+
+void TomUploadPlugin::saveActivity() {
+    std::string text;
+    {
+        std::lock_guard<std::mutex> guard(statusLock);
+        if (!activityDirty) {
+            return;
+        }
+        activityDirty = false;
+        text = activityText;
+    }
+    writeFile(LittleFS, LOG_PATH, text);
 }
 
 void TomUploadPlugin::saveQueue() {

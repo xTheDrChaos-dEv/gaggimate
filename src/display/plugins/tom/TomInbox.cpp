@@ -236,6 +236,47 @@ std::string isoTime(uint32_t epochSeconds, uint32_t extraMs) {
     return buf;
 }
 
+std::string cleanUtf8(const std::string &text) {
+    std::string out;
+    out.reserve(text.size());
+    size_t i = 0;
+    while (i < text.size()) {
+        const unsigned char c = static_cast<unsigned char>(text[i]);
+        size_t extra = 0;
+        unsigned char low = 0x80, high = 0xBF; // allowed range of the second byte
+        if (c < 0x80) {
+            out += static_cast<char>(c);
+            i++;
+            continue;
+        } else if (c >= 0xC2 && c <= 0xDF) {
+            extra = 1;
+        } else if (c >= 0xE0 && c <= 0xEF) {
+            extra = 2;
+            low = c == 0xE0 ? 0xA0 : 0x80;  // no overlong forms
+            high = c == 0xED ? 0x9F : 0xBF; // no UTF-16 surrogates
+        } else if (c >= 0xF0 && c <= 0xF4) {
+            extra = 3;
+            low = c == 0xF0 ? 0x90 : 0x80;
+            high = c == 0xF4 ? 0x8F : 0xBF;
+        } else {
+            i++; // a stray continuation byte or a byte UTF-8 never uses
+            continue;
+        }
+        bool ok = i + extra < text.size();
+        for (size_t k = 1; ok && k <= extra; k++) {
+            const unsigned char next = static_cast<unsigned char>(text[i + k]);
+            ok = k == 1 ? (next >= low && next <= high) : (next >= 0x80 && next <= 0xBF);
+        }
+        if (ok) {
+            out.append(text, i, extra + 1);
+            i += extra + 1;
+        } else {
+            i++;
+        }
+    }
+    return out;
+}
+
 std::string padShotId(uint32_t shotId) {
     char buf[16];
     snprintf(buf, sizeof(buf), "%06u", static_cast<unsigned>(shotId));
@@ -287,10 +328,10 @@ std::string documentBody(const ShotMeta &meta, const uint8_t *slog, size_t len, 
     if (!captured.empty()) {
         body += stringField("capturedAt", captured) + ",";
     }
-    body += stringField("profile", meta.profileName) + ",";
+    body += stringField("profile", cleanUtf8(meta.profileName)) + ",";
     body += boolField("utility", meta.utility || isUtilityName(meta.profileName)) + ",";
     body += integerField("durationMs", meta.durationMs) + ",";
-    body += stringField("device", device) + ",";
+    body += stringField("device", cleanUtf8(device)) + ",";
     body += "\"data\":{\"stringValue\":\"" + encoded + "\"}";
     body += "}}";
     return body;
@@ -404,6 +445,42 @@ bool enqueue(std::vector<uint32_t> &ids, uint32_t shotId) {
         ids.erase(ids.begin());
     }
     return true;
+}
+
+void enqueueFirst(std::vector<uint32_t> &ids, uint32_t shotId) {
+    ids.erase(std::remove(ids.begin(), ids.end(), shotId), ids.end());
+    ids.insert(ids.begin(), shotId);
+    while (ids.size() > MAX_QUEUE) {
+        ids.pop_back(); // the one asked for by hand stays; the newest waiting one gives way
+    }
+}
+
+std::string appendLogLine(const std::string &log, const std::string &line, size_t maxLines) {
+    std::vector<std::string> lines;
+    size_t pos = 0;
+    while (pos < log.size()) {
+        size_t end = log.find('\n', pos);
+        if (end == std::string::npos) {
+            end = log.size();
+        }
+        if (end > pos) {
+            lines.push_back(log.substr(pos, end - pos));
+        }
+        pos = end + 1;
+    }
+    std::string clean = line;
+    std::replace(clean.begin(), clean.end(), '\n', ' ');
+    std::replace(clean.begin(), clean.end(), '\r', ' ');
+    if (!clean.empty()) {
+        lines.push_back(clean);
+    }
+    const size_t first = lines.size() > maxLines ? lines.size() - maxLines : 0;
+    std::string out;
+    for (size_t i = first; i < lines.size(); i++) {
+        out += lines[i];
+        out += '\n';
+    }
+    return out;
 }
 
 uint32_t retryDelayMs(uint32_t failures) {

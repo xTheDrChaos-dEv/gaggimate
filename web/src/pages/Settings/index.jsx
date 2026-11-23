@@ -80,6 +80,8 @@ const READ_ONLY_KEYS = [
   'machineHardwareError',
   'steamControlsAvailable',
   'tomStatus',
+  'tomLog',
+  'tomQueue',
   'machineProfileBoard',
   'machineProfileCapabilities',
   'machineHardwareConfiguration',
