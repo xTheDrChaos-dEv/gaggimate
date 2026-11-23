@@ -46,7 +46,7 @@ void WebUIPlugin::setup(Controller *_controller, PluginManager *_pluginManager) 
     this->pluginManager = _pluginManager;
     this->ota = new GitHubOTA(
         BUILD_GIT_VERSION, controller->getSystemInfo().version,
-        RELEASE_URL + (controller->getSettings().getOTAChannel() == "latest" ? "latest" : "tag/nightly"),
+        otaReleaseUrl(controller->getSettings().getOTAChannel()),
         [this](uint8_t phase) {
             pluginManager->trigger("ota:update:phase", "phase", phase);
             updateOTAProgress(phase, 0);
@@ -56,6 +56,7 @@ void WebUIPlugin::setup(Controller *_controller, PluginManager *_pluginManager) 
             updateOTAProgress(phase, progress);
         },
         OTA_DISPLAY_FIRMWARE, OTA_DISPLAY_FILESYSTEM, "board-firmware.bin");
+    this->ota->setDisplayOnly(controller->getSettings().getOTAChannel() == OTA_CHANNEL_FORK);
     pluginManager->on("controller:wifi:connect", [this](Event const &event) {
         apMode = event.getInt("AP");
         start();
@@ -299,8 +300,10 @@ void WebUIPlugin::stop() {
 void WebUIPlugin::handleOTASettings(JsonDocument &request) {
     if (request["update"].as<bool>()) {
         if (!request["channel"].isNull()) {
-            controller->getSettings().setOTAChannel(request["channel"].as<String>() == "latest" ? "latest" : "nightly");
-            ota->setReleaseUrl(RELEASE_URL + (controller->getSettings().getOTAChannel() == "latest" ? "latest" : "tag/nightly"));
+            const String requested = request["channel"].as<String>();
+            controller->getSettings().setOTAChannel(requested == "latest" || requested == OTA_CHANNEL_FORK ? requested : "nightly");
+            ota->setReleaseUrl(otaReleaseUrl(controller->getSettings().getOTAChannel()));
+            ota->setDisplayOnly(controller->getSettings().getOTAChannel() == OTA_CHANNEL_FORK);
             lastUpdateCheck = 0;
         }
     }

@@ -29,6 +29,8 @@ class GitHubOTA {
     String getCurrentVersion() const;
     void update(bool controller = true, bool display = true, OtaSender *controllerLink = nullptr);
     void setReleaseUrl(const String &release_url);
+    // A channel that publishes screen firmware only: the controller is never reported as outdated or updated.
+    void setDisplayOnly(bool display_only);
     void setControllerVersion(const String &controller_version);
 
   private:
@@ -36,6 +38,7 @@ class GitHubOTA {
     void setPhase(uint8_t newPhase);
 
     uint8_t phase = PHASE_IDLE;
+    bool _display_only = false;
     semver_t _version;
     semver_t _controller_version;
     String _latest_version_string;

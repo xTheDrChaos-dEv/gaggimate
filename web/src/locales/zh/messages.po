@@ -3041,6 +3041,11 @@ msgstr "必须大于到加水线的距离。"
 msgid "Must match the physical RATE-jumper configuration on the HX711 board. This setting does not switch the RATE pin."
 msgstr "必须与 HX711 板上的 RATE 跳线物理配置一致。此设置不会切换 RATE 引脚。"
 
+#: src/pages/Settings/tabs/SystemTab.jsx
+msgctxt "update channel"
+msgid "My fork (screen only)"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "名称"

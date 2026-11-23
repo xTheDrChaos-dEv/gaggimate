@@ -23,6 +23,7 @@ class GitHubOTA {
     String getCurrentVersion() const { return _version; }
     void update(bool = true, bool = true, OtaSender * = nullptr) {}
     void setReleaseUrl(const String &) {}
+    void setDisplayOnly(bool) {}
     void setControllerVersion(const String &) {}
 
   private:

@@ -18,6 +18,16 @@ constexpr size_t DNS_PERIOD = 50;
 
 const String LOCAL_URL = "http://4.4.4.1/";
 const String RELEASE_URL = "https://github.com/jniebuhr/gaggimate/releases/";
+// Third update channel: this fork's own releases. It carries screen firmware only, so the controller is never
+// updated from it. Release tags must look like v1.10.0-fork3 (the updater reads the version from the tag).
+const String FORK_RELEASE_URL = "https://github.com/xTheDrChaos-dEv/gaggimate/releases/";
+constexpr char OTA_CHANNEL_FORK[] = "fork";
+inline String otaReleaseUrl(const String &channel) {
+    if (channel == OTA_CHANNEL_FORK) {
+        return FORK_RELEASE_URL + "latest";
+    }
+    return RELEASE_URL + (channel == "latest" ? "latest" : "tag/nightly");
+}
 // Headless builds must pull their own release assets; the screen firmware would not boot on them.
 #ifdef GAGGIMATE_HEADLESS
 constexpr char OTA_DISPLAY_FIRMWARE[] = "display-headless-firmware.bin";

@@ -3049,6 +3049,11 @@ msgstr "Deve ser maior que a distância até a linha de enchimento."
 msgid "Must match the physical RATE-jumper configuration on the HX711 board. This setting does not switch the RATE pin."
 msgstr "Deve corresponder à configuração física do jumper RATE na placa HX711. Esta configuração não altera o pino RATE."
 
+#: src/pages/Settings/tabs/SystemTab.jsx
+msgctxt "update channel"
+msgid "My fork (screen only)"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "Nome"

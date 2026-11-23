@@ -57,7 +57,7 @@ void GitHubOTA::checkForUpdates() {
         semver_free(&_latest_version);
         _latest_version = from_string(semver_str.c_str());
         _screen_update_required = update_required(_latest_version, _version);
-        _controller_update_required = update_required(_latest_version, _controller_version);
+        _controller_update_required = !_display_only && update_required(_latest_version, _controller_version);
     } else {
         _latest_url = _release_url + "/";
         _latest_url.replace("tag", "download");
@@ -73,7 +73,7 @@ void GitHubOTA::checkForUpdates() {
         semver_free(&_latest_version);
         _latest_version = from_string(version.c_str());
         _screen_update_required = update_required(_latest_version, _version);
-        _controller_update_required = update_required(_latest_version, _controller_version);
+        _controller_update_required = !_display_only && update_required(_latest_version, _controller_version);
     }
 }
 
@@ -104,7 +104,7 @@ void GitHubOTA::update(bool controller, bool display, OtaSender *controllerLink)
         return;
     }
 
-    if (controller && update_required(_latest_version, _controller_version)) {
+    if (controller && !_display_only && update_required(_latest_version, _controller_version)) {
         ESP_LOGI(TAG, "Controller update is required, running firmware update.");
         setPhase(PHASE_CONTROLLER_FW);
         if (!_controller_ota.update(controllerLink, _latest_url + _controller_firmware_name)) {
@@ -139,6 +139,13 @@ void GitHubOTA::update(bool controller, bool display, OtaSender *controllerLink)
 }
 
 void GitHubOTA::setReleaseUrl(const String &release_url) { this->_release_url = release_url; }
+
+void GitHubOTA::setDisplayOnly(bool display_only) {
+    _display_only = display_only;
+    if (display_only) {
+        _controller_update_required = false;
+    }
+}
 
 bool GitHubOTA::flashDisplayFirmware(const String &url) {
     const char *TAG = "flashDisplayFirmware";
@@ -213,5 +220,5 @@ bool GitHubOTA::flashDisplayFirmware(const String &url) {
 void GitHubOTA::setControllerVersion(const String &controller_version) {
     semver_free(&_controller_version);
     _controller_version = from_string(controller_version.substring(1).c_str());
-    _controller_update_required = update_required(_latest_version, _controller_version);
+    _controller_update_required = !_display_only && update_required(_latest_version, _controller_version);
 }

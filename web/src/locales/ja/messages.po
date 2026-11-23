@@ -3041,6 +3041,11 @@ msgstr "満水ラインまでの距離より大きい値にしてください。
 msgid "Must match the physical RATE-jumper configuration on the HX711 board. This setting does not switch the RATE pin."
 msgstr "HX711 基板の RATE ジャンパーの物理的な設定と一致させる必要があります。この設定で RATE ピンが切り替わるわけではありません。"
 
+#: src/pages/Settings/tabs/SystemTab.jsx
+msgctxt "update channel"
+msgid "My fork (screen only)"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "名前"

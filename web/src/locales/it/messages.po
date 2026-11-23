@@ -3045,6 +3045,11 @@ msgstr "Deve essere maggiore della distanza dalla linea di riempimento."
 msgid "Must match the physical RATE-jumper configuration on the HX711 board. This setting does not switch the RATE pin."
 msgstr "Deve corrispondere alla configurazione fisica del ponticello RATE sulla scheda HX711. Questa impostazione non commuta il pin RATE."
 
+#: src/pages/Settings/tabs/SystemTab.jsx
+msgctxt "update channel"
+msgid "My fork (screen only)"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "Nome"

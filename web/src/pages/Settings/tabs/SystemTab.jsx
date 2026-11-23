@@ -367,6 +367,9 @@ export function SystemTab() {
                 <option value='nightly' selected={formData.channel === 'nightly'}>
                   {t({ message: 'Nightly', context: 'update channel' })}
                 </option>
+                <option value='fork' selected={formData.channel === 'fork'}>
+                  {t({ message: 'My fork (screen only)', context: 'update channel' })}
+                </option>
               </select>
               <button type='submit' className='btn btn-secondary' disabled={submitting}>
                 <Trans>Save Channel & Refresh</Trans>

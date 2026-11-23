@@ -3041,6 +3041,11 @@ msgstr "Must be larger than the distance to the fill line."
 msgid "Must match the physical RATE-jumper configuration on the HX711 board. This setting does not switch the RATE pin."
 msgstr "Must match the physical RATE-jumper configuration on the HX711 board. This setting does not switch the RATE pin."
 
+#: src/pages/Settings/tabs/SystemTab.jsx
+msgctxt "update channel"
+msgid "My fork (screen only)"
+msgstr "My fork (screen only)"
+
 #: src/pages/ShotAnalyzer/components/library/LibrarySection.jsx
 msgid "Name"
 msgstr "Name"
