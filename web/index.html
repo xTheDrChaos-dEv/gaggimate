@@ -31,6 +31,10 @@
           if (saved === 'machine') saved = localStorage.getItem('gaggimate-machine-theme') || 'dark';
           var theme = allowed.indexOf(saved) >= 0 ? saved : 'light';
           document.documentElement.setAttribute('data-theme', theme);
+          // Same idea for the page background, which mirrors the machine's background style.
+          var background = localStorage.getItem('gaggimate-machine-background');
+          var backgrounds = ['solid', 'beans', 'beans-left', 'beans-diagonal', 'art', 'floral', 'floral-left', 'floral-diagonal'];
+          if (backgrounds.indexOf(background) >= 0) document.documentElement.setAttribute('data-bg', background);
         } catch (e) {}
       })();
     </script>

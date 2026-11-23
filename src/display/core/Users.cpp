@@ -43,6 +43,7 @@ std::vector<MachineUser> parse(const String &json) {
             continue;
         }
         user.theme = item["theme"] | 0;
+        user.background = item["bg"] | 3;
         user.hasDefaults = item["set"] | false;
         user.selectedProfile = item["sp"] | "";
         for (JsonVariant id : item["fp"].as<JsonArray>()) {
@@ -68,6 +69,7 @@ String serialize(const std::vector<MachineUser> &list) {
         JsonObject item = array.add<JsonObject>();
         item["name"] = user.name;
         item["theme"] = user.theme;
+        item["bg"] = user.background;
         item["set"] = user.hasDefaults;
         if (user.hasDefaults) {
             item["sp"] = user.selectedProfile;
@@ -117,6 +119,7 @@ std::vector<MachineUser> merge(const std::vector<MachineUser> &stored, const std
         }
         user.name = name;
         user.theme = incoming.theme;
+        user.background = incoming.background;
         user.privateProfiles = incoming.privateProfiles;
         result.push_back(user);
     }

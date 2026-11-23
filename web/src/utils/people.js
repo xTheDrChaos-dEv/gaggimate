@@ -13,6 +13,32 @@ export const displayThemes = () => [
   { value: 4, label: t({ message: 'Purple', context: 'theme' }) },
 ];
 
+// What is drawn behind the screens (firmware: backdrop::Style). Any theme works with any background.
+export const DEFAULT_BACKGROUND = 3;
+export const backgroundStyles = () => [
+  { value: 0, label: t`Solid color` },
+  { value: 1, label: t`Coffee beans` },
+  { value: 2, label: t`Coffee beans, drifting right to left` },
+  { value: 3, label: t`Coffee beans, drifting diagonally` },
+  { value: 5, label: t`Floral` },
+  { value: 6, label: t`Floral, drifting right to left` },
+  { value: 7, label: t`Floral, drifting diagonally` },
+  { value: 4, label: t`Theme artwork` },
+];
+
+// The data-bg value the page styles use for a background style.
+export const webBackgroundForStyle = style =>
+  ({
+    0: 'solid',
+    1: 'beans',
+    2: 'beans-left',
+    3: 'beans-diagonal',
+    4: 'art',
+    5: 'floral',
+    6: 'floral-left',
+    7: 'floral-diagonal',
+  })[style] ?? 'solid';
+
 // Web theme that matches a display theme, for the "match the machine" web theme option.
 export const webThemeForDisplayTheme = theme =>
   ({ 0: 'dark', 1: 'light', 2: 'dark', 3: 'olive', 4: 'purple' })[theme] ?? 'dark';

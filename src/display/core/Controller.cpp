@@ -1394,10 +1394,23 @@ std::vector<MachineUser> Controller::getUsers() const { return users::parse(sett
 
 bool Controller::isUserSelectOnWake() const { return settings.isUsersAskOnWake() && getUsers().size() >= 2; }
 
+const String &Controller::getActiveUserName() {
+    const String config = settings.getUsersConfig();
+    const int active = settings.getActiveUser();
+    if (config != activeUserNameSource || active != activeUserNameIndex) {
+        const std::vector<MachineUser> list = users::parse(config);
+        activeUserName = active >= 0 && active < static_cast<int>(list.size()) ? list[active].name : String("");
+        activeUserNameSource = config;
+        activeUserNameIndex = active;
+    }
+    return activeUserName;
+}
+
 // The live settings are always the active person's; this copies them into that person's stored entry.
 static void storeLiveDefaults(MachineUser &user, const Settings &settings) {
     user.hasDefaults = true;
     user.theme = settings.getThemeMode();
+    user.background = settings.getBackgroundStyle();
     user.selectedProfile = settings.getSelectedProfile();
     user.favorites = settings.getFavoritedProfiles();
     user.volumetricTarget = settings.isVolumetricTarget();
@@ -1420,6 +1433,7 @@ bool Controller::setActiveUser(int index) {
     const MachineUser &next = list[index];
     settings.setActiveUser(index);
     settings.setThemeMode(next.theme);
+    settings.setBackgroundStyle(next.background);
     if (changing && next.hasDefaults) {
         settings.setFavoritedProfiles(next.favorites);
         settings.setVolumetricTarget(next.volumetricTarget);
@@ -1455,7 +1469,8 @@ void Controller::updateUsers(const std::vector<MachineUser> &edited) {
     settings.setUsersConfig(users::serialize(merged));
     settings.setActiveUser(active);
     if (!merged.empty()) {
-        settings.setThemeMode(merged[active].theme); // the theme picked for the active person applies at once
+        settings.setThemeMode(merged[active].theme); // the look picked for the active person applies at once
+        settings.setBackgroundStyle(merged[active].background);
     }
 }
 

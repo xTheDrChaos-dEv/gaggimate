@@ -1,3 +1,4 @@
+#include <display/ui/default/Backdrop.h>
 #include "actions.h"
 #include "screens.h"
 #include "ui.h"
@@ -324,6 +325,8 @@ static void styleShotControls() {
 void action_on_screen_load(lv_event_t *e) {
     suppressMeterTicks(lv_event_get_target(e));
     styleShotControls();
+    backdrop::applyTo(lv_event_get_target(e)); // the theme's generated artwork instead of a flat colour
+    backdrop::clearFlatPanels(lv_event_get_target(e));
     applyClickArea(objects.select_profile_1, 30);
     applyClickArea(objects.previous_profile_1, 30);
     applyClickArea(objects.next_profile_1, 30);

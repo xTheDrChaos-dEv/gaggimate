@@ -138,6 +138,7 @@ class Controller {
     // other's; it is refused while a process runs.
     std::vector<MachineUser> getUsers() const;
     bool isUserSelectOnWake() const; // at least two people and the setting is on
+    const String &getActiveUserName(); // "" without people set up; cached, so cheap to call every UI pass
     bool setActiveUser(int index);
     void updateUsers(const std::vector<MachineUser> &edited); // from the settings page
     void onOTAUpdate();
@@ -203,6 +204,9 @@ class Controller {
     GaggiMateClient *getClientController() { return &comms; }
 
   private:
+    String activeUserName;       // derived from the users setting, see getActiveUserName()
+    String activeUserNameSource; // the setting text it was derived from
+    int activeUserNameIndex = -1;
     // Initialization methods
     void setupPanel();
     void seedSDCard();

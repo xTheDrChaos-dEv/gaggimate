@@ -96,6 +96,20 @@ export function setMachineTheme(webTheme) {
   }
 }
 
+// The page background mirrors the machine's background style (data-bg on <html>, styled in style.css). The
+// last value is kept so the next page load shows it before the machine has reported in (see index.html).
+const MACHINE_BACKGROUND_KEY = 'gaggimate-machine-background';
+
+export function setMachineBackground(background) {
+  if (document.documentElement.getAttribute('data-bg') === background) return;
+  document.documentElement.setAttribute('data-bg', background);
+  try {
+    localStorage.setItem(MACHINE_BACKGROUND_KEY, background);
+  } catch {
+    // Without storage the background still follows the machine for this page view.
+  }
+}
+
 // Initialize theme on load
 export function initializeTheme() {
   const theme = getStoredTheme();

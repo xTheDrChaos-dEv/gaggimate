@@ -1,6 +1,7 @@
 import './style.css';
-import { initializeTheme, setMachineTheme } from './utils/themeManager.js';
-import { webThemeForDisplayTheme } from './utils/people.js';
+import { initializeTheme, setMachineBackground, setMachineTheme } from './utils/themeManager.js';
+import { webBackgroundForStyle, webThemeForDisplayTheme } from './utils/people.js';
+import { Backdrop } from './components/Backdrop.jsx';
 import { I18nProvider } from '@lingui/react';
 import { activateLocale, i18n } from './i18n.js';
 import { isApp } from './app/platform.js';
@@ -108,7 +109,8 @@ export function App() {
     <LocationProvider>
       <ApiServiceContext.Provider value={apiService}>
         {isApp && showMachineSetup.value && <MachineSetup />}
-        <div className='bg-base-300 flex h-screen overflow-hidden pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]'>
+        <div className='bg-base-300 relative isolate flex h-screen overflow-hidden pt-[env(safe-area-inset-top)] pr-[env(safe-area-inset-right)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)]'>
+          <Backdrop />
           <Navigation
             collapsed={navCollapsed}
             onToggleCollapsed={() => setNavCollapsed(collapsed => !collapsed)}
@@ -176,6 +178,9 @@ async function boot() {
   effect(() => {
     const displayTheme = machine.value.status.displayTheme;
     if (Number.isInteger(displayTheme)) setMachineTheme(webThemeForDisplayTheme(displayTheme));
+    // The pages get the same background as the round screen, whatever web theme is selected.
+    const backgroundStyle = machine.value.status.backgroundStyle;
+    if (Number.isInteger(backgroundStyle)) setMachineBackground(webBackgroundForStyle(backgroundStyle));
   });
   await activateLocale();
   render(

@@ -3,7 +3,14 @@ import { useLingui } from '@lingui/react/macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
-import { MAX_NAME_LENGTH, MAX_PEOPLE, displayThemes, initialOf } from '../../utils/people.js';
+import {
+  DEFAULT_BACKGROUND,
+  MAX_NAME_LENGTH,
+  MAX_PEOPLE,
+  backgroundStyles,
+  displayThemes,
+  initialOf,
+} from '../../utils/people.js';
 
 // People who share the machine. With two or more, waking it by touch asks who is brewing, and each person gets
 // their own display theme and brew defaults back.
@@ -15,14 +22,17 @@ export function UsersCard({ formData, setField, onChange }) {
     Math.max(people.length - 1, 0),
   );
   const themes = displayThemes();
+  const backgrounds = backgroundStyles();
 
   const setPeople = next => setField('users', next);
   const update = (index, patch) => {
     setPeople(people.map((person, i) => (i === index ? { ...person, ...patch } : person)));
-    // The live display theme is the active person's, so keep the two controls in step.
+    // The live display theme and background are the active person's, so keep the controls in step.
     if (index === active && patch.theme !== undefined) setField('themeMode', patch.theme);
+    if (index === active && patch.bg !== undefined) setField('backgroundStyle', patch.bg);
   };
-  const add = () => setPeople([...people, { name: '', theme: 0, private: [] }]);
+  const add = () =>
+    setPeople([...people, { name: '', theme: 0, bg: DEFAULT_BACKGROUND, private: [] }]);
   const remove = index => {
     setPeople(people.filter((_, i) => i !== index));
     setField('activeUser', index === active ? 0 : index < active ? active - 1 : active);
@@ -30,12 +40,13 @@ export function UsersCard({ formData, setField, onChange }) {
   const makeActive = index => {
     setField('activeUser', index);
     setField('themeMode', people[index].theme);
+    setField('backgroundStyle', people[index].bg ?? DEFAULT_BACKGROUND);
   };
 
   return (
     <div className='space-y-4'>
       <p className='text-base-content/70 text-sm'>
-        {t`Each person keeps their own display theme, selected and favorite profiles, and brew, steam, water and grind targets.`}
+        {t`Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets.`}
       </p>
       {people.map((person, index) => (
         <div key={index} className='bg-base-200/60 space-y-2 rounded-xl p-2'>
@@ -65,7 +76,7 @@ export function UsersCard({ formData, setField, onChange }) {
               <FontAwesomeIcon icon={faTrashCan} />
             </button>
           </div>
-          <div className='flex items-center gap-3'>
+          <div className='flex items-center gap-2'>
             <select
               className='select select-bordered min-w-0 flex-1'
               value={person.theme}
@@ -78,6 +89,20 @@ export function UsersCard({ formData, setField, onChange }) {
                 </option>
               ))}
             </select>
+            <select
+              className='select select-bordered min-w-0 flex-1'
+              value={person.bg ?? DEFAULT_BACKGROUND}
+              aria-label={t`Background for ${person.name || t`this person`}`}
+              onChange={e => update(index, { bg: Number(e.target.value) })}
+            >
+              {backgrounds.map(style => (
+                <option key={style.value} value={style.value}>
+                  {style.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className='flex items-center'>
             <label className='flex shrink-0 cursor-pointer items-center gap-1 text-xs'>
               <input
                 type='radio'

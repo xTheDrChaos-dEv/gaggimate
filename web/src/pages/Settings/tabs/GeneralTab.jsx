@@ -1,5 +1,6 @@
 import { grindAvailable } from '../../../utils/grind.js';
 import { UsersCard } from '../UsersCard.jsx';
+import { DEFAULT_BACKGROUND, backgroundStyles } from '../../../utils/people.js';
 import { computed } from '@preact/signals';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -292,6 +293,34 @@ export function GeneralTab({
                 <option value={1}>{t`Light Theme`}</option>
                 <option value={3}>{t({ message: 'Olive', context: 'theme' })}</option>
                 <option value={4}>{t({ message: 'Purple', context: 'theme' })}</option>
+              </select>
+            </SettingsFormField>
+            <SettingsFormField label={t`Background`} htmlFor='backgroundStyle' noMargin>
+              <select
+                id='backgroundStyle'
+                name='backgroundStyle'
+                className='select select-bordered w-full'
+                value={formData.backgroundStyle ?? DEFAULT_BACKGROUND}
+                onChange={e => {
+                  onChange('backgroundStyle')(e);
+                  // Like the theme, the live background belongs to whoever is brewing now.
+                  const people = Array.isArray(formData.users) ? formData.users : [];
+                  const active = Number(formData.activeUser ?? 0);
+                  if (people[active]) {
+                    setField(
+                      'users',
+                      people.map((person, i) =>
+                        i === active ? { ...person, bg: Number(e.target.value) } : person,
+                      ),
+                    );
+                  }
+                }}
+              >
+                {backgroundStyles().map(style => (
+                  <option key={style.value} value={style.value}>
+                    {style.label}
+                  </option>
+                ))}
               </select>
             </SettingsFormField>
             {pressureAvailable.value && (

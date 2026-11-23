@@ -582,6 +582,15 @@ msgstr "Backflush"
 msgid "Backflush due"
 msgstr "Backflush due"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "Background"
+msgstr "Background"
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Background for {0}"
+msgstr "Background for {0}"
+
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotDetailsCard.jsx
 msgid "Balance / Taste"
 msgstr "Balance / Taste"
@@ -924,6 +933,18 @@ msgstr "Coefficients saved to machine: {newCoeffs}"
 msgctxt "theme"
 msgid "Coffee"
 msgstr "Coffee"
+
+#: src/utils/people.js
+msgid "Coffee beans"
+msgstr "Coffee beans"
+
+#: src/utils/people.js
+msgid "Coffee beans, drifting diagonally"
+msgstr "Coffee beans, drifting diagonally"
+
+#: src/utils/people.js
+msgid "Coffee beans, drifting right to left"
+msgstr "Coffee beans, drifting right to left"
 
 #: src/components/Navigation.jsx
 msgid "Collapse"
@@ -1685,8 +1706,8 @@ msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flus
 msgstr "Each finished shot goes to the TOM inbox, where you keep or skip it. Flushes, cleaning profiles and shots under 5 s are not sent. Needs internet on this machine's Wi-Fi. Turning this on takes effect after a restart."
 
 #: src/pages/Settings/UsersCard.jsx
-msgid "Each person keeps their own display theme, selected and favorite profiles, and brew, steam, water and grind targets."
-msgstr "Each person keeps their own display theme, selected and favorite profiles, and brew, steam, water and grind targets."
+msgid "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
+msgstr "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
 msgid "Ease In"
@@ -2073,6 +2094,18 @@ msgstr "Firmware {version} – not all features may be available."
 #: src/utils/panelDefinitions.js
 msgid "Flexible Space"
 msgstr "Flexible Space"
+
+#: src/utils/people.js
+msgid "Floral"
+msgstr "Floral"
+
+#: src/utils/people.js
+msgid "Floral, drifting diagonally"
+msgstr "Floral, drifting diagonally"
+
+#: src/utils/people.js
+msgid "Floral, drifting right to left"
+msgstr "Floral, drifting right to left"
 
 #: src/components/ExtendedProfileChart.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx
@@ -5203,6 +5236,10 @@ msgstr "Smart Grind Plugin"
 msgid "Snapshotting shot history..."
 msgstr "Snapshotting shot history..."
 
+#: src/utils/people.js
+msgid "Solid color"
+msgstr "Solid color"
+
 #: src/pages/Statistics/components/statisticsView/helpers.js
 msgid "Some shots have no shot timestamp. Choose how date handling should treat them (Shot = exclude missing, Auto = fallback to upload time, Upload = upload time only)."
 msgstr "Some shots have no shot timestamp. Choose how date handling should treat them (Shot = exclude missing, Auto = fallback to upload time, Upload = upload time only)."
@@ -5945,6 +5982,10 @@ msgstr "Theme"
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Theme & Notifications"
 msgstr "Theme & Notifications"
+
+#: src/utils/people.js
+msgid "Theme artwork"
+msgstr "Theme artwork"
 
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Thermal Feedforward Gain"

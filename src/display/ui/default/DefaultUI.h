@@ -250,6 +250,7 @@ class DefaultUI {
     std::vector<bool> favoritedHasImage;
     int profilesGeneration = 0; // bumped on every reload so previews re-render
     int currentThemeMode = -1;  // Force applyTheme on first loop
+    int currentBackgroundStyle = -1; // backdrop::Style last drawn
     lv_obj_t *userSelect = nullptr;        // runtime-built picker on lv_layer_top(), not part of the EEZ project
     lv_timer_t *userSelectTimer = nullptr; // closes the picker if nobody answers
 

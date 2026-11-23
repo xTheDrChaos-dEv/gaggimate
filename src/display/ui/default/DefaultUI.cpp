@@ -1,4 +1,5 @@
 #include "DefaultUI.h"
+#include "Backdrop.h"
 
 #include <WiFi.h>
 #include <display/core/Controller.h>
@@ -85,19 +86,32 @@ static void applyBrewReadoutFace() {
 // Ready view: the caption above the profile name ("Selected profile" in the EEZ project) carries the machine
 // state instead, readable from across the counter: "Heating • 62 / 93 °C" while warming up, then
 // "Ready • 93 °C • 0:28" (or the yield target for weight-targeted profiles).
-static void applyBrewReadySummary(bool stable, float currentTemp, float targetTemp, const char *profileTime, bool volumetric,
-                                  float targetWeight) {
+static void applyBrewReadySummary(const String &person, bool stable, float currentTemp, float targetTemp,
+                                  const char *profileTime, bool volumetric, float targetWeight) {
     lv_obj_t *label = objects.obj6; // static caption label on the brew screen
     if (label == nullptr) {
         return;
     }
-    char text[48];
+    // With people set up, the line starts with who is brewing (first name, shortened so it stays inside the dial).
+    char who[20] = "";
+    if (person.length() > 0) {
+        String first = person;
+        const int space = first.indexOf(' ');
+        if (space > 0) {
+            first = first.substring(0, space);
+        }
+        if (first.length() > 10) {
+            first = first.substring(0, 10);
+        }
+        snprintf(who, sizeof(who), "%s \xE2\x80\xA2 ", first.c_str());
+    }
+    char text[72];
     if (!stable) {
-        snprintf(text, sizeof(text), "Heating \xE2\x80\xA2 %.0f / %.0f \xC2\xB0" "C", currentTemp, targetTemp);
+        snprintf(text, sizeof(text), "%sHeating %.0f / %.0f \xC2\xB0" "C", who, currentTemp, targetTemp);
     } else if (volumetric && targetWeight > 0.0f) {
-        snprintf(text, sizeof(text), "Ready \xE2\x80\xA2 %.0f \xC2\xB0" "C \xE2\x80\xA2 %.0f g", targetTemp, targetWeight);
+        snprintf(text, sizeof(text), "%sReady \xE2\x80\xA2 %.0f \xC2\xB0" "C \xE2\x80\xA2 %.0f g", who, targetTemp, targetWeight);
     } else {
-        snprintf(text, sizeof(text), "Ready \xE2\x80\xA2 %.0f \xC2\xB0" "C \xE2\x80\xA2 %s", targetTemp, profileTime);
+        snprintf(text, sizeof(text), "%sReady \xE2\x80\xA2 %.0f \xC2\xB0" "C \xE2\x80\xA2 %s", who, targetTemp, profileTime);
     }
     if (strcmp(lv_label_get_text(label), text) != 0) {
         lv_label_set_text(label, text);
@@ -523,6 +537,16 @@ void DefaultUI::loop() {
                     setBrightness(settings.getStandbyBrightness());
                 }
             }
+        }
+    }
+
+    // A drifting background moves one pixel at a time and stands still whenever the machine is doing something
+    // (a shot, steam, an update) or is in standby, so it never competes with the screens that matter.
+    if (backdrop::drift(now, !controller->isActive() && !controller->isUpdating() && !controller->isAutotuning() &&
+                                 currentScreen != SCREEN_ID_STANDBY_SCREEN)) {
+        lv_obj_invalidate(lv_scr_act());
+        if (lv_obj_get_child_cnt(lv_layer_top()) > 0) {
+            lv_obj_invalidate(lv_layer_top()); // the "who's brewing" picker shows the same picture
         }
     }
 
@@ -1075,7 +1099,8 @@ void DefaultUI::updateBrewProcess() {
     brewProcess.profile_target_weight(selected.getTotalVolume());
     brewProcess.boiler_target_temperature(controller->getTargetTemp());
     brewProcess.current_flow(controller->getCurrentPumpFlow());
-    applyBrewReadySummary(controller->getWarnings().isTemperatureStable(), controller->getCurrentTemp(), controller->getTargetTemp(), buf,
+    applyBrewReadySummary(controller->getActiveUserName(), controller->getWarnings().isTemperatureStable(), controller->getCurrentTemp(),
+                          controller->getTargetTemp(), buf,
                           selected.isVolumetric(), selected.getTotalVolume());
 
     // Hold the process lock across every deref below — the logic/AsyncTCP/BLE tasks delete
@@ -1572,7 +1597,16 @@ void DefaultUI::applyTheme() {
     }
 #endif
 
-    if (newThemeMode != currentThemeMode) {
+    const int newBackgroundStyle = settings.getBackgroundStyle();
+    const bool themeChanged = newThemeMode != currentThemeMode;
+    if (themeChanged || newBackgroundStyle != currentBackgroundStyle) {
+        currentBackgroundStyle = newBackgroundStyle;
+        // Redrawn into the shared buffer in the new theme's colours; screens already using it pick it up.
+        backdrop::render(newThemeMode, newBackgroundStyle);
+        backdrop::applyTo(lv_scr_act());
+        backdrop::clearFlatPanels(lv_scr_act());
+    }
+    if (themeChanged) {
         currentThemeMode = newThemeMode;
         // Via EEZ so its selected index updates too; on-demand screens (new profile) read it when created.
         static const char *const THEME_NAMES[] = {"Dark", "Light", "AmoledDark", "Olive", "Purple"};
@@ -1645,6 +1679,7 @@ bool DefaultUI::showUserSelect() {
     lv_obj_add_flag(panel, LV_OBJ_FLAG_CLICKABLE);
     lv_obj_clear_flag(panel, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_add_event_cb(panel, userSelectBackdropCb, LV_EVENT_CLICKED, this);
+    backdrop::applyTo(panel);
 
     lv_obj_t *title = lv_label_create(panel);
     lv_label_set_text(title, "Who's brewing?");

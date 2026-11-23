@@ -10,6 +10,7 @@
 struct MachineUser {
     String name;
     int theme = 0;            // Settings::themeMode value
+    int background = 3;       // Settings::backgroundStyle value (default: drifting coffee beans)
     bool hasDefaults = false; // false until this person has been active once; their first wake keeps the live values
     String selectedProfile;
     std::vector<String> favorites;

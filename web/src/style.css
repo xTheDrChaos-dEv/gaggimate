@@ -1068,3 +1068,84 @@ html[data-theme='purple'] .gm-trace-heading p { color: #c7b8dc; }
 html[data-theme='purple'] .gm-readings,
 html[data-theme='purple'] .gm-readings div { border-color: #5a4479; }
 html[data-theme='purple'] .gm-readings dt { color: #e6dcf2; }
+
+/* Page background that mirrors the round screen's background style (components/Backdrop.jsx). data-bg on <html>
+   comes from the machine: solid | beans[-left|-diagonal] | floral[-left|-diagonal] | art. The layer sits behind
+   everything in the app shell and is drawn in the current theme's colours: lines in the primary colour toned
+   down into the page colour, petals and leaves in a faint tint of it. */
+.gm-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  display: none;
+  overflow: hidden;
+  pointer-events: none;
+}
+html[data-bg^='beans'] .gm-backdrop,
+html[data-bg^='floral'] .gm-backdrop,
+html[data-bg='art'] .gm-backdrop {
+  display: block;
+}
+/* One tile larger than the page on every side, so a drift of one tile never shows an edge. Only the transform is
+   animated, which the browser does without repainting. */
+.gm-backdrop > svg {
+  position: absolute;
+  top: -320px;
+  left: -320px;
+  display: none;
+  width: calc(100% + 640px);
+  height: calc(100% + 640px);
+}
+.gm-backdrop-beans {
+  --gm-tile: 240px;
+  --gm-drift-time: 30s;
+}
+.gm-backdrop-floral {
+  --gm-tile: 320px;
+  --gm-drift-time: 40s;
+}
+html[data-bg^='beans'] .gm-backdrop-beans,
+html[data-bg^='floral'] .gm-backdrop-floral {
+  display: block;
+}
+.gm-backdrop svg svg {
+  stroke: color-mix(in srgb, var(--color-primary) 30%, var(--color-base-300));
+}
+.gm-backdrop-floral svg {
+  fill: color-mix(in srgb, var(--color-primary) 8%, var(--color-base-300));
+}
+html[data-bg$='-left'] .gm-backdrop > svg {
+  animation: gm-drift-left var(--gm-drift-time) linear infinite;
+}
+html[data-bg$='-diagonal'] .gm-backdrop > svg {
+  animation: gm-drift-diagonal var(--gm-drift-time) linear infinite;
+}
+@keyframes gm-drift-left {
+  to {
+    transform: translate3d(calc(-1 * var(--gm-tile)), 0, 0);
+  }
+}
+@keyframes gm-drift-diagonal {
+  to {
+    transform: translate3d(calc(-1 * var(--gm-tile)), var(--gm-tile), 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gm-backdrop > svg {
+    animation: none !important;
+  }
+}
+/* Theme artwork: two soft glows of the theme's colours instead of a flat page. */
+html[data-bg='art'] .gm-backdrop {
+  background:
+    radial-gradient(
+      60rem 40rem at 15% 0%,
+      color-mix(in srgb, var(--color-primary) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      50rem 40rem at 100% 100%,
+      color-mix(in srgb, var(--color-secondary) 14%, transparent),
+      transparent 70%
+    );
+}

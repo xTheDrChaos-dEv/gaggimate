@@ -351,6 +351,8 @@ class Settings {
     float getSteamPumpPercentage() const { return steamPumpPercentage.get(); }
     float getSteamPumpCutoff() const { return steamPumpCutoff.get(); }
     int getThemeMode() const { return themeMode.get(); }
+    int getBackgroundStyle() const { return backgroundStyle.get(); } // backdrop::Style
+    void setBackgroundStyle(int style) { backgroundStyle.set(style); }
     int getStatusDisplayMode() const { return statusDisplayMode.get(); } // STATUS_DISPLAY_*
     int getHistoryIndex() const { return historyIndex.get(); }
 
@@ -621,6 +623,7 @@ class Settings {
     Property<int> standbyBrightnessTimeout{registry, "standby_bt", 60000}; // 60 seconds default
     Property<int> wifiApTimeout{registry, "wifi_apt", DEFAULT_WIFI_AP_TIMEOUT_MS};
     Property<int> themeMode{registry, "theme", 0};
+    Property<int> backgroundStyle{registry, "bg_style", 3}; // backdrop::STYLE_BEANS_DIAGONAL
     Property<int> statusDisplayMode{registry, "sdm", STATUS_DISPLAY_PROGRESS};
 
     // Warning levels (WarningLevel)

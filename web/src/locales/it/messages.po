@@ -586,6 +586,15 @@ msgstr "Backflush"
 msgid "Backflush due"
 msgstr "Backflush da fare"
 
+#: src/pages/Settings/tabs/GeneralTab.jsx
+msgid "Background"
+msgstr ""
+
+#. placeholder {0}: person.name || t`this person`
+#: src/pages/Settings/UsersCard.jsx
+msgid "Background for {0}"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/components/shotDetails/ShotDetailsCard.jsx
 msgid "Balance / Taste"
 msgstr "Equilibrio / Gusto"
@@ -928,6 +937,18 @@ msgstr "Coefficienti salvati sulla macchina: {newCoeffs}"
 msgctxt "theme"
 msgid "Coffee"
 msgstr "Caffè"
+
+#: src/utils/people.js
+msgid "Coffee beans"
+msgstr ""
+
+#: src/utils/people.js
+msgid "Coffee beans, drifting diagonally"
+msgstr ""
+
+#: src/utils/people.js
+msgid "Coffee beans, drifting right to left"
+msgstr ""
 
 #: src/components/Navigation.jsx
 msgid "Collapse"
@@ -1689,7 +1710,7 @@ msgid "Each finished shot goes to the TOM inbox, where you keep or skip it. Flus
 msgstr ""
 
 #: src/pages/Settings/UsersCard.jsx
-msgid "Each person keeps their own display theme, selected and favorite profiles, and brew, steam, water and grind targets."
+msgid "Each person keeps their own display theme and background, selected and favorite profiles, and brew, steam, water and grind targets."
 msgstr ""
 
 #: src/pages/ProfileEdit/ExtendedPhase.jsx
@@ -2077,6 +2098,18 @@ msgstr "Firmware {version}: alcune funzioni potrebbero non essere disponibili."
 #: src/utils/panelDefinitions.js
 msgid "Flexible Space"
 msgstr "Spazio flessibile"
+
+#: src/utils/people.js
+msgid "Floral"
+msgstr ""
+
+#: src/utils/people.js
+msgid "Floral, drifting diagonally"
+msgstr ""
+
+#: src/utils/people.js
+msgid "Floral, drifting right to left"
+msgstr ""
 
 #: src/components/ExtendedProfileChart.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx
@@ -5207,6 +5240,10 @@ msgstr "Plugin Smart Grind"
 msgid "Snapshotting shot history..."
 msgstr "Snapshot della cronologia shot..."
 
+#: src/utils/people.js
+msgid "Solid color"
+msgstr ""
+
 #: src/pages/Statistics/components/statisticsView/helpers.js
 msgid "Some shots have no shot timestamp. Choose how date handling should treat them (Shot = exclude missing, Auto = fallback to upload time, Upload = upload time only)."
 msgstr "Alcuni shot non hanno il timestamp dello shot. Scegli come gestire la data per questi shot (Shot = escludi i mancanti, Auto = usa l'ora di upload come ripiego, Upload = solo ora di upload)."
@@ -5949,6 +5986,10 @@ msgstr "Tema"
 #: src/pages/Settings/tabs/GeneralTab.jsx
 msgid "Theme & Notifications"
 msgstr "Tema e notifiche"
+
+#: src/utils/people.js
+msgid "Theme artwork"
+msgstr ""
 
 #: src/pages/Settings/tabs/MachineTab.jsx
 msgid "Thermal Feedforward Gain"
