@@ -17,6 +17,8 @@ constexpr int RERENDER_INTERVAL_IDLE = 2500;
 constexpr int RERENDER_INTERVAL_ACTIVE = 100;
 
 constexpr int TEMP_HISTORY_INTERVAL = 250;
+constexpr uint32_t DRIFT_AFTER_TOUCH_MS = 3000;         // a drifting background waits this long after the last touch
+constexpr uint32_t DRIFT_AFTER_SCREEN_CHANGE_MS = 1500; // ...and this long after the screen changed
 
 constexpr int SHOT_CHART_POINTS = 120;                    // 30 s live window; older samples slide out to the left
 constexpr unsigned long SHOT_CHART_SAMPLE_INTERVAL = 250; // ms per point

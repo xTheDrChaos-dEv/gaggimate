@@ -40,6 +40,14 @@ void clearFlatPanels(lv_obj_t *screen);
 // screen needs redrawing. Pass allowed = false to hold it still (while a shot runs, in standby).
 bool drift(unsigned long now, bool allowed);
 
+// Tells the backdrop how long the step it just reported took, from moving the picture to the screen being redrawn.
+// Every pixel changes on a step, so it is the most expensive redraw there is; the steps are spaced out so that
+// drifting never takes more than about a third of the display task's time, whatever the panel's speed.
+void noteDriftCost(unsigned long ms);
+
+// The current pause between two steps (ms), for logs and tests.
+unsigned long driftInterval();
+
 } // namespace backdrop
 
 #endif // BACKDROP_H

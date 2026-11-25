@@ -13,7 +13,9 @@ namespace {
 constexpr int SIZE = 480;
 constexpr float HALF = SIZE / 2.0f;
 constexpr int MAX_TILE = backdrop_floral::TILE; // the larger of the two pattern tiles
-constexpr unsigned long DRIFT_STEP_MS = 120; // one pixel per step: about 8 px a second
+constexpr unsigned long DRIFT_STEP_MS = 120;     // one pixel per step: about 8 px a second, when the panel keeps up
+constexpr unsigned long DRIFT_STEP_MAX_MS = 600; // never slower than this, or it stops reading as movement
+constexpr unsigned long DRIFT_COST_SHARE = 3;    // a step may use one part in three of the display task's time
 constexpr float PI_F = 3.14159265f;
 
 uint16_t *pixels = nullptr; // what the screens show: RGB565, SIZE x SIZE, PSRAM
@@ -27,6 +29,7 @@ int tileTheme = -1;
 int driftX = 0; // where in the tile the top-left corner of the picture starts
 int driftY = 0;
 unsigned long lastDriftStep = 0;
+unsigned long driftCost = 0; // how long a step takes to draw (ms), as measured on this panel
 
 struct Rgb {
     float r, g, b;
@@ -467,7 +470,7 @@ bool drift(unsigned long now, bool allowed) {
         lastDriftStep = now;
         return false;
     }
-    if (now - lastDriftStep < DRIFT_STEP_MS) {
+    if (now - lastDriftStep < driftInterval()) {
         return false;
     }
     lastDriftStep = now;
@@ -477,6 +480,16 @@ bool drift(unsigned long now, bool allowed) {
     }
     drawTile();
     return true;
+}
+
+void noteDriftCost(unsigned long ms) {
+    // Follow a slower redraw at once, a faster one gradually: one quick frame must not bring the load straight back.
+    driftCost = ms > driftCost ? ms : (driftCost * 3 + ms) / 4;
+}
+
+unsigned long driftInterval() {
+    const unsigned long paced = driftCost * DRIFT_COST_SHARE;
+    return paced < DRIFT_STEP_MS ? DRIFT_STEP_MS : (paced > DRIFT_STEP_MAX_MS ? DRIFT_STEP_MAX_MS : paced);
 }
 
 } // namespace backdrop

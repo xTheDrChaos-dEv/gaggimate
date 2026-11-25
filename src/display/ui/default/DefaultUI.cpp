@@ -541,9 +541,22 @@ void DefaultUI::loop() {
     }
 
     // A drifting background moves one pixel at a time and stands still whenever the machine is doing something
-    // (a shot, steam, an update) or is in standby, so it never competes with the screens that matter.
-    if (backdrop::drift(now, !controller->isActive() && !controller->isUpdating() && !controller->isAutotuning() &&
-                                 currentScreen != SCREEN_ID_STANDBY_SCREEN)) {
+    // (a shot, steam, an update) or is in standby, so it never competes with the screens that matter. Each step
+    // redraws the whole dial, which on the real panel is slow enough to delay a touch, so it also holds still
+    // while someone is using the screen (and for a moment after), and right after a screen change, when the
+    // gauge animation needs the time.
+    static ScreensEnum driftScreen = currentScreen;
+    static unsigned long driftScreenSince = 0;
+    if (currentScreen != driftScreen) {
+        driftScreen = currentScreen;
+        driftScreenSince = now;
+    }
+    const bool screenAtRest =
+        lv_disp_get_inactive_time(nullptr) >= DRIFT_AFTER_TOUCH_MS && now - driftScreenSince >= DRIFT_AFTER_SCREEN_CHANGE_MS;
+    const unsigned long driftStart = ::millis();
+    const bool drifted = backdrop::drift(now, screenAtRest && !controller->isActive() && !controller->isUpdating() &&
+                                                  !controller->isAutotuning() && currentScreen != SCREEN_ID_STANDBY_SCREEN);
+    if (drifted) {
         lv_obj_invalidate(lv_scr_act());
         if (lv_obj_get_child_cnt(lv_layer_top()) > 0) {
             lv_obj_invalidate(lv_layer_top()); // the "who's brewing" picker shows the same picture
@@ -568,6 +581,9 @@ void DefaultUI::loop() {
         }
     }
     lv_task_handler();
+    if (drifted) {
+        backdrop::noteDriftCost(::millis() - driftStart); // moving the picture plus the full redraw it caused
+    }
 }
 
 void DefaultUI::loopProfiles() {
