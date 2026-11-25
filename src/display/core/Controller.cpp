@@ -715,8 +715,9 @@ void Controller::loopLogic() {
         if (lastProcess != nullptr && lastProcess->isComplete() && !processCompleted && settings.isDelayAdjust()) {
             processCompleted = true;
             if (lastProcess->getType() == MODE_BREW) {
+                // A shot stopped by hand says nothing about overshoot: it never reached the target.
                 if (auto *brewProcess = static_cast<BrewProcess *>(lastProcess.get());
-                    brewProcess->target == ProcessTarget::VOLUMETRIC) {
+                    brewProcess->target == ProcessTarget::VOLUMETRIC && !brewProcess->stoppedEarly) {
                     newBrewDelay = brewProcess->getNewDelayTime();
                 }
             } else if (lastProcess->getType() == MODE_GRIND) {
@@ -1312,6 +1313,7 @@ void Controller::deactivateLocked(std::vector<const char *> &events) {
     // A process that was stopped by hand or ran out on time never stamped its own end; status reads elapsed time from it.
     if (lastProcess->getType() == MODE_BREW) {
         auto *brew = static_cast<BrewProcess *>(lastProcess.get());
+        brew->stop(); // still running means it was cut short: freeze it, or it would keep stepping through its phases
         if (brew->finished == 0)
             brew->finished = millis();
         utility = brew->isUtility();
@@ -1328,6 +1330,23 @@ void Controller::deactivateLocked(std::vector<const char *> &events) {
     updateLastAction();
     if (utility)
         clearLocked(events); // a flush has nothing to show, skip the finished screen
+}
+
+// Stop from a person (touch screen, phone, brew switch, profile button). A shot that ran long enough to be saved stays
+// as the last process, so both screens show what it reached until someone acknowledges it or starts the next one.
+// Everything else (a mistaken tap, a flush, water, nothing running) is cleared at once, as before.
+void Controller::stop() {
+    bool keepResult = false;
+    {
+        std::lock_guard<std::recursive_mutex> guard(processMutex);
+        if (currentProcess != nullptr && currentProcess->getType() == MODE_BREW && currentProcess->isActive()) {
+            auto *brew = static_cast<BrewProcess *>(currentProcess.get());
+            keepResult = !brew->isUtility() && millis() - brew->processStarted > SHOT_KEEP_MIN_DURATION_MS;
+        }
+    }
+    deactivate();
+    if (!keepResult)
+        clear();
 }
 
 void Controller::clear() {
@@ -1638,8 +1657,16 @@ void Controller::onVolumetricMeasurement(double measurement, VolumetricMeasureme
     if (currentProcess != nullptr) {
         currentProcess->updateVolume(effectiveMeasurement);
     }
-    if (lastProcess != nullptr && !lastProcess->isComplete()) {
-        lastProcess->updateVolume(effectiveMeasurement);
+    if (lastProcess != nullptr) {
+        bool settling = !lastProcess->isComplete();
+        if (!settling && lastProcess->getType() == MODE_BREW) {
+            // A shot stopped by hand is complete at once, but its result still takes the last drops.
+            auto *brew = static_cast<BrewProcess *>(lastProcess.get());
+            settling = brew->stoppedEarly && brew->isSettling();
+        }
+        if (settling) {
+            lastProcess->updateVolume(effectiveMeasurement);
+        }
     }
 }
 
@@ -1839,8 +1866,7 @@ void Controller::runButtonBehavior(const String &behavior, bool pressed) {
 void Controller::handleBrewButton(bool pressed) {
     if (!pressed) { // latching switch flipped off
         if (getMode() == MODE_BREW) {
-            deactivate();
-            clear();
+            stop();
         } else if (getMode() == MODE_WATER) {
             deactivate();
         }
@@ -1862,8 +1888,7 @@ void Controller::handleBrewButton(bool pressed) {
 #endif
             activate();
         } else if (settings.isMomentaryButtons()) { // second press stops the shot
-            deactivate();
-            clear();
+            stop();
         }
         break;
     case MODE_WATER:
@@ -1954,8 +1979,7 @@ void Controller::handleFlushButton(bool pressed) {
 
 void Controller::handleProfileButton(bool pressed, const String &id) {
     if (!pressed) { // latching switch flipped off
-        deactivate();
-        clear();
+        stop();
         return;
     }
     if (getMode() == MODE_STANDBY) {
@@ -1966,8 +1990,7 @@ void Controller::handleProfileButton(bool pressed, const String &id) {
         setMode(MODE_BREW);
     }
     if (isActive()) { // pressing again stops the running shot
-        deactivate();
-        clear();
+        stop();
         return;
     }
     std::vector<String> profileIds = profileManager->listProfiles();

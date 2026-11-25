@@ -5534,6 +5534,10 @@ msgstr "Stop replay and restore chart"
 msgid "Stop when"
 msgstr "Stop when"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr "Stopped early"
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "Stopped: Manually"

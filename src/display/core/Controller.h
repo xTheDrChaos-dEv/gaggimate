@@ -129,6 +129,7 @@ class Controller {
     void cancelBrewConfirm();
     void deactivate();
     void clear();
+    void stop(); // the user's stop: a real shot stays on screen as a result, anything else is cleared
     void activateGrind();
     void deactivateGrind();
     void activateStandby();

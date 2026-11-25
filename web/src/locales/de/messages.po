@@ -5534,6 +5534,10 @@ msgstr "Replay stoppen und Diagramm wiederherstellen"
 msgid "Stop when"
 msgstr "Stoppen, wenn"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "Gestoppt: manuell"

@@ -7,6 +7,7 @@ constexpr int PROGRESS_INTERVAL = 100;
 constexpr int HOT_WATER_SAFETY_DURATION_MS = 120000;
 constexpr int STEAM_SAFETY_DURATION_MS = 600000;
 constexpr int BREW_MIN_DURATION_MS = 5000;
+constexpr unsigned long SHOT_KEEP_MIN_DURATION_MS = 7500; // shorter brews are failed shots or flushes: not saved, no result shown
 constexpr int BREW_MAX_DURATION_MS = 300000;
 constexpr int BREW_SAFETY_DURATION_MS = BREW_MAX_DURATION_MS;
 constexpr double BREW_MIN_VOLUMETRIC = 5.0;

@@ -22,6 +22,7 @@ class BrewProcess : public Process {
     PhaseExitReason lastExitReason = PhaseExitReason::NONE; // why the most recent phase ended (for shot history)
     bool holdPhase = false;                                 // phase 0 runs until release() (hold-to-flush, GM-201)
     bool releaseRequested = false;
+    bool stoppedEarly = false; // ended by stop(), not by its own last phase
     double phaseStartVolume = 0;
     double currentVolume = 0; // most recent volume pushed
     float currentFlow = 0.0f;
@@ -41,6 +42,10 @@ class BrewProcess : public Process {
     }
 
     void updateVolume(double volume) override { // called even after the Process is no longer active
+        // Once the pump is off only late drops count. A lower reading is the scale being tared for the next shot
+        // or the cup being lifted, and must not wipe the result that is on screen.
+        if (processPhase == ProcessPhase::FINISHED && volume < currentVolume)
+            return;
         currentVolume = volume;
         if (processPhase != ProcessPhase::FINISHED) { // only store measurements while active
             volumetricRateCalculator.addMeasurement(volume);
@@ -84,6 +89,16 @@ class BrewProcess : public Process {
     }
 
     bool isCurrentPhaseFinished() { return currentPhaseExitReason() != PhaseExitReason::NONE; }
+
+    // Ends a running brew where it stands. From here it reads as over (pump off, clock frozen) to every caller, so a
+    // shot stopped by hand can stay on screen as a result exactly like one that ran out. No-op once finished.
+    void stop() {
+        if (processPhase != ProcessPhase::RUNNING)
+            return;
+        processPhase = ProcessPhase::FINISHED;
+        finished = millis();
+        stoppedEarly = true;
+    }
 
     bool isUtility() const { return profile.utility; }
 
@@ -169,11 +184,14 @@ class BrewProcess : public Process {
     bool isActive() override { return processPhase == ProcessPhase::RUNNING; }
 
     bool isComplete() override {
-        if (target == ProcessTarget::TIME) {
+        if (target == ProcessTarget::TIME || stoppedEarly) { // a stopped shot has no overshoot to wait for: show it at once
             return !isActive();
         }
         return processPhase == ProcessPhase::FINISHED && millis() - finished > PREDICTIVE_TIME;
     }
+
+    // The last drops still land for a moment after the pump stops.
+    bool isSettling() const { return processPhase == ProcessPhase::FINISHED && millis() - finished <= PREDICTIVE_TIME; }
 
     int getType() override { return MODE_BREW; }
 

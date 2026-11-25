@@ -241,8 +241,7 @@ void WebSocketHandler::handleWebSocketData(AsyncWebSocket *server, AsyncWebSocke
                 } else if (msgType == "req:brew:confirm:cancel") {
                     controller->cancelBrewConfirm();
                 } else if (msgType == "req:process:deactivate") {
-                    controller->deactivate();
-                    controller->clear();
+                    controller->stop();
                 } else if (msgType == "req:process:clear") {
                     controller->clear();
                 } else if (msgType == "req:grind:activate") {
@@ -542,6 +541,7 @@ void WebSocketHandler::publishTelemetry() {
             pObj["l"] = brew->isActive() ? brew->currentPhase.name.c_str() : "Finished";
             pObj["e"] = ts - brew->processStarted;
             pObj["u"] = brew->isUtility() ? 1 : 0;
+            pObj["x"] = brew->stoppedEarly ? 1 : 0; // stopped by hand before the profile ran out
             const bool isVolumetric = brew->target == ProcessTarget::VOLUMETRIC && brew->currentPhase.hasVolumetricTarget() &&
                                       controller->isVolumetricAvailable();
             pObj["tt"] = isVolumetric ? "volumetric" : "time";

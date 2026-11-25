@@ -5534,6 +5534,10 @@ msgstr "Detener reproducción y restaurar gráfica"
 msgid "Stop when"
 msgstr "Detener cuando"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "Detenida: manualmente"

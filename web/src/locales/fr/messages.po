@@ -5534,6 +5534,10 @@ msgstr "Arrêter la relecture et restaurer le graphique"
 msgid "Stop when"
 msgstr "Arrêter quand"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "Arrêté : manuellement"

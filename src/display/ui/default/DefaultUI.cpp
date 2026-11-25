@@ -1155,6 +1155,8 @@ void DefaultUI::updateBrewProcess() {
     String phaseName = "Finished";
     if (active) {
         phaseName = phase.name;
+    } else if (bp->stoppedEarly) {
+        phaseName = "Stopped early";
     } else if (controller->getSettings().isDelayAdjust() && !process->isComplete()) {
         phaseName = "Calibrating...";
     }

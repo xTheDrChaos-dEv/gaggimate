@@ -5538,6 +5538,10 @@ msgstr "Interrompi il replay e ripristina il grafico"
 msgid "Stop when"
 msgstr "Arresta quando"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "Arrestato: manualmente"

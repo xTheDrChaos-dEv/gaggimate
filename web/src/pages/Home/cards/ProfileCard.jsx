@@ -76,7 +76,9 @@ function FinishedProcessCard({ processInfo, isBrewing, selectedProfile, stats, w
     <div className='card bg-success/10 border-success/30 flex flex-col gap-1 rounded-xl border p-3'>
       <div className='text-success flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-wider uppercase'>
         <FontAwesomeIcon icon={faCheck} />
-        <Trans>Finished</Trans> · {selectedProfile || t({ message: 'Default', context: 'profile' })}
+        {/* x: the shot was stopped by hand before the profile ran out */}
+        {p?.x ? <Trans>Stopped early</Trans> : <Trans>Finished</Trans>} ·{' '}
+        {selectedProfile || t({ message: 'Default', context: 'profile' })}
       </div>
       <span className='text-base-content text-center text-2xl font-bold tabular-nums'>
         {fmtElapsed(p?.e)}

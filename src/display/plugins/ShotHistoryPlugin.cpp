@@ -288,7 +288,7 @@ void ShotHistoryPlugin::record() {
         isFileOpen = false;
         pluginManager->trigger("history:shot:recorded"); // final weight and pumped water are written
         unsigned long duration = header.durationMs;
-        if (duration <= 7500) { // Exclude failed shots and flushes
+        if (duration <= SHOT_KEEP_MIN_DURATION_MS) { // Exclude failed shots and flushes
             fs->remove("/h/" + currentId + ".slog");
         } else {
             controller->getSettings().setHistoryIndex(controller->getSettings().getHistoryIndex() + 1);
@@ -400,8 +400,10 @@ void ShotHistoryPlugin::endRecording() {
         Process *last = controller->getLastProcess();
         if (last != nullptr && last->getType() == MODE_BREW) {
             auto *brewProcess = static_cast<BrewProcess *>(last);
-            PhaseExitReason reason =
-                brewProcess->processPhase == ProcessPhase::FINISHED ? brewProcess->lastExitReason : PhaseExitReason::ABORTED;
+            // A stopped brew is marked finished by deactivate() before this runs, so ask how it ended, not whether.
+            PhaseExitReason reason = brewProcess->processPhase == ProcessPhase::FINISHED && !brewProcess->stoppedEarly
+                                         ? brewProcess->lastExitReason
+                                         : PhaseExitReason::ABORTED;
             finalExitReason = static_cast<uint8_t>(reason);
             shotDose = brewProcess->profile.dose; // process copy, unaffected by later temporary adjustments
         }

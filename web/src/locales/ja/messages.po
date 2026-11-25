@@ -5534,6 +5534,10 @@ msgstr "リプレイを停止してチャートを復元"
 msgid "Stop when"
 msgstr "停止条件"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "停止: 手動"

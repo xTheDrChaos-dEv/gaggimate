@@ -5534,6 +5534,10 @@ msgstr "停止回放并恢复图表"
 msgid "Stop when"
 msgstr "停止条件"
 
+#: src/pages/Home/cards/ProfileCard.jsx
+msgid "Stopped early"
+msgstr ""
+
 #: src/pages/ShotAnalyzer/services/analyzer/exitReasons.js
 msgid "Stopped: Manually"
 msgstr "已停止：手动"
