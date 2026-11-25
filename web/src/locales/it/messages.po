@@ -950,14 +950,6 @@ msgstr "Caffè"
 msgid "Coffee beans"
 msgstr ""
 
-#: src/utils/people.js
-msgid "Coffee beans, drifting diagonally"
-msgstr ""
-
-#: src/utils/people.js
-msgid "Coffee beans, drifting right to left"
-msgstr ""
-
 #: src/components/Navigation.jsx
 msgid "Collapse"
 msgstr "Comprimi"
@@ -2105,14 +2097,6 @@ msgstr "Spazio flessibile"
 
 #: src/utils/people.js
 msgid "Floral"
-msgstr ""
-
-#: src/utils/people.js
-msgid "Floral, drifting diagonally"
-msgstr ""
-
-#: src/utils/people.js
-msgid "Floral, drifting right to left"
 msgstr ""
 
 #: src/components/ExtendedProfileChart.jsx

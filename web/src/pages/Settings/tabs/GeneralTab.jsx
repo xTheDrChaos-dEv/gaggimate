@@ -3,6 +3,7 @@ import { UsersCard } from '../UsersCard.jsx';
 import {
   DEFAULT_BACKGROUND,
   backgroundStyles,
+  stillBackground,
   displayColors,
   displayModes,
   themeFor,
@@ -324,7 +325,7 @@ export function GeneralTab({
                 id='backgroundStyle'
                 name='backgroundStyle'
                 className='select select-bordered w-full'
-                value={formData.backgroundStyle ?? DEFAULT_BACKGROUND}
+                value={stillBackground(formData.backgroundStyle ?? DEFAULT_BACKGROUND)}
                 onChange={e => {
                   onChange('backgroundStyle')(e);
                   // Like the theme, the live background belongs to whoever is brewing now.

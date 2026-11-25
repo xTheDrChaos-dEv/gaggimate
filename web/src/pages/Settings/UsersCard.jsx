@@ -8,6 +8,7 @@ import {
   MAX_NAME_LENGTH,
   MAX_PEOPLE,
   backgroundStyles,
+  stillBackground,
   displayColors,
   displayModes,
   initialOf,
@@ -113,7 +114,7 @@ export function UsersCard({ formData, setField, onChange }) {
           <div className='flex items-center gap-2'>
             <select
               className='select select-bordered min-w-0 flex-1'
-              value={person.bg ?? DEFAULT_BACKGROUND}
+              value={stillBackground(person.bg ?? DEFAULT_BACKGROUND)}
               aria-label={t`Background for ${person.name || t`this person`}`}
               onChange={e => update(index, { bg: Number(e.target.value) })}
             >

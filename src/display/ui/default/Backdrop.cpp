@@ -362,9 +362,17 @@ int patternOf(int style) {
     }
 }
 
-bool driftsLeft(int style) { return style == backdrop::STYLE_BEANS_LEFT || style == backdrop::STYLE_FLORAL_LEFT; }
+// Backgrounds no longer move: on the real panel the redraws made scrolling text and transitions stutter. The
+// drifting style numbers are kept (they are saved in settings) and draw the same picture standing still.
+bool driftsLeft(int style) {
+    (void)style;
+    return false;
+}
 
-bool driftsDiagonally(int style) { return style == backdrop::STYLE_BEANS_DIAGONAL || style == backdrop::STYLE_FLORAL_DIAGONAL; }
+bool driftsDiagonally(int style) {
+    (void)style;
+    return false;
+}
 
 } // namespace
 

@@ -946,14 +946,6 @@ msgstr "Coffee"
 msgid "Coffee beans"
 msgstr "Coffee beans"
 
-#: src/utils/people.js
-msgid "Coffee beans, drifting diagonally"
-msgstr "Coffee beans, drifting diagonally"
-
-#: src/utils/people.js
-msgid "Coffee beans, drifting right to left"
-msgstr "Coffee beans, drifting right to left"
-
 #: src/components/Navigation.jsx
 msgid "Collapse"
 msgstr "Collapse"
@@ -2102,14 +2094,6 @@ msgstr "Flexible Space"
 #: src/utils/people.js
 msgid "Floral"
 msgstr "Floral"
-
-#: src/utils/people.js
-msgid "Floral, drifting diagonally"
-msgstr "Floral, drifting diagonally"
-
-#: src/utils/people.js
-msgid "Floral, drifting right to left"
-msgstr "Floral, drifting right to left"
 
 #: src/components/ExtendedProfileChart.jsx
 #: src/pages/Home/cards/RecentShotsCard.jsx

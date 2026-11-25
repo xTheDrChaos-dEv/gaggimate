@@ -27,13 +27,15 @@
           var key = 'gaggimate-daisyui-theme';
           var allowed = ['light', 'dark', 'olive', 'olive-light', 'purple', 'purple-light', 'coffee', 'nord'];
           var saved = localStorage.getItem(key);
-          // 'machine' follows the machine's display theme; use the last one it reported until it reconnects.
-          if (saved === 'machine') saved = localStorage.getItem('gaggimate-machine-theme') || 'dark';
+          // 'machine' (also the default when nothing was chosen) follows the machine's display theme; use the last one it reported until it reconnects.
+          if (!saved || saved === 'machine') saved = localStorage.getItem('gaggimate-machine-theme') || 'dark';
           var theme = allowed.indexOf(saved) >= 0 ? saved : 'light';
           document.documentElement.setAttribute('data-theme', theme);
           // Same idea for the page background, which mirrors the machine's background style.
           var background = localStorage.getItem('gaggimate-machine-background');
           var backgrounds = ['solid', 'beans', 'beans-left', 'beans-diagonal', 'art', 'floral', 'floral-left', 'floral-diagonal'];
+          // Backgrounds no longer move: an older saved moving value shows as the still picture.
+          if (background) background = background.replace(/-(left|diagonal)$/, '');
           if (backgrounds.indexOf(background) >= 0) document.documentElement.setAttribute('data-bg', background);
         } catch (e) {}
       })();

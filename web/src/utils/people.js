@@ -32,15 +32,13 @@ export const themeParts = theme => {
 };
 
 // What is drawn behind the screens (firmware: backdrop::Style). Any theme works with any background.
-export const DEFAULT_BACKGROUND = 3;
+export const DEFAULT_BACKGROUND = 1;
+// Backgrounds used to be able to drift; a saved drifting value now means the same picture standing still.
+export const stillBackground = style => ({ 2: 1, 3: 1, 6: 5, 7: 5 })[Number(style)] ?? Number(style);
 export const backgroundStyles = () => [
   { value: 0, label: t`Solid color` },
   { value: 1, label: t`Coffee beans` },
-  { value: 2, label: t`Coffee beans, drifting right to left` },
-  { value: 3, label: t`Coffee beans, drifting diagonally` },
   { value: 5, label: t`Floral` },
-  { value: 6, label: t`Floral, drifting right to left` },
-  { value: 7, label: t`Floral, drifting diagonally` },
   { value: 4, label: t`Theme artwork` },
 ];
 
@@ -49,12 +47,12 @@ export const webBackgroundForStyle = style =>
   ({
     0: 'solid',
     1: 'beans',
-    2: 'beans-left',
-    3: 'beans-diagonal',
+    2: 'beans',
+    3: 'beans',
     4: 'art',
     5: 'floral',
-    6: 'floral-left',
-    7: 'floral-diagonal',
+    6: 'floral',
+    7: 'floral',
   })[style] ?? 'solid';
 
 // Web theme that matches a display theme, for the "match the machine" web theme option.

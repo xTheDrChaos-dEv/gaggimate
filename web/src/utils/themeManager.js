@@ -24,7 +24,8 @@ export function getSystemTheme() {
 export function getStoredTheme() {
   try {
     const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    return stored && AVAILABLE_THEMES.includes(stored) ? stored : 'system';
+    // Nothing chosen on this phone yet: wear the same colour as the round screen.
+    return stored && AVAILABLE_THEMES.includes(stored) ? stored : 'machine';
   } catch (error) {
     console.warn('Failed to get stored theme:', error);
     return 'system';
